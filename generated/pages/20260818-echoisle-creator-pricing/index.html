@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>回声岛 Echoisle — 定价 · 选择你的创作节奏</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@500;600&family=Poppins:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ MiniMax Tokens（来源：design-md/minimax/DESIGN.md）============ */
+  :root {
+    --bg: #ffffff;             /* 白是结构色——内容区禁止彩色底 */
+    --text: #222222;           /* 主文本 */
+    --text-2: #45515e;         /* 次级文本 */
+    --text-3: #8e8e93;         /* 弱化文本 */
+    --btn-dark: #181e25;       /* 主 CTA 深色 */
+    --btn-gray: #f0f0f0;       /* 次级按钮底 */
+    --footer: #181e25;         /* 深色页脚 */
+    --brand: #1456f0;          /* 品牌蓝 brand-6 */
+    --blue-500: #3b82f6;
+    --blue-hover: #2563eb;
+    --pink: #ea5ec1;           /* 品牌粉——仅装饰点缀，不上文字/按钮 */
+    --border: #e5e7eb;
+    --border-light: #f2f3f5;
+    /* 阴影体系（全部 ≤ 0.16 不透明度，轻盈通透）*/
+    --shadow-card: rgba(0, 0, 0, 0.08) 0px 4px 6px;            /* L1 标准卡 */
+    --shadow-brand: rgba(44, 30, 116, 0.16) 0px 0px 15px;      /* L3 品牌紫辉光 */
+    --shadow-lift: rgba(36, 36, 36, 0.08) 0px 12px 16px -4px;  /* L4 抬升/hover */
+    /* 多字体系统：各司其职 */
+    --ui: 'DM Sans', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mid: 'Poppins', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --data: 'Roboto', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); }
+  :focus-visible { outline: 2px solid var(--blue-500); outline-offset: 2px; }
+
+  /* ============ 导航：白底 + 药丸激活态 ============ */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.92); border-bottom: 1px solid var(--border-light); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-family: var(--display); font-size: 19px; font-weight: 600; }
+  .logo i { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(from 210deg, var(--pink), #8b5cf6 45%, var(--blue-500) 90%); font-style: normal; }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--text-3); letter-spacing: 0.06em; }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #18181b; padding: 8px 16px; border-radius: 9999px; transition: background .15s; }
+  .nav-links a:hover { background: rgba(0, 0, 0, 0.05); }
+  .nav-links a.active { background: rgba(0, 0, 0, 0.05); } /* 药丸激活指示 */
+  .nav-cta { display: flex; align-items: center; gap: 18px; }
+  .nav-cta .login { font-size: 14px; font-weight: 500; color: #18181b; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 20px; height: 2px; background: #18181b; border-radius: 2px; margin: 4px auto; }
+
+  /* ============ 按钮体系：CTA 8px 圆角（非药丸）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; border-radius: 8px; padding: 11px 20px; cursor: pointer; border: none; transition: background .15s, transform .15s, box-shadow .15s; min-height: 44px; }
+  .btn-dark { background: var(--btn-dark); color: #ffffff; }
+  .btn-dark:hover { background: #2a323c; }
+  .btn-light { background: var(--btn-gray); color: #333333; }
+  .btn-light:hover { background: #e4e4e4; }
+  .btn-white { background: #ffffff; color: #18181b; }
+  .btn-white:hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+
+  /* ============ 英雄区：80px Outfit 展示标题 ============ */
+  .hero { text-align: center; padding: 88px 0 56px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--brand); background: rgba(20, 86, 240, 0.06); border-radius: 30px; padding: 6px 14px; margin-bottom: 26px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(38px, 6vw, 80px); font-weight: 500; line-height: 1.10; color: #222222; }
+  .hero p { margin: 20px auto 32px; font-size: 16px; line-height: 1.50; color: var(--text-2); max-width: 520px; }
+
+  /* 计费切换：药丸分段控件 */
+  .toggle { display: inline-flex; background: rgba(0, 0, 0, 0.05); border-radius: 9999px; padding: 4px; }
+  .t-opt { background: transparent; border: none; padding: 10px 22px; border-radius: 9999px; font-size: 14px; font-weight: 500; color: var(--text-2); cursor: pointer; transition: background .15s, color .15s; min-height: 44px; }
+  .t-opt em { font-style: normal; font-size: 12px; color: var(--brand); margin-left: 4px; }
+  .t-opt.active { background: #ffffff; color: #18181b; box-shadow: var(--shadow-card); }
+
+  /* ============ 定价卡：画廊式排布 ============ */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 40px 0 16px; align-items: stretch; }
+  .plan { position: relative; background: #ffffff; border: 1px solid var(--border-light); border-radius: 20px; padding: 32px 28px; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .plan:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .plan-name { font-family: var(--display); font-size: 28px; font-weight: 600; line-height: 1.71; color: #222222; }
+  .plan-for { font-size: 14px; line-height: 1.50; color: var(--text-3); margin-top: 2px; }
+  .plan-price { display: flex; align-items: baseline; gap: 6px; margin: 22px 0 6px; }
+  .plan-price b { font-family: var(--display); font-size: 44px; font-weight: 600; color: #222222; line-height: 1.1; }
+  .plan-price .cur { font-family: var(--display); font-size: 20px; font-weight: 500; color: #45515e; }
+  .plan-price .per { font-size: 13px; color: var(--text-3); }
+  .plan-note { font-size: 12px; color: var(--text-3); min-height: 18px; margin-bottom: 20px; }
+  .plan ul { list-style: none; display: flex; flex-direction: column; gap: 12px; margin-bottom: 28px; }
+  .plan li { display: flex; gap: 10px; font-size: 14px; line-height: 1.50; color: var(--text-2); }
+  .plan li::before { content: '✓'; color: var(--brand); font-weight: 700; flex-shrink: 0; }
+  .plan li.na { color: var(--text-3); }
+  .plan li.na::before { content: '—'; color: #c4c4c8; font-weight: 400; }
+  .plan .btn { margin-top: auto; width: 100%; }
+
+  /* 精选卡：品牌渐变 + 紫调辉光（产品卡待遇）*/
+  .plan.featured { background: linear-gradient(150deg, #f5c5ec 0%, #c9b8f7 38%, #8fb4fb 100%); border: none; border-radius: 24px; padding: 36px 28px; box-shadow: var(--shadow-brand); }
+  .plan.featured:hover { transform: translateY(-6px); box-shadow: rgba(44, 30, 116, 0.16) 0px 12px 26px -6px; }
+  .plan.featured .plan-name, .plan.featured .plan-price b, .plan.featured .plan-price .cur { color: #18181b; }
+  .plan.featured .plan-for, .plan.featured .plan-price .per, .plan.featured .plan-note { color: rgba(24, 30, 37, 0.62); }
+  .plan.featured li { color: rgba(24, 30, 37, 0.82); }
+  .plan.featured li::before { color: var(--brand); }
+  .plan.featured li.na { color: rgba(24, 30, 37, 0.42); }
+  .badge-hot { position: absolute; top: -13px; right: 24px; background: #181e25; color: #ffffff; font-size: 12px; font-weight: 500; border-radius: 30px; padding: 5px 14px; }
+
+  /* ============ 对比表：Roboto 数据语境 ============ */
+  .compare { padding: 72px 0 24px; }
+  .section-head { text-align: center; margin-bottom: 40px; }
+  .section-head h2 { font-family: var(--display); font-size: 31px; font-weight: 600; line-height: 1.50; color: #222222; }
+  .section-head p { font-family: var(--mid); font-size: 18px; font-weight: 500; color: var(--text-2); margin-top: 8px; }
+  .table-wrap { border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); overflow: hidden; }
+  .table-scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 680px; }
+  th, td { padding: 14px 20px; font-size: 14px; line-height: 1.50; text-align: center; border-bottom: 1px solid var(--border-light); }
+  th { background: #fafbfc; font-family: var(--display); font-size: 16px; font-weight: 600; color: #222222; }
+  th:first-child, td:first-child { text-align: left; color: var(--text-2); font-weight: 500; }
+  th small { display: block; font-family: var(--ui); font-size: 12px; font-weight: 500; color: var(--text-3); }
+  th.pro { color: var(--brand); }
+  td { color: var(--text-2); }
+  td.num { font-family: var(--data); font-variant-numeric: tabular-nums; } /* Roboto：数据语境 */
+  td .yes { color: var(--brand); font-weight: 700; }
+  td .no { color: #c4c4c8; }
+  col.pro-col { background: rgba(20, 86, 240, 0.035); }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr:hover td { background: rgba(0, 0, 0, 0.015); }
+  tbody tr:hover td.pro-col { background: rgba(20, 86, 240, 0.055); }
+
+  /* ============ 创作者说 ============ */
+  .voices { padding: 72px 0 8px; }
+  .voice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .voice { background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); padding: 26px; transition: transform .2s, box-shadow .2s; }
+  .voice:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .v-top { display: flex; align-items: center; gap: 12px; margin-bottom: 16px; }
+  .v-ava { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #ffffff; font-size: 15px; font-weight: 700; flex-shrink: 0; }
+  .ava-1 { background: linear-gradient(140deg, #ea5ec1, #8b5cf6); }
+  .ava-2 { background: linear-gradient(140deg, #ff9a5a, #ea5ec1); }
+  .ava-3 { background: linear-gradient(140deg, #3b82f6, #22d3ee); }
+  .v-top b { font-size: 15px; font-weight: 500; display: block; }
+  .v-top span { font-size: 13px; color: var(--text-3); }
+  .voice p { font-size: 14px; line-height: 1.70; color: var(--text-2); }
+
+  /* ============ FAQ ============ */
+  .faq { padding: 72px 0; }
+  .faq-list { max-width: 720px; margin: 0 auto; }
+  details { border-bottom: 1px solid var(--border-light); }
+  summary { list-style: none; display: flex; justify-content: space-between; align-items: center; gap: 16px; padding: 20px 4px; font-size: 16px; font-weight: 500; color: #222222; cursor: pointer; min-height: 44px; }
+  summary::-webkit-details-marker { display: none; }
+  summary::after { content: '+'; font-size: 20px; color: var(--text-3); transition: transform .2s; }
+  details[open] summary::after { transform: rotate(45deg); }
+  details p { padding: 0 4px 20px; font-size: 14px; line-height: 1.70; color: var(--text-2); }
+
+  /* ============ 终章 CTA：渐变大卡（精选产品卡待遇）============ */
+  .cta-card { background: linear-gradient(140deg, #ea5ec1 0%, #9d7bf0 45%, #4c8df6 100%); border-radius: 24px; box-shadow: var(--shadow-brand); padding: 64px 40px; text-align: center; color: #18181b; margin: 24px 0 0; }
+  .cta-card h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 600; line-height: 1.50; }
+  .cta-card p { font-size: 16px; line-height: 1.50; color: rgba(24, 30, 37, 0.72); margin: 10px auto 28px; max-width: 460px; }
+  .cta-actions { display: flex; gap: 14px; justify-content: center; flex-wrap: wrap; }
+  .btn-glass { background: rgba(255, 255, 255, 0.4); color: #18181b; border-radius: 8px; }
+  .btn-glass:hover { background: rgba(255, 255, 255, 0.55); }
+
+  /* ============ 深色页脚 ============ */
+  footer { background: var(--footer); margin-top: 88px; padding: 56px 0 0; color: rgba(255, 255, 255, 0.8); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-grid .logo { color: #ffffff; margin-bottom: 14px; }
+  .footer-grid .logo em { color: rgba(255, 255, 255, 0.5); }
+  .footer-grid p.desc { font-size: 13px; line-height: 1.70; color: rgba(255, 255, 255, 0.55); max-width: 300px; }
+  .footer-grid h4 { font-size: 14px; font-weight: 500; color: #ffffff; margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 14px; color: rgba(255, 255, 255, 0.8); padding: 5px 0; line-height: 1.50; }
+  .footer-grid a:hover { color: #ffffff; }
+  .footer-bottom { margin-top: 48px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 22px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) {
+    .plans { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+    .plan.featured { order: -1; }
+    .voice-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--border-light); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 16px; }
+    .menu-btn { display: block; }
+    .nav-cta .login { display: none; }
+    .hero { padding: 56px 0 40px; }
+    .hero h1 { font-size: clamp(38px, 9vw, 48px); }
+    .toggle { width: 100%; max-width: 340px; }
+    .t-opt { flex: 1; }
+    .compare, .voices, .faq { padding: 48px 0; }
+    .cta-card { padding: 44px 24px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; gap: 28px; }
+    footer { margin-top: 56px; }
+  }
+  @media (max-width: 480px) {
+    .plans, .voice-grid { max-width: none; }
+    .plan { padding: 28px 22px; }
+    .cta-actions .btn { width: 100%; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>回声岛 <em>ECHOISLE</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">产品</a></li>
+      <li><a href="#" class="active">定价</a></li>
+      <li><a href="#">社区</a></li>
+      <li><a href="#">文档</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="login">登录</a>
+      <a href="#" class="btn btn-dark">免费开始</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">新 · AI 起标题助手已上线</span>
+    <h1>选择你的<br>创作节奏</h1>
+    <p>从第一条专栏到一整个工作室，回声岛为每个阶段的创作者准备了刚好够用的工具。</p>
+    <div class="toggle" role="group" aria-label="计费周期">
+      <button class="t-opt active" data-cycle="m">月付</button>
+      <button class="t-opt" data-cycle="y">年付<em>省 20%</em></button>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="plans">
+      <div class="plan">
+        <h3 class="plan-name">自由启程</h3>
+        <p class="plan-for">刚开麦的创作者</p>
+        <div class="plan-price"><span class="cur">¥</span><b>0</b><span class="per">/ 永久免费</span></div>
+        <p class="plan-note">不需要信用卡</p>
+        <ul>
+          <li>3 个专栏 / 1 个主页</li>
+          <li>1 GB 素材云盘</li>
+          <li>基础数据看板（7 天）</li>
+          <li>社区徽章与新功能优先体验</li>
+          <li class="na">AI 起标题助手</li>
+        </ul>
+        <a href="#" class="btn btn-light">免费注册</a>
+      </div>
+
+      <div class="plan featured">
+        <span class="badge-hot">最受欢迎</span>
+        <h3 class="plan-name">全速创作</h3>
+        <p class="plan-for">稳定更新的职业创作者</p>
+        <div class="plan-price"><span class="cur">¥</span><b class="price" data-m="39" data-y="31">39</b><span class="per">/ 月</span></div>
+        <p class="plan-note billed" data-m="按月计费，随时取消" data-y="按年计费 ¥372，折合每月省 20%">按月计费，随时取消</p>
+        <ul>
+          <li>无限专栏 + 自定义主页装扮</li>
+          <li>100 GB 素材云盘</li>
+          <li>全量数据看板（2 年回溯）</li>
+          <li>AI 起标题助手 × 每月 300 次</li>
+          <li>1 个私密付费社群</li>
+          <li>创作者成长营全部课程</li>
+        </ul>
+        <a href="#" class="btn btn-white">开始 7 天免费试用</a>
+      </div>
+
+      <div class="plan">
+        <h3 class="plan-name">工作室</h3>
+        <p class="plan-for">小团队与内容机构</p>
+        <div class="plan-price"><span class="cur">¥</span><b class="price" data-m="129" data-y="103">129</b><span class="per">/ 月</span></div>
+        <p class="plan-note billed" data-m="按月计费，随时取消" data-y="按年计费 ¥1,236，折合每月省 20%">按月计费，随时取消</p>
+        <ul>
+          <li>全速创作全部权益</li>
+          <li>5 个团队席位（可扩展）</li>
+          <li>无限素材云盘 + 版本管理</li>
+          <li>无限私密社群</li>
+          <li>开放 API 与数据导出</li>
+          <li>专属客户成功经理</li>
+        </ul>
+        <a href="#" class="btn btn-dark">联系开通</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="compare">
+  <div class="container">
+    <div class="section-head">
+      <h2>逐项对比</h2>
+      <p>两张表看懂三档差异</p>
+    </div>
+    <div class="table-wrap">
+      <div class="table-scroll">
+        <table>
+          <colgroup><col><col><col class="pro-col"><col></colgroup>
+          <thead>
+            <tr>
+              <th>权益</th>
+              <th>自由启程<small>¥0</small></th>
+              <th class="pro">全速创作<small>¥39/月</small></th>
+              <th>工作室<small>¥129/月</small></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr><td>专栏数量</td><td class="num">3</td><td class="num pro-c">无限</td><td class="num">无限</td></tr>
+            <tr><td>素材云盘</td><td class="num">1 GB</td><td class="num pro-c">100 GB</td><td class="num">无限</td></tr>
+            <tr><td>数据看板回溯</td><td class="num">7 天</td><td class="num pro-c">2 年</td><td class="num">3 年</td></tr>
+            <tr><td>AI 起标题助手</td><td><span class="no">—</span></td><td class="pro-c"><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+            <tr><td>自定义主页装扮</td><td><span class="no">—</span></td><td class="pro-c"><span class="yes">✓</span></td><td><span class="yes">✓</span></td></tr>
+            <tr><td>私密付费社群</td><td><span class="no">—</span></td><td class="num pro-c">1 个</td><td class="num">无限</td></tr>
+            <tr><td>团队席位</td><td class="num">1</td><td class="num pro-c">1</td><td class="num">5，可扩展</td></tr>
+            <tr><td>开放 API</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td class="pro-c"><span class="yes">✓</span></td></tr>
+            <tr><td>专属客户成功</td><td><span class="no">—</span></td><td><span class="no">—</span></td><td class="pro-c"><span class="yes">✓</span></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="voices">
+  <div class="container">
+    <div class="section-head">
+      <h2>创作者们已经在岛上</h2>
+      <p>他们用回声岛记账、更新、被听见</p>
+    </div>
+    <div class="voice-grid">
+      <div class="voice">
+        <div class="v-top">
+          <div class="v-ava ava-1">陆</div>
+          <div><b>陆青野</b><span>播客《深夜修灯铺》主播</span></div>
+        </div>
+        <p>"全量看板让我第一次看清听众在第几分钟离开。第七期改了开头之后，完播率涨了 18%。"</p>
+      </div>
+      <div class="voice">
+        <div class="v-top">
+          <div class="v-ava ava-2">M</div>
+          <div><b>Momo</b><span>独立插画师 · 2.4 万订阅</span></div>
+        </div>
+        <p>"素材库加 AI 标题，我的更新频率翻了一倍，灵感不再死在起名字这一步。"</p>
+      </div>
+      <div class="voice">
+        <div class="v-top">
+          <div class="v-ava ava-3">白</div>
+          <div><b>白鸟工作室</b><span>三人内容团队</span></div>
+        </div>
+        <p>"五个席位一个后台，我们把整个编辑部搬了上来，审稿流程从三天缩到一晚。"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="faq">
+  <div class="container">
+    <div class="section-head">
+      <h2>常见问题</h2>
+      <p>关于账单、发票与降级</p>
+    </div>
+    <div class="faq-list">
+      <details open>
+        <summary>可以随时更换套餐吗？</summary>
+        <p>可以。升级立即生效、按剩余天数折算差价；降级在当前计费周期结束后生效，权益与数据全部保留。</p>
+      </details>
+      <details>
+        <summary>年付如何开具发票？</summary>
+        <p>支持电子普通发票与增值税专用发票，支付后在「账单中心」提交开票信息，1–3 个工作日内开出。</p>
+      </details>
+      <details>
+        <summary>免费版有流量或内容限制吗？</summary>
+        <p>没有。免费版不限发布数量与读者访问流量，差异只在工具功能：专栏数、云盘容量与数据看板回溯期。</p>
+      </details>
+      <details>
+        <summary>取消订阅后我的内容会怎样？</summary>
+        <p>账号自动降级回免费版，全部内容、订阅者与数据保留；付费功能（如私密社群）将进入只读状态 90 天。</p>
+      </details>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-card">
+      <h2>现在，轮到你开麦了</h2>
+      <p>免费版永不过期，付费档 7 天试用。第一声回声，从这里开始。</p>
+      <div class="cta-actions">
+        <a href="#" class="btn btn-white">免费开始创作</a>
+        <a href="#" class="btn btn-glass">预约工作室演示</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>回声岛 <em>ECHOISLE</em></a>
+        <p class="desc">创作者的兴趣群岛。写下去、被听见、把热爱变成可持续的生计。</p>
+      </div>
+      <div>
+        <h4>产品</h4>
+        <a href="#">专栏</a><a href="#">素材库</a><a href="#">数据看板</a><a href="#">付费社群</a>
+      </div>
+      <div>
+        <h4>公司</h4>
+        <a href="#">关于我们</a><a href="#">加入我们</a><a href="#">媒体报道</a>
+      </div>
+      <div>
+        <h4>支持</h4>
+        <a href="#">帮助中心</a><a href="#">服务状态</a><a href="#">开发者 API</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 回声岛 Echoisle · StyleForge 平台 AI 生成习作 · study of minimax</span>
+      <span>zh-CN</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 月付 / 年付切换：同步改写价格与计费说明
+  document.querySelectorAll('.t-opt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.t-opt').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cycle = btn.dataset.cycle;
+      document.querySelectorAll('.price').forEach((el) => { el.textContent = el.dataset[cycle]; });
+      document.querySelectorAll('.billed').forEach((el) => { el.textContent = el.dataset[cycle]; });
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "id": "20260818-original-ink-ember-radio",
+  "title": "EMBER 夜间白噪音电台（原创风格 Ink & Ember）",
+  "created_at": "2026-08-18T21:10:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "original",
+  "lineage": [],
+  "page_type": "landing",
+  "industry": [
+    "media",
+    "consumer"
+  ],
+  "mood": [
+    "editorial",
+    "retro",
+    "playful"
+  ],
+  "innovation": 3,
+  "tags_ai": [
+    "奶油纸底焦墨线",
+    "衬线巨字标题",
+    "贴纸式斜角徽章",
+    "硬偏移投影",
+    "跑马灯节目条",
+    "CSS波形动画",
+    "点阵纸面背景"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

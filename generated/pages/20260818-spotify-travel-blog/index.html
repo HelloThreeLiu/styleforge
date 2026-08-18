@@ -1,0 +1,311 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>声游记 SoundVoyage — 把旅途录成专辑</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ Spotify Design Tokens（来源：design-md/spotify/DESIGN.md）============ */
+  :root {
+    --black: #121212;        /* 最深背景 */
+    --surface: #181818;      /* 卡片/容器 */
+    --mid: #1f1f1f;          /* 按钮/交互面 */
+    --card-hover: #282828;   /* hover 微亮（文档：slight background lightening）*/
+    --green: #1ed760;        /* Spotify Green——仅功能性使用 */
+    --green-deep: #1db954;   /* 绿色边框变体 */
+    --white: #ffffff;
+    --silver: #b3b3b3;       /* 次级文本 */
+    --border-gray: #4d4d4d;
+    --outline-border: #7c7c7c;
+    --shadow-heavy: rgba(0, 0, 0, 0.5) 0px 8px 24px;
+    --shadow-medium: rgba(0, 0, 0, 0.3) 0px 8px 8px;
+    --font: 'SpotifyMixUI', 'SpotifyMixUITitle', 'Inter', 'Helvetica Neue', helvetica, arial, 'Hiragino Sans', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: var(--font);
+    background: var(--black);
+    color: var(--white);
+    -webkit-font-smoothing: antialiased;
+    padding-bottom: 88px; /* 给底部播放条让位 */
+  }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+
+  /* ============ 顶部导航（药丸 + 大写标签）============ */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(0, 0, 0, 0.9); backdrop-filter: blur(10px); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 18px; font-weight: 700; }
+  .logo i { width: 30px; height: 30px; border-radius: 50%; background: var(--green); display: flex; align-items: center; justify-content: center; color: #000; font-style: normal; font-size: 14px; }
+  .nav-links { display: flex; gap: 8px; list-style: none; }
+  .nav-links a { display: inline-block; padding: 8px 16px; border-radius: 9999px; font-size: 14px; font-weight: 400; color: var(--silver); transition: color .15s; }
+  .nav-links a:hover { color: var(--white); }
+  .nav-links a.active { color: var(--white); font-weight: 700; background: var(--mid); }
+  .nav-cta { display: flex; gap: 12px; align-items: center; }
+  .btn-pill { display: inline-block; padding: 8px 20px; border-radius: 500px; font-size: 14px; font-weight: 700; cursor: pointer; border: none; transition: transform .12s, background .15s, color .15s; }
+  .btn-pill.upper { text-transform: uppercase; letter-spacing: 1.6px; font-size: 13px; padding: 10px 24px; }
+  .btn-green { background: var(--green); color: #000000; }
+  .btn-green:hover { transform: scale(1.04); background: #3be477; }
+  .btn-dark { background: var(--mid); color: var(--white); }
+  .btn-dark:hover { color: var(--white); background: var(--card-hover); }
+  .btn-outline { background: transparent; color: var(--white); border: 1px solid var(--outline-border); }
+  .btn-outline:hover { border-color: var(--white); }
+  .menu-btn { display: none; background: var(--mid); border: none; cursor: pointer; padding: 10px; border-radius: 9999px; }
+  .menu-btn svg { width: 18px; height: 18px; stroke: var(--white); display: block; }
+
+  /* ============ 英雄区：内容优先的黑暗 + 专辑艺术为色彩源 ============ */
+  .hero { padding: 72px 0 56px; background: linear-gradient(180deg, #1c2b22 0%, var(--black) 70%); }
+  .hero-grid { display: grid; grid-template-columns: 1.2fr 1fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(40px, 5.2vw, 64px); font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; }
+  .hero h1 span { color: var(--green); }
+  .hero p { margin: 22px 0 30px; font-size: 16px; font-weight: 400; color: var(--silver); line-height: 1.6; max-width: 460px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  .disc { position: relative; width: 320px; height: 320px; border-radius: 50%; margin: 0 auto;
+    background: conic-gradient(from 45deg, #2a1f4e, #1f4e3e, #4e3a1f, #4e1f33, #1f2a4e, #2a1f4e);
+    box-shadow: var(--shadow-heavy); animation: spin 24s linear infinite; }
+  .disc::before { content: ''; position: absolute; inset: 32%; border-radius: 50%; background: var(--black); border: 6px solid rgba(255,255,255,0.08); }
+  .disc::after { content: '🎧'; position: absolute; inset: 0; display: grid; place-items: center; font-size: 44px; }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 700; color: var(--white); background: rgba(30, 215, 96, 0.12); border: 1px solid rgba(30, 215, 96, 0.35); padding: 4px 12px; border-radius: 2px; margin-bottom: 18px; }
+  .hero-badge i { width: 7px; height: 7px; border-radius: 50%; background: var(--green); font-style: normal; }
+
+  /* ============ 城市专辑网格（专辑卡 6-8px 圆角）============ */
+  section { padding: 48px 0; }
+  .section-title { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .section-sub { font-size: 14px; font-weight: 400; color: var(--silver); margin-bottom: 28px; }
+  .album-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .album { background: var(--surface); border-radius: 8px; padding: 16px; transition: background .2s; position: relative; }
+  .album:hover { background: var(--card-hover); }
+  .album-art { width: 100%; aspect-ratio: 1; border-radius: 6px; margin-bottom: 14px; position: relative; overflow: hidden; }
+  .album-play { position: absolute; right: 12px; bottom: 84px; width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: #000; display: grid; place-items: center; font-size: 16px; opacity: 0; transform: translateY(8px); transition: all .2s; box-shadow: var(--shadow-medium); }
+  .album:hover .album-play { opacity: 1; transform: translateY(0); }
+  .album h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+  .album p { font-size: 12px; font-weight: 400; color: var(--silver); line-height: 1.45; }
+  /* 城市专辑封面——纯 CSS 渐变艺术（专辑艺术即色彩源）*/
+  .art-kyoto { background: linear-gradient(135deg, #8b5cf6 0%, #d92b6a 60%, #f5c542 100%); }
+  .art-reykjavik { background: linear-gradient(160deg, #0ea5e9 0%, #1e3a5f 55%, #e2e8f0 100%); }
+  .art-marrakech { background: linear-gradient(145deg, #ea580c 0%, #9a3412 50%, #fbbf24 100%); }
+  .art-hanoi { background: linear-gradient(150deg, #10b981 0%, #065f46 45%, #facc15 100%); }
+  .art-lisbon { background: linear-gradient(140deg, #f43f5e 0%, #7c3aed 70%, #22d3ee 100%); }
+  .art-cairo { background: linear-gradient(155deg, #f59e0b 0%, #b45309 50%, #111827 100%); }
+  .art-quito { background: linear-gradient(150deg, #38bdf8 0%, #f472b6 65%, #fef08a 100%); }
+  .art-utah { background: linear-gradient(145deg, #fb7185 0%, #f97316 45%, #7c2d12 100%); }
+  .album-art::after { content: ''; position: absolute; inset: 0; background: linear-gradient(180deg, transparent 55%, rgba(0,0,0,0.35)); }
+
+  /* ============ 轨迹列表（tracklist 风格文章列表）============ */
+  .tracks { background: var(--surface); border-radius: 8px; padding: 8px 20px 16px; }
+  .tracks-head { display: grid; grid-template-columns: 40px 1fr 140px 72px; gap: 14px; padding: 14px 0 10px; border-bottom: 1px solid var(--border-gray); font-size: 12px; font-weight: 400; color: var(--silver); }
+  .track { display: grid; grid-template-columns: 40px 1fr 140px 72px; gap: 14px; align-items: center; padding: 12px 0; border-bottom: 1px solid rgba(77, 77, 77, 0.35); font-size: 14px; }
+  .track:hover { background: rgba(255, 255, 255, 0.03); }
+  .track .no { color: var(--silver); font-variant-numeric: tabular-nums; }
+  .track:hover .no { color: var(--green); }
+  .track .t-title { font-weight: 700; }
+  .track .t-sub { font-weight: 400; color: var(--silver); font-size: 12px; margin-top: 3px; }
+  .track .plays { color: var(--silver); font-variant-numeric: tabular-nums; }
+  .track .dur { color: var(--silver); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ============ 数据带 ============ */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  .stat { background: var(--surface); border-radius: 8px; padding: 24px; }
+  .stat b { font-size: 24px; font-weight: 700; display: block; }
+  .stat b span { color: var(--green); }
+  .stat p { font-size: 14px; font-weight: 400; color: var(--silver); margin-top: 6px; }
+
+  /* ============ 订阅区 ============ */
+  .cta-box { background: linear-gradient(135deg, #1f4e3e, #233b2b); border-radius: 8px; padding: 48px; display: grid; grid-template-columns: 1.3fr 1fr; gap: 32px; align-items: center; }
+  .cta-box h2 { font-size: 24px; font-weight: 700; margin-bottom: 10px; }
+  .cta-box p { font-size: 14px; color: #d1e8d8; line-height: 1.6; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid #232323; padding: 48px 0 32px; margin-top: 24px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px; }
+  .footer-grid h4 { font-size: 12px; font-weight: 700; color: var(--silver); margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 14px; font-weight: 400; color: var(--silver); padding: 4px 0; }
+  .footer-grid a:hover { color: var(--white); text-decoration: underline; }
+  .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid #232323; font-size: 12px; color: var(--silver); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; }
+
+  /* ============ 底部正在播放条（全宽 Now Playing Bar）============ */
+  .nowplaying { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; background: var(--surface); border-top: 1px solid #000; box-shadow: var(--shadow-heavy); height: 76px; display: flex; align-items: center; }
+  .np-inner { display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 20px; align-items: center; width: 100%; }
+  .np-track { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .np-art { width: 46px; height: 46px; border-radius: 6px; flex-shrink: 0; }
+  .np-track b { font-size: 14px; font-weight: 700; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .np-track span { font-size: 12px; color: var(--silver); }
+  .np-center { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .np-controls { display: flex; align-items: center; gap: 18px; }
+  .np-btn { width: 32px; height: 32px; border-radius: 50%; background: transparent; border: none; color: var(--silver); font-size: 13px; cursor: pointer; display: grid; place-items: center; }
+  .np-btn:hover { color: var(--white); }
+  .np-play { width: 36px; height: 36px; border-radius: 50%; background: var(--white); color: var(--black); font-size: 14px; }
+  .np-play:hover { transform: scale(1.06); background: var(--green); color: #000; }
+  .np-progress { display: flex; align-items: center; gap: 10px; width: 100%; max-width: 480px; font-size: 11px; color: var(--silver); font-variant-numeric: tabular-nums; }
+  .np-bar { flex: 1; height: 4px; border-radius: 2px; background: #4d4d4d; position: relative; cursor: pointer; }
+  .np-bar i { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; border-radius: 2px; background: var(--white); }
+  .np-bar:hover i { background: var(--green); }
+  .np-right { display: flex; justify-content: flex-end; gap: 12px; color: var(--silver); font-size: 14px; align-items: center; }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: #000; flex-direction: column; padding: 16px 24px 24px; gap: 6px; border-bottom: 1px solid #232323; }
+    .nav-links.open { display: flex; }
+    .nav-links a { display: block; }
+    .menu-btn { display: block; }
+    .hero { padding: 48px 0; }
+    .hero-grid { grid-template-columns: 1fr; gap: 40px; }
+    .disc { width: 230px; height: 230px; }
+    .album-grid { grid-template-columns: 1fr 1fr; }
+    .tracks-head, .track { grid-template-columns: 32px 1fr 60px; }
+    .tracks-head .col-plays, .track .plays { display: none; }
+    .stats { grid-template-columns: 1fr; }
+    .cta-box { grid-template-columns: 1fr; padding: 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .np-inner { grid-template-columns: 1fr auto; }
+    .np-center { display: none; }
+  }
+  @media (max-width: 480px) {
+    .album-grid { grid-template-columns: 1fr 1fr; gap: 12px; }
+    .hero h1 { font-size: 36px; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .nav-cta .btn-outline { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i>♪</i>声游记</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#albums" class="active">城市专辑</a></li>
+      <li><a href="#fieldnotes">田野笔记</a></li>
+      <li><a href="#stats">数据</a></li>
+      <li><a href="#">关于</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn-pill btn-outline">登 录</a>
+      <a href="#" class="btn-pill btn-green upper">免费注册</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</header>
+
+<div class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="hero-badge"><i></i>本季推荐 · 京都雨季特辑上线</span>
+      <h1>把每一段旅途<br>录成一张<span>专辑</span></h1>
+      <p>声游记是一个旅行声音日志社区。收录 190 座城市的街道声、市集声、海岸与铁轨——订阅后，用耳朵先抵达目的地。</p>
+      <div class="hero-actions">
+        <a href="#" class="btn-pill btn-green upper">▶ 立即收听</a>
+        <a href="#albums" class="btn-pill btn-dark upper">浏览专辑</a>
+      </div>
+    </div>
+    <div class="disc" aria-hidden="true"></div>
+  </div>
+</div>
+
+<section id="albums">
+  <div class="container">
+    <h2 class="section-title">本季城市专辑</h2>
+    <p class="section-sub">每张专辑由 12–18 段实地录音组成，附旅行者口述笔记</p>
+    <div class="album-grid">
+      <a class="album" href="#"><div class="album-art art-kyoto"></div><h3>京都 · 雨季寺町</h3><p>雨滴、木屐、远处的梵钟 — 16 段</p></a>
+      <a class="album" href="#"><div class="album-art art-reykjavik"></div><h3>雷克雅未克 · 极夜港口</h3><p>海浪、缆绳、地热蒸汽 — 14 段</p></a>
+      <a class="album" href="#"><div class="album-art art-marrakech"></div><h3>马拉喀什 · 香料市集</h3><p>叫卖、铜器、宣礼塔回声 — 18 段</p></a>
+      <a class="album" href="#"><div class="album-art art-hanoi"></div><h3>河内 · 摩托晨流</h3><p>车铃、法棍叫卖、火车街 — 15 段</p></a>
+      <a class="album" href="#"><div class="album-art art-lisbon"></div><h3>里斯本 · 电车 28 路</h3><p>齿轮、坡道、法多吉他 — 13 段</p></a>
+      <a class="album" href="#"><div class="album-art art-cairo"></div><h3>开罗 · 尼罗河夜航</h3><p>水声、驳船、老城钟楼 — 17 段</p></a>
+      <a class="album" href="#"><div class="album-art art-quito"></div><h3>基多 · 安第斯集市</h3><p>排箫、羊驼铃、火山风 — 12 段</p></a>
+      <a class="album" href="#"><div class="album-art art-utah"></div><h3>犹他 · 红岩峡谷</h3><p>风蚀、岩燕、星空下的寂静 — 16 段</p></a>
+    </div>
+  </div>
+</section>
+
+<section id="fieldnotes">
+  <div class="container">
+    <h2 class="section-title">热门田野笔记</h2>
+    <p class="section-sub">社区本周播放最多的旅行声音故事</p>
+    <div class="tracks">
+      <div class="tracks-head"><span>#</span><span>标题</span><span class="col-plays">播放</span><span style="text-align:right">时长</span></div>
+      <a class="track" href="#"><span class="no">1</span><span><span class="t-title">凌晨四点的鱼市拍卖</span><span class="t-sub" style="display:block">筑地 · 录音师 田岛直人</span></span><span class="plays">284,105</span><span class="dur">22:41</span></a>
+      <a class="track" href="#"><span class="no">2</span><span><span class="t-title">穿越戈壁的绿皮火车</span><span class="t-sub" style="display:block">兰新线 · 录音师 何清和</span></span><span class="plays">201,830</span><span class="dur">48:12</span></a>
+      <a class="track" href="#"><span class="no">3</span><span><span class="t-title">撒哈拉的沙丘移动时</span><span class="t-sub" style="display:block">梅尔祖卡 · 录音师 A. Berrada</span></span><span class="plays">187,442</span><span class="dur">31:07</span></a>
+      <a class="track" href="#"><span class="no">4</span><span><span class="t-title">香港茶楼的周日早晨</span><span class="t-sub" style="display:block">旺角 · 录音师 陈以宁</span></span><span class="plays">154,209</span><span class="dur">19:55</span></a>
+      <a class="track" href="#"><span class="no">5</span><span><span class="t-title">亚马逊雨林的雷雨夜</span><span class="t-sub" style="display:block">马瑙斯 · 录音师 L. Ferreira</span></span><span class="plays">142,976</span><span class="dur">54:30</span></a>
+    </div>
+  </div>
+</section>
+
+<section id="stats">
+  <div class="container">
+    <div class="stats">
+      <div class="stat"><b>190<span>+</span></b><p>座城市的声音档案，每周新增 3 座</p></div>
+      <div class="stat"><b>2,400<span>+</span></b><p>段实地录音，全部 48kHz / 24bit 母带质量</p></div>
+      <div class="stat"><b>86<span>k</span></b><p>位旅行者与录音师在此交换耳朵</p></div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-box">
+      <div>
+        <h2>订阅 SoundVoyage Premium</h2>
+        <p>离线下载整张城市专辑、无打断收听、独享录音师幕后笔记。学生半价，随时取消。</p>
+      </div>
+      <div style="text-align:right">
+        <a href="#" class="btn-pill btn-green upper">开始订阅</a>
+        <p style="font-size:12px;margin-top:12px;color:#a8c9b2">¥18 / 月 · 首月免费</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#" style="margin-bottom:14px"><i>♪</i>声游记</a>
+        <p style="font-size:13px;color:var(--silver);max-width:260px;line-height:1.6">用耳朵先抵达目的地。所有录音均获录音师授权发布。</p>
+      </div>
+      <div><h4>探索</h4><a href="#">城市专辑</a><a href="#">田野笔记</a><a href="#">录音师名录</a></div>
+      <div><h4>社区</h4><a href="#">投稿指南</a><a href="#">设备建议</a><a href="#">活动</a></div>
+      <div><h4>公司</h4><a href="#">关于我们</a><a href="#">联系</a><a href="#">隐私</a></div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SoundVoyage · StyleForge 平台 AI 生成习作 · inspired-by Spotify 设计语言</span>
+      <span>zh-CN</span>
+    </div>
+  </div>
+</footer>
+
+<div class="nowplaying" aria-label="正在播放">
+  <div class="container np-inner">
+    <div class="np-track">
+      <div class="np-art art-kyoto"></div>
+      <div><b>雨滴与木屐（第三乐章）</b><span>京都 · 雨季寺町</span></div>
+    </div>
+    <div class="np-center">
+      <div class="np-controls">
+        <button class="np-btn" aria-label="随机">⤨</button>
+        <button class="np-btn" aria-label="上一曲">⏮</button>
+        <button class="np-btn np-play" aria-label="播放/暂停">▶</button>
+        <button class="np-btn" aria-label="下一曲">⏭</button>
+        <button class="np-btn" aria-label="循环">⟳</button>
+      </div>
+      <div class="np-progress"><span>1:24</span><div class="np-bar"><i></i></div><span>3:42</span></div>
+    </div>
+    <div class="np-right"><span>♪ 音质 320kbps</span><span style="color:var(--green)">● 高品</span></div>
+  </div>
+</div>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,34 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+::selection {
+  background: rgba(113, 112, 255, 0.35);
+}
+
+*::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+*::-webkit-scrollbar-thumb {
+  background: #2c2e35;
+  border-radius: 5px;
+}
+*::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+@layer components {
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full border border-edge bg-panel px-2.5 py-0.5 text-xs text-sub;
+  }
+  .chip-on {
+    @apply border-accent/60 bg-accentSoft text-accent;
+  }
+  .field {
+    @apply rounded-md border border-edge bg-panel px-2.5 py-1.5 text-sm text-ink outline-none transition-colors focus:border-accent/70;
+  }
+  .btn-sm {
+    @apply rounded-md border border-edge bg-panel px-3 py-1.5 text-xs text-sub transition-colors hover:border-accent/50 hover:text-ink;
+  }
+}

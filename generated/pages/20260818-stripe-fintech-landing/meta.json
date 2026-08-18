@@ -1,0 +1,37 @@
+{
+  "id": "20260818-stripe-fintech-landing",
+  "title": "Meridian 支付基础设施落地页",
+  "created_at": "2026-08-18T20:10:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "stripe"
+  ],
+  "page_type": "landing",
+  "industry": [
+    "fintech"
+  ],
+  "mood": [
+    "premium",
+    "minimal"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "300细字重大标题",
+    "蓝调双层阴影",
+    "紫色主CTA",
+    "红紫渐变装饰线",
+    "tnum表格数字",
+    "深靛蓝品牌区"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

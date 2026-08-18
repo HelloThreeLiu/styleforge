@@ -1,0 +1,11 @@
+node_modules/
+web/.next/
+web/out/
+*.tsbuildinfo
+.DS_Store
+Thumbs.db
+.env*.local
+web/next-env.d.ts
+playwright-report/
+_site/
+.zcode/

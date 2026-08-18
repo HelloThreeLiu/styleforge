@@ -1,0 +1,38 @@
+{
+  "id": "20260818-echoisle-creator-pricing",
+  "title": "回声岛 · 创作者社区定价页",
+  "created_at": "2026-08-18T12:10:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "minimax"
+  ],
+  "page_type": "pricing",
+  "industry": [
+    "social"
+  ],
+  "mood": [
+    "soft",
+    "playful",
+    "minimal"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "白底画廊式留白",
+    "渐变精选定价卡",
+    "紫调品牌辉光",
+    "药丸计费切换",
+    "四字体分工系统",
+    "Roboto数据对比表"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

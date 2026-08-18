@@ -1,0 +1,21 @@
+{
+  "name": "ui-design-platform",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "description": "StyleForge — Agent 驱动的 UI 设计平台（见 docs/PRD.md）",
+  "scripts": {
+    "verify": "node scripts/verify-readonly.mjs",
+    "validate": "node scripts/validate-meta.mjs",
+    "snapshot": "node scripts/snapshot.mjs",
+    "round": "node scripts/round-plan.mjs",
+    "promote": "node scripts/promote-register.mjs",
+    "sync": "node scripts/sync.mjs",
+    "prompt": "node scripts/build-prompt.mjs",
+    "gallery": "node scripts/build-gallery.mjs",
+    "web": "npm run dev --prefix web"
+  },
+  "devDependencies": {
+    "playwright": "^1.49.0"
+  }
+}

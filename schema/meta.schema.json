@@ -1,0 +1,97 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "$id": "styleforge-meta-v1",
+  "title": "StyleForge 元数据 Schema（v1）",
+  "description": "generated/pages/*/meta.json 与 generated/styles/*/meta.json 的唯一真源。scripts/validate-meta.mjs 与 web/src/lib/schema.ts 需与本文件保持同步。",
+  "$defs": {
+    "page_type_enum": {
+      "type": "string",
+      "enum": ["landing", "dashboard", "pricing", "portfolio", "blog", "docs", "login", "e-commerce", "settings", "marketing"]
+    },
+    "industry_enum": {
+      "type": "string",
+      "enum": ["fintech", "dev-tool", "ai", "travel", "health", "education", "social", "media", "enterprise", "consumer"]
+    },
+    "mood_enum": {
+      "type": "string",
+      "enum": ["minimal", "dense", "playful", "premium", "brutalist", "soft", "dark-first", "editorial", "retro", "futuristic"]
+    },
+    "page_id": {
+      "type": "string",
+      "pattern": "^[0-9]{8}-[a-z0-9]+(-[a-z0-9]+)*$",
+      "description": "YYYYMMDD-主题-类型[-序号]，仅小写字母数字连字符"
+    },
+    "style_id": {
+      "type": "string",
+      "pattern": "^[a-z0-9]+(-[a-z0-9]+)*-v[0-9]+$",
+      "description": "风格英文名-v主版本"
+    },
+    "iso_datetime": {
+      "type": "string",
+      "pattern": "^\\d{4}-\\d{2}-\\d{2}T\\d{2}:\\d{2}:\\d{2}(\\.\\d+)?([+-]\\d{2}:\\d{2}|Z)$"
+    },
+    "pageMeta": {
+      "type": "object",
+      "required": ["id", "title", "created_at", "generator", "origin", "lineage", "page_type", "industry", "mood", "innovation", "tags_ai", "tags_user", "rating", "status", "files"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/page_id" },
+        "title": { "type": "string", "minLength": 1 },
+        "created_at": { "$ref": "#/$defs/iso_datetime" },
+        "generator": {
+          "type": "object",
+          "required": ["agent", "invoked_by"],
+          "additionalProperties": false,
+          "properties": {
+            "agent": { "type": "string", "minLength": 1 },
+            "invoked_by": { "type": "string", "minLength": 1 }
+          }
+        },
+        "origin": { "type": "string", "enum": ["study", "remix", "original"] },
+        "lineage": {
+          "type": "array",
+          "items": { "type": "string", "minLength": 1 },
+          "description": "种子风格目录名或派生风格 id。study=恰好1项；remix=至少2项；original=空数组"
+        },
+        "page_type": { "$ref": "#/$defs/page_type_enum" },
+        "industry": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/industry_enum" } },
+        "mood": { "type": "array", "minItems": 1, "items": { "$ref": "#/$defs/mood_enum" } },
+        "innovation": { "type": "integer", "minimum": 0, "maximum": 3 },
+        "tags_ai": { "type": "array", "minItems": 3, "items": { "type": "string", "minLength": 1 } },
+        "tags_user": { "type": "array", "items": { "type": "string", "minLength": 1 } },
+        "rating": {
+          "oneOf": [
+            { "type": "null" },
+            { "type": "number", "minimum": 1, "maximum": 5, "multipleOf": 0.5 }
+          ]
+        },
+        "status": { "type": "string", "enum": ["draft", "published", "promoted", "archived"] },
+        "files": {
+          "type": "object",
+          "required": ["html", "notes"],
+          "additionalProperties": false,
+          "properties": {
+            "html": { "const": "index.html" },
+            "notes": { "const": "notes.md" }
+          }
+        }
+      }
+    },
+    "styleMeta": {
+      "type": "object",
+      "required": ["id", "name", "created_at", "source_page", "lineage", "inherited_rating", "rating", "child_count", "summary"],
+      "additionalProperties": false,
+      "properties": {
+        "id": { "$ref": "#/$defs/style_id" },
+        "name": { "type": "string", "minLength": 1 },
+        "created_at": { "$ref": "#/$defs/iso_datetime" },
+        "source_page": { "$ref": "#/$defs/page_id" },
+        "lineage": { "type": "array", "minItems": 1, "items": { "type": "string", "minLength": 1 } },
+        "inherited_rating": { "type": "number", "minimum": 1, "maximum": 5 },
+        "rating": { "type": "number", "minimum": 1, "maximum": 5, "multipleOf": 0.5 },
+        "child_count": { "type": "integer", "minimum": 0 },
+        "summary": { "type": "string", "minLength": 1 }
+      }
+    }
+  }
+}

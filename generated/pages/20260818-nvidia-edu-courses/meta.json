@@ -1,0 +1,38 @@
+{
+  "id": "20260818-nvidia-edu-courses",
+  "title": "TensorAcademy · GPU 工程师课程商城",
+  "created_at": "2026-08-18T22:55:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "nvidia"
+  ],
+  "page_type": "e-commerce",
+  "industry": [
+    "education"
+  ],
+  "mood": [
+    "dense",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "绿即信号不铺面",
+    "工业直角卡片",
+    "黑底大写导航",
+    "GPU芯片CSS图形",
+    "规格表式对比",
+    "绿描边按钮",
+    "橙色精选徽章"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

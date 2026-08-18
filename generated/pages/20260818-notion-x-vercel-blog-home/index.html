@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Signal — 工程师的写作频道</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ 混血基因：Notion（暖） × Vercel（准） ============
+     Notion 贡献：暖中性色板、耳语边框、Notion Blue CTA、卡片圆角与柔和阴影、四字重体系
+     Vercel 贡献：Geist Mono 大写技术标签、阴影即边框技法、激进负字距、三色工作流点缀、深黑页脚 */
+  :root {
+    /* —— Notion 暖色基因 —— */
+    --warm-white: #f6f5f4;
+    --warm-dark: #31302e;
+    --warm-gray-500: #615d59;
+    --warm-gray-300: #a39e98;
+    --ink: rgba(0, 0, 0, 0.95);
+    --notion-blue: #0075de;
+    --notion-blue-active: #005bab;
+    --badge-blue-bg: #f2f9ff;
+    --badge-blue-text: #097fe8;
+    --whisper-border: 1px solid rgba(0, 0, 0, 0.1);
+    --card-shadow: rgba(0, 0, 0, 0.04) 0px 4px 18px, rgba(0, 0, 0, 0.027) 0px 2.025px 7.85px, rgba(0, 0, 0, 0.02) 0px 0.8px 2.925px;
+    /* —— Vercel 精确基因 —— */
+    --vercel-black: #171717;
+    --gray-100: #ebebeb;
+    --shadow-border: rgba(0, 0, 0, 0.08) 0px 0px 0px 1px;
+    --develop-blue: #0a72ef;
+    --preview-pink: #de1d8d;
+    --ship-red: #ff5b4f;
+    --font: 'NotionInter', 'Inter', -apple-system, system-ui, 'Segoe UI', sans-serif;
+    --mono: 'Geist Mono', ui-monospace, SFMono-Regular, 'Roboto Mono', Menlo, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: var(--font); color: var(--ink); background: #fff; -webkit-font-smoothing: antialiased; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; }
+
+  /* ============ 导航：Vercel 式 sticky + mono 标签 + Notion 蓝药丸 CTA ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255,255,255,.9); backdrop-filter: blur(10px); border-bottom: var(--whisper-border); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; text-decoration: none; font-weight: 700; font-size: 20px; letter-spacing: -0.6px; }
+  .logo-mark { width: 28px; height: 28px; border-radius: 8px; background: var(--warm-dark); color: #fff; display: flex; align-items: center; justify-content: center; font-family: var(--mono); font-size: 13px; }
+  .nav-links { display: flex; gap: 26px; list-style: none; }
+  .nav-links a { text-decoration: none; font-size: 15px; font-weight: 500; color: rgba(0,0,0,.8); }
+  .nav-links a:hover { color: var(--notion-blue); }
+  .btn-primary { display: inline-block; background: var(--notion-blue); color: #fff; padding: 8px 16px; border-radius: 4px; font-size: 15px; font-weight: 600; text-decoration: none; border: 1px solid transparent; }
+  .btn-primary:hover { background: var(--notion-blue-active); }
+  .btn-ghost { display: inline-block; background: rgba(0,0,0,.05); color: var(--ink); padding: 8px 16px; border-radius: 4px; font-size: 15px; font-weight: 500; text-decoration: none; }
+  .menu-btn { display: none; background: none; border: none; cursor: pointer; padding: 8px; }
+  .menu-btn svg { width: 20px; height: 20px; stroke: var(--ink); }
+
+  /* ============ mono 技术标签（Vercel 声音）============ */
+  .mono-label { font-family: var(--mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: var(--warm-gray-500); }
+
+  /* ============ 英雄区：Notion 的 700 压缩大字 + Geist Mono 眉题 ============ */
+  .hero { padding: 88px 0 64px; }
+  .hero .mono-label { display: flex; align-items: center; gap: 10px; margin-bottom: 22px; }
+  .hero .mono-label .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--develop-blue); }
+  .hero h1 { font-size: 64px; font-weight: 700; letter-spacing: -2.125px; line-height: 1.0; max-width: 720px; font-feature-settings: "lnum","locl"; }
+  .hero h1 .accent { color: var(--notion-blue); }
+  .hero p { margin: 26px 0 34px; font-size: 20px; font-weight: 600; letter-spacing: -0.125px; line-height: 1.4; color: var(--warm-gray-500); max-width: 560px; }
+  .hero-actions { display: flex; gap: 14px; }
+
+  /* ============ 选题药丸（Notion pill badge）============ */
+  .topics { padding: 8px 0 56px; display: flex; flex-wrap: wrap; gap: 10px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; background: var(--badge-blue-bg); color: var(--badge-blue-text); padding: 4px 12px; border-radius: 9999px; font-size: 12px; font-weight: 600; letter-spacing: .125px; text-decoration: none; }
+  .pill i { width: 6px; height: 6px; border-radius: 50%; }
+  .pill:hover { background: #e4f2ff; }
+
+  /* ============ 精选文章：阴影即边框 + 耳语边框双重奏 ============ */
+  .featured { padding: 24px 0 72px; }
+  .featured-card {
+    display: grid; grid-template-columns: 1.2fr 1fr; background: #fff;
+    border-radius: 16px; overflow: hidden;
+    box-shadow: var(--shadow-border), var(--card-shadow); /* Vercel 影线 + Notion 柔影 */
+    text-decoration: none;
+  }
+  .featured-body { padding: 40px; }
+  .featured-body h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.625px; line-height: 1.23; margin: 14px 0 12px; }
+  .featured-body p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--warm-gray-500); }
+  .featured-meta { margin-top: 22px; display: flex; align-items: center; gap: 12px; }
+  .avatar { width: 30px; height: 30px; border-radius: 50%; background: var(--warm-white); box-shadow: var(--shadow-border); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; }
+  .featured-meta .who { font-size: 14px; font-weight: 500; }
+  .featured-meta .who span { color: var(--warm-gray-300); font-weight: 400; }
+  .featured-art { background: linear-gradient(135deg, var(--warm-white) 0%, #fff 60%, var(--badge-blue-bg) 100%); display: flex; align-items: center; justify-content: center; min-height: 280px; position: relative; overflow: hidden; }
+  .featured-art::before { content: 'SIGNAL'; font-family: var(--mono); font-weight: 500; font-size: 88px; letter-spacing: -4px; color: rgba(0,0,0,.06); }
+  .featured-art .glyph { position: absolute; font-family: var(--mono); font-size: 150px; color: var(--notion-blue); opacity: .12; right: 24px; bottom: -30px; }
+
+  /* ============ 文章网格 ============ */
+  .articles { background: var(--warm-white); padding: 80px 0; }
+  .section-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 36px; }
+  .section-head h2 { font-size: 48px; font-weight: 700; letter-spacing: -1.5px; font-feature-settings: "lnum","locl"; }
+  .grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .article-card { background: #fff; border: var(--whisper-border); border-radius: 12px; padding: 24px; text-decoration: none; display: flex; flex-direction: column; transition: box-shadow .18s ease; }
+  .article-card:hover { box-shadow: var(--card-shadow); }
+  .card-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
+  .read-time { font-family: var(--mono); font-size: 12px; color: var(--warm-gray-300); }
+  .article-card h3 { font-size: 22px; font-weight: 700; letter-spacing: -0.25px; line-height: 1.27; margin-bottom: 10px; }
+  .article-card p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--warm-gray-500); flex: 1; }
+  .card-foot { margin-top: 18px; padding-top: 14px; border-top: var(--whisper-border); display: flex; align-items: center; gap: 10px; font-size: 14px; font-weight: 500; }
+  .card-foot .date { color: var(--warm-gray-300); font-weight: 400; margin-left: auto; }
+
+  /* Vercel 工作流三色——作为文章分类点 */
+  .dot-dev { background: var(--develop-blue); }
+  .dot-prev { background: var(--preview-pink); }
+  .dot-ship { background: var(--ship-red); }
+
+  /* ============ 订阅区：暖白 + 耳语边框卡 ============ */
+  .newsletter { padding: 80px 0; }
+  .news-card { background: #fff; border: var(--whisper-border); border-radius: 16px; padding: 48px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 32px; align-items: center; box-shadow: var(--shadow-border); }
+  .news-card h2 { font-size: 26px; font-weight: 700; letter-spacing: -0.625px; margin: 12px 0 8px; }
+  .news-card > div > p { color: var(--warm-gray-500); font-size: 16px; line-height: 1.5; }
+  .subscribe-form { display: flex; gap: 10px; }
+  .subscribe-form input { flex: 1; background: #fff; border: 1px solid #dddddd; border-radius: 4px; padding: 8px 12px; font-size: 15px; font-family: var(--font); color: rgba(0,0,0,.9); outline: none; }
+  .subscribe-form input:focus { box-shadow: 0 0 0 2px var(--notion-blue); border-color: transparent; }
+  .subscribe-form input::placeholder { color: var(--warm-gray-300); }
+
+  /* ============ 页脚：Vercel 深黑 ============ */
+  footer { background: var(--vercel-black); color: #fff; padding: 64px 0 40px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-grid h4 { font-family: var(--mono); font-size: 12px; font-weight: 500; text-transform: uppercase; letter-spacing: .08em; color: rgba(255,255,255,.45); margin-bottom: 16px; }
+  .footer-grid a { display: block; color: rgba(255,255,255,.8); font-size: 14px; font-weight: 400; text-decoration: none; padding: 4px 0; }
+  .footer-grid a:hover { color: #fff; text-decoration: underline; }
+  .footer-bottom { margin-top: 48px; padding-top: 24px; border-top: 1px solid rgba(255,255,255,.12); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 12px; color: rgba(255,255,255,.4); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 16px 24px 24px; gap: 16px; border-bottom: var(--whisper-border); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .hero { padding: 56px 0 40px; }
+    .hero h1 { font-size: 40px; letter-spacing: -1.3px; }
+    .hero p { font-size: 17px; }
+    .featured-card { grid-template-columns: 1fr; }
+    .featured-art { min-height: 180px; order: -1; }
+    .grid { grid-template-columns: 1fr 1fr; }
+    .news-card { grid-template-columns: 1fr; padding: 32px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    .section-head h2 { font-size: 34px; letter-spacing: -1px; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 34px; letter-spacing: -1.1px; }
+    .grid { grid-template-columns: 1fr; }
+    .hero-actions { flex-direction: column; align-items: flex-start; }
+    .subscribe-form { flex-direction: column; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><span class="logo-mark">S</span>Signal</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#latest">最新</a></li>
+      <li><a href="#topics">选题</a></li>
+      <li><a href="#">专栏作者</a></li>
+      <li><a href="#">RSS</a></li>
+    </ul>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="#" class="btn-primary">订阅周刊</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><svg viewBox="0 0 24 24" fill="none" stroke-width="2"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero container">
+  <div class="mono-label"><span class="dot"></span>ISSUE 042 · WEEKLY DISPATCH</div>
+  <h1>把工程决策<br>写成<span class="accent">值得收藏</span>的文章</h1>
+  <p>Signal 是工程师的写作频道——只发架构复盘、事故复盘与亲手踩过的坑，每周四发送。</p>
+  <div class="hero-actions">
+    <a href="#" class="btn-primary">免费订阅</a>
+    <a href="#latest" class="btn-ghost">浏览全部文章</a>
+  </div>
+</header>
+
+<div class="topics container" id="topics">
+  <a class="pill" href="#"><i class="dot-dev"></i>架构</a>
+  <a class="pill" href="#"><i class="dot-prev"></i>前端工程</a>
+  <a class="pill" href="#"><i class="dot-ship"></i>发布与运维</a>
+  <a class="pill" href="#"><i class="dot-dev"></i>数据库</a>
+  <a class="pill" href="#"><i class="dot-prev"></i>性能</a>
+  <a class="pill" href="#"><i class="dot-ship"></i>团队实践</a>
+</div>
+
+<section class="featured container">
+  <a class="featured-card" href="#">
+    <div class="featured-body">
+      <span class="mono-label">FEATURED · 架构</span>
+      <h2>我们把单体拆成 37 个服务，然后又合回了 4 个</h2>
+      <p>一次持续两年的架构振荡完整复盘：微服务不是目的，是成本结构的一部分。本文含全部决策树与数据。</p>
+      <div class="featured-meta">
+        <span class="avatar">陆</span>
+        <span class="who">陆一舟 <span>· 平台架构组</span></span>
+        <span class="mono-label" style="margin-left:auto">24 MIN READ</span>
+      </div>
+    </div>
+    <div class="featured-art"><span class="glyph">~/</span></div>
+  </a>
+</section>
+
+<section class="articles" id="latest">
+  <div class="container">
+    <div class="section-head">
+      <h2>最新文章</h2>
+      <span class="mono-label">128 POSTS · RSS READY</span>
+    </div>
+    <div class="grid">
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-dev" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">12 MIN</span></div>
+        <h3>CPU 缓存行与你在 Go 里写的那个 false sharing</h3>
+        <p>一段把 P99 延迟拖高 40% 的代码，和一个 pad 出来的解法。含基准测试全过程。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">沈</span>沈望舒<span class="date">08-14</span></div>
+      </a>
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-prev" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">9 MIN</span></div>
+        <h3>设计系统的暗面：260 个组件之后我们删掉了 190 个</h3>
+        <p>组件库不是越多越好。一次以删除为主的设计系统重构，以及背后的权衡表格。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">周</span>周其瑾<span class="date">08-11</span></div>
+      </a>
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-ship" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">18 MIN</span></div>
+        <h3>凌晨三点的 P0：一次全量宕机的事故时间线</h3>
+        <p>从告警到恢复 74 分钟，逐分钟还原。真正救我们的不是预案，是三个月前的一次演练。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">周</span>全体 SRE<span class="date">08-07</span></div>
+      </a>
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-dev" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">15 MIN</span></div>
+        <h3>为什么我们把 PostgreSQL 主键从 BIGINT 换成了 UUIDv7</h3>
+        <p>索引局部性、写入吞吐与备份体积的三角权衡，附迁移期间的灰度方案。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">陆</span>陆一舟<span class="date">08-04</span></div>
+      </a>
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-prev" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">7 MIN</span></div>
+        <h3>用 200 行 CSS 复刻三个顶级官网的排版系统</h3>
+        <p>我们把三家公司的设计 tokens 拆开铺在桌面上对比，结论出乎意料地简单。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">苏</span>苏晚<span class="date">07-31</span></div>
+      </a>
+      <a class="article-card" href="#">
+        <div class="card-top"><i class="dot-ship" style="width:8px;height:8px;border-radius:50%"></i><span class="read-time">11 MIN</span></div>
+        <h3>灰度发布不是百分比游戏，是维度游戏</h3>
+        <p>按用户、按地域、按租户套餐的三套发布策略，以及它们分别救过我们什么。</p>
+        <div class="card-foot"><span class="avatar" style="width:24px;height:24px;font-size:11px">沈</span>沈望舒<span class="date">07-27</span></div>
+      </a>
+    </div>
+  </div>
+</section>
+
+<section class="newsletter container">
+  <div class="news-card">
+    <div>
+      <span class="mono-label">NEWSLETTER</span>
+      <h2>每周四，一封只有干货的信</h2>
+      <p>本周最值得读的 3 篇 + 1 个开源项目 + 1 道面试级思考题。已有 21,400 位工程师订阅。</p>
+    </div>
+    <form class="subscribe-form" onsubmit="event.preventDefault(); this.querySelector('button').textContent='已订阅 ✓'">
+      <input type="email" placeholder="you@company.dev" required>
+      <button class="btn-primary" type="submit">订阅</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#" style="color:#fff;margin-bottom:14px"><span class="logo-mark" style="background:#fff;color:var(--vercel-black)">S</span>Signal</a>
+        <p style="font-size:14px;color:rgba(255,255,255,.55);max-width:280px;line-height:1.6">工程师的写作频道。所有文章首发于本站，转载需署名。</p>
+      </div>
+      <div>
+        <h4>栏目</h4>
+        <a href="#">架构</a><a href="#">前端工程</a><a href="#">发布与运维</a><a href="#">数据库</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">作者们</a><a href="#">投稿指南</a><a href="#">联系我们</a>
+      </div>
+      <div>
+        <h4>订阅</h4>
+        <a href="#">邮件周刊</a><a href="#">RSS</a><a href="#">Telegram</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SIGNAL · STYLEFORGE PILOT PAGE</span>
+      <span>INSPIRED-BY NOTION × VERCEL</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

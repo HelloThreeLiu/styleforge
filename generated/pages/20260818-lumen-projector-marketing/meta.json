@@ -1,0 +1,38 @@
+{
+  "id": "20260818-lumen-projector-marketing",
+  "title": "LUMEN L3 · 口袋激光投影营销页",
+  "created_at": "2026-08-18T12:05:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "framer"
+  ],
+  "page_type": "marketing",
+  "industry": [
+    "consumer"
+  ],
+  "mood": [
+    "dark-first",
+    "premium",
+    "minimal"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "纯黑虚空画布",
+    "极端负字距大标题",
+    "蓝色光环描边卡",
+    "CSS投影仪英雄场景",
+    "白底药丸主CTA",
+    "产品即英雄艺术"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

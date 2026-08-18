@@ -1,0 +1,40 @@
+{
+  "id": "20260818-notion-x-vercel-blog-home",
+  "title": "Signal 工程师博客首页（Notion 暖 × Vercel 准）",
+  "created_at": "2026-08-18T20:40:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "remix",
+  "lineage": [
+    "notion",
+    "vercel"
+  ],
+  "page_type": "blog",
+  "industry": [
+    "dev-tool",
+    "media"
+  ],
+  "mood": [
+    "editorial",
+    "soft",
+    "minimal"
+  ],
+  "innovation": 2,
+  "tags_ai": [
+    "暖白纸感分区",
+    "阴影即边框",
+    "mono大写眉题",
+    "压缩字距巨标题",
+    "三色工作流圆点",
+    "药丸选题标签"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "archived",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

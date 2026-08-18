@@ -1,0 +1,11 @@
+{
+  "id": "vinyl-noir-v1",
+  "name": "黑胶暗调 · 播放器编辑风",
+  "created_at": "2026-08-18T12:00:00+08:00",
+  "source_page": "20260818-spotify-travel-blog",
+  "lineage": ["spotify"],
+  "inherited_rating": 4,
+  "rating": 4,
+  "child_count": 0,
+  "summary": "近黑播放器语言移植到编辑类内容：绿色只做功能，文章排成曲目单，CSS 渐变封面供给全页色彩，页尾永远钉一条正在播放条。"
+}
