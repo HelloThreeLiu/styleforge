@@ -4,13 +4,11 @@
 
 ## 在线画廊
 
-每次推送到 `main`，GitHub Actions 会自动把生成页面发布为**只读在线画廊**（GitHub Pages）：
+**地址：<https://hellothreeliu.github.io/styleforge/>** —— 每次推送到 `main`，GitHub Actions 自动更新：
 
 - 在线交互预览每个生成页面（页面均为单文件自包含 HTML，直接可浏览）；
 - 查看截图、设计笔记、风格谱系与风格库；
 - 画廊为纯静态站点：**没有评分入口**——浏览即可，打分不在此处（见「关于评分」）。
-
-> 首次开启（一次性）：仓库 **Settings → Pages → Build and deployment → Source 选 GitHub Actions**。之后每次 push 自动更新。
 
 ## 目录结构
 
