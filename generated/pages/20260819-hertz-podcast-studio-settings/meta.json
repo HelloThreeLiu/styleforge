@@ -1,0 +1,38 @@
+{
+  "id": "20260819-hertz-podcast-studio-settings",
+  "title": "赫兹 Hertz · 播客工作室设置页",
+  "created_at": "2026-08-19T12:14:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "opencode.ai"
+  ],
+  "page_type": "settings",
+  "industry": [
+    "media"
+  ],
+  "mood": [
+    "dark-first",
+    "minimal",
+    "retro"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "暖黑终端等宽字",
+    "零阴影纯边框深度",
+    "方角平面开关",
+    "命令行式页头",
+    "语义四色状态标注",
+    "两段式危险确认"
+  ],
+  "tags_user": [],
+  "rating": 2,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

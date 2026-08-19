@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>赫兹 Hertz — 工作室设置</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ OpenCode Tokens（来源：design-md/opencode.ai/DESIGN.md）============ */
+  :root {
+    --dark: #201d1d;         /* 暖近黑（rgb 32,29,29），非纯黑 */
+    --light: #fdfcfc;        /* 暖近白，非纯白 */
+    --mid: #9a9898;          /* 中暖灰：次级文本、tab 指示 */
+    --muted: #6e6e73;        /* 弱化标签 */
+    --surface: #302c2c;      /* 抬升暗面 */
+    --outline: #646262;      /* 容器描边 */
+    --border: rgba(15, 0, 0, 0.12); /* 暖透明边（分区/输入框） */
+    --blue: #007aff; --blue-h: #0056b3; --blue-a: #004085;
+    --red: #ff3b30;  --red-h: #d70015;  --red-a: #a50011;
+    --green: #30d158;
+    --orange: #ff9f0a; --orange-h: #cc7f08; --orange-a: #995f06;
+    --input-bg: #f8f7f7;     /* 浅色输入底——暗页面上的对照 */
+    --mono: 'IBM Plex Mono', ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Courier New', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--dark); color: var(--light); font-family: var(--mono); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 840px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--mono); }
+  :focus-visible { outline: 1px solid var(--blue); outline-offset: 2px; }
+
+  /* ============ 导航：实心暗面，无模糊 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: var(--dark); border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; gap: 24px; }
+  .brand { font-weight: 700; font-size: 16px; letter-spacing: -0.5px; }
+  .brand i { color: var(--green); font-style: normal; }
+  .nav-links { display: flex; gap: 28px; list-style: none; }
+  .nav-links a { font-size: 16px; font-weight: 500; line-height: 1; padding: 20px 0 18px; border-bottom: 2px solid transparent; }
+  .nav-links a:hover { color: var(--blue); }
+  .nav-links a.active { color: var(--light); border-bottom-color: var(--mid); } /* 2px tab 指示 */
+  .nav-user { font-size: 14px; color: var(--mid); white-space: nowrap; }
+  .nav-user a:hover { color: var(--blue); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--outline); border-radius: 4px; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--light); margin: 3px auto; }
+
+  /* ============ 页头 ============ */
+  .pagehead { padding: 48px 0 0; }
+  .cmd { font-size: 14px; color: var(--mid); line-height: 2; }
+  .cmd b { color: var(--green); font-weight: 400; }
+  .pagehead h1 { font-size: 38px; font-weight: 700; line-height: 1.5; }
+  .pagehead .sub { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--mid); margin-top: 4px; }
+
+  /* ============ Tabs：2px 底线指示 ============ */
+  .tabs { display: flex; gap: 8px; margin-top: 32px; border-bottom: 1px solid var(--border); overflow-x: auto; }
+  .tab { background: transparent; border: none; border-bottom: 2px solid transparent; color: var(--mid); font-size: 16px; font-weight: 500; line-height: 1; padding: 12px 16px 14px; cursor: pointer; white-space: nowrap; transition: color .12s; }
+  .tab:hover { color: var(--light); }
+  .tab.active { color: var(--light); border-bottom-color: var(--mid); }
+
+  /* ============ 设置面板 ============ */
+  .panel { display: none; padding: 40px 0 24px; }
+  .panel.active { display: block; }
+  .field { margin-bottom: 32px; }
+  .field label { display: block; font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 8px; }
+  .field .hint { font-size: 14px; line-height: 2; color: var(--muted); margin-top: 6px; }
+  .field input[type="text"], .field input[type="email"], .field input[type="url"], .field textarea {
+    width: 100%; background: var(--input-bg); color: var(--dark);
+    border: 1px solid var(--border); border-radius: 6px; padding: 20px;
+    font-family: var(--mono); font-size: 16px; line-height: 1.5; outline: none;
+  }
+  .field textarea { resize: vertical; min-height: 120px; }
+  .field input:focus, .field textarea:focus { border-color: var(--blue); }
+  .field input[readonly] { background: var(--surface); color: var(--mid); }
+  .field-inline { display: flex; gap: 12px; }
+  .field-inline input { flex: 1; }
+
+  /* ============ 按钮体系：单一形态 + 语义变体 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; font-size: 16px; font-weight: 500; line-height: 1; padding: 12px 20px; border-radius: 4px; cursor: pointer; border: 1px solid var(--outline); background: var(--dark); color: var(--light); transition: background .12s, border-color .12s, color .12s; white-space: nowrap; }
+  .btn:hover { background: var(--surface); }
+  .btn-blue { border-color: var(--blue); color: var(--blue); background: transparent; }
+  .btn-blue:hover { background: var(--blue-h); border-color: var(--blue-h); color: var(--light); }
+  .btn-red { border-color: var(--red); background: var(--red); color: #ffffff; }
+  .btn-red:hover { background: var(--red-h); border-color: var(--red-h); }
+  .btn-sm { padding: 10px 16px; font-size: 14px; }
+
+  /* ============ 开关：方角平面开关 ============ */
+  .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--border); }
+  .switch-row:last-of-type { border-bottom: none; }
+  .switch-row .txt b { font-size: 16px; font-weight: 500; line-height: 1.5; display: block; }
+  .switch-row .txt span { font-size: 14px; line-height: 2; color: var(--muted); }
+  .switch { position: relative; width: 48px; height: 26px; flex-shrink: 0; cursor: pointer; }
+  .switch input { position: absolute; opacity: 0; width: 100%; height: 100%; margin: 0; cursor: pointer; }
+  .switch .track { position: absolute; inset: 0; border: 1px solid var(--outline); border-radius: 4px; background: var(--dark); transition: background .12s, border-color .12s; }
+  .switch .track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 2px; background: var(--mid); transition: transform .12s, background .12s; }
+  .switch input:checked + .track { border-color: var(--green); background: rgba(48, 209, 88, 0.12); }
+  .switch input:checked + .track::after { transform: translateX(22px); background: var(--green); }
+  .switch input:focus-visible + .track { outline: 1px solid var(--blue); outline-offset: 2px; }
+
+  /* ============ 单选组（方括号终端风）============ */
+  .radios { display: flex; gap: 12px; flex-wrap: wrap; }
+  .radio { display: inline-flex; align-items: center; gap: 10px; border: 1px solid var(--outline); border-radius: 4px; padding: 12px 16px; cursor: pointer; font-size: 14px; transition: border-color .12s, color .12s; min-height: 44px; }
+  .radio input { accent-color: var(--blue); width: 16px; height: 16px; cursor: pointer; }
+  .radio:has(input:checked) { border-color: var(--blue); color: var(--light); }
+
+  /* ============ 嵌入播放器预览 ============ */
+  .embed { border: 1px solid var(--outline); border-radius: 4px; background: var(--surface); padding: 20px; margin-top: 8px; }
+  .embed .e-top { display: flex; align-items: center; gap: 14px; }
+  .embed .e-play { width: 44px; height: 44px; border-radius: 4px; border: 1px solid var(--light); display: grid; place-items: center; font-size: 15px; flex-shrink: 0; }
+  .embed .e-meta b { font-size: 16px; font-weight: 700; line-height: 1.5; display: block; }
+  .embed .e-meta span { font-size: 14px; line-height: 2; color: var(--mid); }
+  .embed .e-bar { margin-top: 16px; display: flex; align-items: center; gap: 10px; font-size: 14px; line-height: 2; color: var(--mid); }
+  .embed .e-track { flex: 1; height: 4px; border-radius: 2px; background: var(--dark); border: 1px solid var(--outline); position: relative; }
+  .embed .e-track i { position: absolute; left: 0; top: 0; bottom: 0; width: 38%; background: var(--green); }
+
+  /* ============ 平台分发状态列表 ============ */
+  .plat { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 0; border-bottom: 1px solid var(--border); }
+  .plat:last-child { border-bottom: none; }
+  .plat b { font-size: 16px; font-weight: 500; line-height: 1.5; }
+  .plat .st { font-size: 14px; line-height: 2; }
+  .st.ok { color: var(--green); }
+  .st.warn { color: var(--orange); }
+  .st.off { color: var(--muted); }
+
+  /* ============ API 密钥 ============ */
+  .apikey { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .apikey code { background: var(--surface); border: 1px solid var(--border); border-radius: 4px; padding: 12px 16px; font-size: 16px; line-height: 1.5; color: var(--light); }
+  .usage { font-size: 14px; line-height: 2; color: var(--mid); margin-top: 12px; }
+  .usage b { color: var(--light); font-weight: 400; }
+
+  /* ============ 危险区 ============ */
+  .danger { border: 1px solid rgba(255, 59, 48, 0.4); border-radius: 4px; padding: 24px; margin-top: 24px; }
+  .danger h3 { font-size: 16px; font-weight: 700; color: var(--red); line-height: 1.5; }
+  .danger p { font-size: 14px; line-height: 2; color: var(--mid); margin: 4px 0 16px; }
+
+  /* ============ 保存条 ============ */
+  .save-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; border-top: 1px solid var(--border); padding-top: 24px; margin-top: 8px; flex-wrap: wrap; }
+  .save-row .st-ok { color: var(--green); font-size: 14px; line-height: 2; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--border); margin-top: 64px; padding: 48px 0 40px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .footer-grid h4 { font-size: 16px; font-weight: 700; line-height: 1.5; margin-bottom: 12px; }
+  .footer-grid a { display: block; font-size: 16px; font-weight: 400; line-height: 2; color: var(--mid); }
+  .footer-grid a:hover { color: var(--blue); }
+  .footer-grid .desc { font-size: 14px; line-height: 2; color: var(--muted); max-width: 280px; margin-top: 12px; }
+  .footer-bottom { margin-top: 40px; border-top: 1px solid var(--border); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 14px; line-height: 2; color: var(--muted); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--dark); flex-direction: column; gap: 0; padding: 8px 24px 16px; border-bottom: 1px solid var(--border); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 14px 0; border-bottom: none; }
+    .nav-links a.active { border-bottom-color: transparent; color: var(--green); }
+    .menu-btn { display: block; }
+    .pagehead h1 { font-size: 28px; }
+    .panel { padding: 32px 0 16px; }
+    .field-inline { flex-direction: column; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .pagehead h1 { font-size: 24px; }
+    .nav-user { display: none; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .btn { min-height: 44px; }
+    .apikey code { width: 100%; overflow-x: auto; }
+    .plat { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="brand" href="#">hertz<i>~</i></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">仪表盘</a></li>
+      <li><a href="#">节目</a></li>
+      <li><a href="#">分析</a></li>
+      <li><a href="#" class="active">设置</a></li>
+    </ul>
+    <div class="nav-user"><a href="#">文档</a> · 夜航西飞</div>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="pagehead">
+    <p class="cmd">$ hertz settings <b>--studio</b></p>
+    <h1>工作室设置</h1>
+    <p class="sub">管理「夜航西飞」的资料、播放器、分发渠道与开发者接口。</p>
+  </header>
+
+  <div class="tabs" role="tablist">
+    <button class="tab active" data-panel="p-account">账号资料</button>
+    <button class="tab" data-panel="p-player">播放器</button>
+    <button class="tab" data-panel="p-dist">分发</button>
+    <button class="tab" data-panel="p-notify">通知</button>
+    <button class="tab" data-panel="p-api">API</button>
+  </div>
+
+  <!-- 面板：账号资料 -->
+  <section class="panel active" id="p-account">
+    <div class="field">
+      <label for="f-name">工作室名称</label>
+      <input id="f-name" type="text" value="夜航西飞">
+      <p class="hint">对外展示名称，将同步到各分发平台的节目页。</p>
+    </div>
+    <div class="field">
+      <label for="f-mail">联系邮箱</label>
+      <input id="f-mail" type="email" value="flight@hertz.fm">
+      <p class="hint">用于接收平台通知与听众来信，不会公开展示。</p>
+    </div>
+    <div class="field">
+      <label for="f-bio">节目简介</label>
+      <textarea id="f-bio">一档关于夜间飞行、长途列车与边境小镇的声音纪实。每周四更新，主笔：林晚。</textarea>
+    </div>
+    <div class="field">
+      <label for="f-url">主页地址</label>
+      <input id="f-url" type="url" value="hertz.fm/nightflight" readonly>
+    </div>
+    <div class="save-row">
+      <span class="st-ok">✓ 上次保存于今天 12:04</span>
+      <button class="btn" id="saveBtn">保存更改</button>
+    </div>
+  </section>
+
+  <!-- 面板：播放器 -->
+  <section class="panel" id="p-player">
+    <div class="field">
+      <label>嵌入行为</label>
+      <div class="switch-row">
+        <div class="txt"><b>自动播放</b><span>嵌入页加载后自动开始播放（部分浏览器会拦截）</span></div>
+        <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="switch-row">
+        <div class="txt"><b>显示节目单</b><span>在播放器下方列出最近 10 期节目</span></div>
+        <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="switch-row">
+        <div class="txt"><b>深色嵌入</b><span>播放器使用深色主题渲染</span></div>
+        <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="switch-row">
+        <div class="txt"><b>允许下载</b><span>听众可在播放器内下载本期音频</span></div>
+        <label class="switch"><input type="checkbox"><span class="track"></span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>进度条强调色</label>
+      <div class="radios">
+        <label class="radio"><input type="radio" name="accent" checked> 绿 #30d158</label>
+        <label class="radio"><input type="radio" name="accent"> 蓝 #007aff</label>
+        <label class="radio"><input type="radio" name="accent"> 橙 #ff9f0a</label>
+      </div>
+    </div>
+    <div class="field">
+      <label>嵌入预览</label>
+      <div class="embed" aria-label="播放器预览">
+        <div class="e-top">
+          <span class="e-play">▶</span>
+          <div class="e-meta"><b>EP.47 国境线上的加油站</b><span>夜航西飞 · 28 分钟</span></div>
+        </div>
+        <div class="e-bar"><span>10:41</span><span class="e-track"><i></i></span><span>28:00</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- 面板：分发 -->
+  <section class="panel" id="p-dist">
+    <div class="field">
+      <label for="f-rss">RSS 源地址</label>
+      <div class="field-inline">
+        <input id="f-rss" type="url" value="https://feeds.hertz.fm/nightflight.xml" readonly>
+        <button class="btn" id="copyBtn">复制</button>
+      </div>
+      <p class="hint">将此地址提交到任何支持 RSS 的播客平台即可完成收录。</p>
+    </div>
+    <div class="field">
+      <label>平台状态</label>
+      <div class="plat"><b>Apple Podcasts</b><span class="st ok">✓ 已收录 · 12,483 订阅</span></div>
+      <div class="plat"><b>Spotify</b><span class="st ok">✓ 已收录 · 8,905 订阅</span></div>
+      <div class="plat"><b>小宇宙</b><span class="st warn">◔ 待审核 · 提交于 3 天前</span></div>
+      <div class="plat"><b>YouTube Podcasts</b><button class="btn btn-blue btn-sm">提交收录</button></div>
+    </div>
+    <div class="save-row">
+      <span class="hint" style="font-size:14px;line-height:2;color:var(--muted)">新章节发布后，各平台将在 30 分钟内自动同步。</span>
+      <button class="btn">立即全量同步</button>
+    </div>
+  </section>
+
+  <!-- 面板：通知 -->
+  <section class="panel" id="p-notify">
+    <div class="field">
+      <label>事件通知</label>
+      <div class="switch-row">
+        <div class="txt"><b>新订阅</b><span>任一平台新增订阅时邮件提醒</span></div>
+        <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="switch-row">
+        <div class="txt"><b>听众评论</b><span>收到新评论时邮件提醒</span></div>
+        <label class="switch"><input type="checkbox" checked><span class="track"></span></label>
+      </div>
+      <div class="switch-row">
+        <div class="txt"><b>里程碑</b><span>订阅数突破整千、单期播放破万时提醒</span></div>
+        <label class="switch"><input type="checkbox"><span class="track"></span></label>
+      </div>
+    </div>
+    <div class="field">
+      <label>数据周报</label>
+      <div class="radios">
+        <label class="radio"><input type="radio" name="digest" checked> 每周一封</label>
+        <label class="radio"><input type="radio" name="digest"> 每日一封</label>
+        <label class="radio"><input type="radio" name="digest"> 关闭</label>
+      </div>
+      <p class="hint">汇总播放、完听率与订阅变化，由 hertz-analyze 自动生成。</p>
+    </div>
+  </section>
+
+  <!-- 面板：API -->
+  <section class="panel" id="p-api">
+    <div class="field">
+      <label>API 密钥</label>
+      <div class="apikey">
+        <code id="apiKey">hz_live_•••••••••••••••4f2a</code>
+        <button class="btn" id="revealBtn">显示</button>
+        <button class="btn btn-blue">重新生成</button>
+      </div>
+      <p class="usage">本月调用 <b>12,483 / 50,000</b> 次 · 重置于每月 1 日 00:00</p>
+    </div>
+    <div class="field">
+      <label for="f-hook">Webhook 回调地址</label>
+      <input id="f-hook" type="url" value="https://nightflight.app/hooks/hertz">
+      <p class="hint">新章节发布、转码完成时将向此地址 POST JSON 事件。</p>
+    </div>
+    <div class="danger">
+      <h3>危险区</h3>
+      <p>删除工作室将移除全部节目、音频与订阅数据，此操作不可撤销。</p>
+      <button class="btn btn-red" id="delBtn">删除工作室</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="brand" href="#">hertz<i>~</i></a>
+        <p class="desc">开源的播客托管与发行引擎。终端里的一站式工作室。</p>
+      </div>
+      <div>
+        <h4>产品</h4>
+        <a href="#">托管</a><a href="#">分析</a><a href="#">转码</a>
+      </div>
+      <div>
+        <h4>开发者</h4>
+        <a href="#">API 文档</a><a href="#">CLI 工具</a><a href="#">状态页</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="#">GitHub</a><a href="#">Discord</a><a href="#">更新日志</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 Hertz FM · StyleForge 平台 AI 生成习作 · study of opencode.ai</span>
+      <span>MIT License</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // Tabs 切换：显隐面板 + 指示线迁移
+  document.querySelectorAll('.tab').forEach((tab) => {
+    tab.addEventListener('click', () => {
+      document.querySelectorAll('.tab').forEach((t) => t.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+      tab.classList.add('active');
+      document.getElementById(tab.dataset.panel).classList.add('active');
+    });
+  });
+  // 保存反馈：终端式瞬时状态
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.addEventListener('click', () => {
+    const old = saveBtn.textContent;
+    saveBtn.textContent = '✓ 已保存';
+    saveBtn.style.color = 'var(--green)';
+    setTimeout(() => { saveBtn.textContent = old; saveBtn.style.color = ''; }, 1400);
+  });
+  // RSS 复制反馈
+  const copyBtn = document.getElementById('copyBtn');
+  copyBtn.addEventListener('click', () => {
+    const old = copyBtn.textContent;
+    copyBtn.textContent = '✓ 已复制';
+    copyBtn.style.color = 'var(--green)';
+    setTimeout(() => { copyBtn.textContent = old; copyBtn.style.color = ''; }, 1400);
+  });
+  // API 密钥显隐
+  const revealBtn = document.getElementById('revealBtn');
+  revealBtn.addEventListener('click', () => {
+    const key = document.getElementById('apiKey');
+    const masked = 'hz_live_•••••••••••••••4f2a';
+    const full = 'hz_live_9xT2mQ7bKd4pR8vN4f2a';
+    const showing = key.textContent === full;
+    key.textContent = showing ? masked : full;
+    revealBtn.textContent = showing ? '显示' : '隐藏';
+  });
+  // 危险操作两段确认
+  const delBtn = document.getElementById('delBtn');
+  delBtn.addEventListener('click', () => {
+    if (delBtn.dataset.armed) { delBtn.textContent = '✓ 已请求删除（演示）'; delBtn.dataset.armed = ''; return; }
+    delBtn.dataset.armed = '1';
+    delBtn.textContent = '再点一次确认删除';
+    setTimeout(() => { if (delBtn.dataset.armed) { delBtn.dataset.armed = ''; delBtn.textContent = '删除工作室'; } }, 3000);
+  });
+</script>
+</body>
+</html>

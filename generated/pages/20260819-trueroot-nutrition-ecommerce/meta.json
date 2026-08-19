@@ -1,0 +1,38 @@
+{
+  "id": "20260819-trueroot-nutrition-ecommerce",
+  "title": "禾本 TrueRoot · 天然营养电商首页",
+  "created_at": "2026-08-19T12:08:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "airtable"
+  ],
+  "page_type": "e-commerce",
+  "industry": [
+    "health"
+  ],
+  "mood": [
+    "minimal",
+    "soft",
+    "premium"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "正字距企业文本",
+    "蓝调多层阴影",
+    "CSS药罐静物",
+    "批次溯源表格卡",
+    "12px圆角蓝CTA",
+    "48px双声部标题"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}
