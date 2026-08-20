@@ -1,0 +1,11 @@
+{
+  "id": "blue-console-v1",
+  "name": "蓝调控制台 · SaaS 设置风",
+  "created_at": "2026-08-20T18:00:00+08:00",
+  "source_page": "20260820-neura-ai-workspace-settings",
+  "lineage": ["coinbase"],
+  "inherited_rating": 4,
+  "rating": 4,
+  "child_count": 0,
+  "summary": "金融级蓝白语言的控制台化：蓝只做功能、一切交互件药丸化、行高 1.0 大标题、白↔黑交替分区，配一整套侧栏/开关/计量/密钥/深色账单的设置页组件语法。"
+}

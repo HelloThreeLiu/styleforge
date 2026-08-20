@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>neura 奈拉 — 工作台设置</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Coinbase Tokens（来源：design-md/coinbase/DESIGN.md）============ */
+  :root {
+    --blue: #0052ff;         /* 唯一品牌蓝：交互专用 */
+    --blue-hover: #578bfa;   /* hover 蓝 */
+    --blue-link: #0667d0;    /* 次级链接蓝 */
+    --ink: #0a0b0d;          /* 近黑：文本 + 深色分区 */
+    --card-dark: #282b31;    /* 深色卡/按钮底 */
+    --gray: #eef0f3;         /* 冷灰表面（蓝调） */
+    --white: #ffffff;
+    --bd: rgba(91, 97, 110, 0.2);   /* 中性蓝灰边 */
+    --text-2: #5b616e;
+    --font-d: 'Manrope', 'CoinbaseDisplay', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif; /* 展示/UI */
+    --font-t: 'Inter', 'CoinbaseText', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;       /* 正文阅读 */
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font-t); background: var(--white); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font-d); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+
+  /* ============ 按钮：56px 药丸 CTA（禁止方角）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-family: var(--font-d); font-size: 16px; font-weight: 600; letter-spacing: 0.16px; line-height: 1.2; padding: 12px 24px; border-radius: 56px; border: 1px solid transparent; transition: background .15s, color .15s, border-color .15s; min-height: 44px; }
+  .btn-dark { background: var(--card-dark); color: var(--white); }          /* 主 CTA：深卡底 */
+  .btn-dark:hover { background: var(--blue-hover); }
+  .btn-blue-border { background: transparent; color: var(--blue); border: 1px solid var(--blue); } /* 蓝描边 */
+  .btn-blue-border:hover { background: var(--blue); color: var(--white); }
+  .btn-gray { background: var(--gray); color: var(--ink); }
+  .btn-gray:hover { background: #e2e5ea; }
+  .btn-light { background: var(--white); color: var(--ink); }
+  .btn-light:hover { background: var(--blue-hover); color: var(--white); }
+  .btn-sm { padding: 8px 18px; font-size: 14px; min-height: 40px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.95); border-bottom: 1px solid var(--bd); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { font-family: var(--font-d); font-size: 21px; font-weight: 700; display: flex; align-items: center; gap: 9px; letter-spacing: -0.01em; }
+  .logo i { width: 14px; height: 14px; background: var(--blue); transform: rotate(45deg); border-radius: 3px; font-style: normal; }
+  .nav-links { display: flex; gap: 4px; list-style: none; }
+  .nav-links a { font-family: var(--font-d); font-size: 16px; font-weight: 600; color: var(--ink); padding: 8px 14px; border-radius: 24px; transition: background .15s; }
+  .nav-links a:hover { background: var(--gray); }
+  .nav-links a.active { color: var(--blue); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; }
+  .menu-btn span { display: block; width: 20px; height: 2px; background: var(--ink); margin: 4px auto; }
+
+  /* ============ 页头 ============ */
+  .pagehead { padding: 64px 0 48px; }
+  .crumb { font-family: var(--font-d); font-size: 14px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; color: var(--blue); margin-bottom: 14px; }
+  .pagehead h1 { font-family: var(--font-d); font-size: clamp(36px, 5.4vw, 64px); font-weight: 400; line-height: 1.00; letter-spacing: -0.015em; }
+  .pagehead p { font-size: 18px; line-height: 1.56; color: var(--text-2); margin-top: 16px; max-width: 560px; }
+
+  /* ============ 设置布局：侧栏 + 面板 ============ */
+  .settings { display: grid; grid-template-columns: 232px 1fr; gap: 40px; align-items: start; padding-bottom: 72px; }
+  .side { position: sticky; top: 104px; display: flex; flex-direction: column; gap: 4px; }
+  .side button { text-align: left; font-family: var(--font-d); font-size: 16px; font-weight: 600; background: transparent; border: none; color: var(--ink); padding: 11px 16px; border-radius: 28px; transition: background .15s, color .15s; }
+  .side button:hover { background: var(--gray); }
+  .side button.active { background: var(--gray); color: var(--blue); }
+  .panel { display: none; }
+  .panel.active { display: block; }
+  .panel h2 { font-family: var(--font-d); font-size: 36px; font-weight: 400; line-height: 1.11; margin-bottom: 28px; }
+
+  /* 表单卡 */
+  .card { background: var(--white); border: 1px solid var(--bd); border-radius: 16px; padding: 28px; margin-bottom: 20px; }
+  .card h3 { font-family: var(--font-d); font-size: 18px; font-weight: 600; line-height: 1.33; margin-bottom: 6px; }
+  .card .desc { font-size: 16px; line-height: 1.5; color: var(--text-2); margin-bottom: 20px; }
+  .field { margin-bottom: 18px; }
+  .field label { display: block; font-family: var(--font-d); font-size: 14px; font-weight: 700; margin-bottom: 8px; }
+  .field input, .field select { width: 100%; font-family: var(--font-t); font-size: 16px; padding: 13px 16px; border: 1px solid var(--bd); border-radius: 12px; background: var(--white); color: var(--ink); outline: none; transition: border-color .15s; }
+  .field input:focus, .field select:focus { border-color: var(--blue); }
+  .field .hint { font-size: 14px; color: var(--text-2); margin-top: 6px; }
+  .save-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-top: 24px; flex-wrap: wrap; }
+  .save-row .meta { font-family: var(--font-d); font-size: 14px; font-weight: 600; color: var(--text-2); }
+
+  /* 开关：蓝功能色 */
+  .switch-row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 16px 0; border-bottom: 1px solid var(--bd); }
+  .switch-row:last-of-type { border-bottom: none; }
+  .switch-row .txt b { font-family: var(--font-d); font-size: 16px; font-weight: 600; display: block; }
+  .switch-row .txt span { font-size: 14px; color: var(--text-2); }
+  .sw { position: relative; width: 48px; height: 28px; flex-shrink: 0; }
+  .sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .sw .track { position: absolute; inset: 0; border-radius: 56px; background: var(--gray); border: 1px solid var(--bd); transition: background .15s, border-color .15s; }
+  .sw .track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 20px; height: 20px; border-radius: 50%; background: var(--white); box-shadow: 0 1px 3px rgba(10, 11, 13, 0.2); transition: transform .15s; }
+  .sw input:checked + .track { background: var(--blue); border-color: var(--blue); }
+  .sw input:checked + .track::after { transform: translateX(20px); }
+
+  /* 模型选择卡 */
+  .models { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 20px; }
+  .model { border: 1px solid var(--bd); border-radius: 16px; padding: 22px; cursor: pointer; background: var(--white); transition: border-color .15s, background .15s; }
+  .model input { display: none; }
+  .model .m-name { font-family: var(--font-d); font-size: 18px; font-weight: 600; display: flex; align-items: center; gap: 8px; }
+  .model .m-name i { width: 10px; height: 10px; border-radius: 50%; background: var(--gray); border: 1.5px solid var(--bd); font-style: normal; transition: background .15s, border-color .15s; }
+  .model .m-spec { font-size: 14px; color: var(--text-2); line-height: 1.5; margin-top: 8px; }
+  .model .m-price { font-family: var(--font-d); font-size: 14px; font-weight: 700; color: var(--blue); margin-top: 14px; }
+  .model.sel { border-color: var(--blue); background: rgba(0, 82, 255, 0.04); }
+  .model.sel .m-name i { background: var(--blue); border-color: var(--blue); }
+  /* 用量条 */
+  .meter { margin-bottom: 18px; }
+  .meter .m-top { display: flex; justify-content: space-between; font-family: var(--font-d); font-size: 14px; font-weight: 600; margin-bottom: 8px; }
+  .meter .m-top span:last-child { color: var(--text-2); font-family: var(--font-t); }
+  .meter .m-track { height: 8px; border-radius: 56px; background: var(--gray); overflow: hidden; }
+  .meter .m-fill { height: 100%; border-radius: 56px; background: var(--blue); }
+
+  /* 成员表 */
+  .invite { display: flex; gap: 12px; margin-bottom: 24px; flex-wrap: wrap; }
+  .invite input { flex: 1; min-width: 200px; font-family: var(--font-t); font-size: 16px; padding: 13px 16px; border: 1px solid var(--bd); border-radius: 56px; outline: none; }
+  .invite input:focus { border-color: var(--blue); }
+  .members { border: 1px solid var(--bd); border-radius: 16px; overflow: hidden; }
+  .m-row { display: grid; grid-template-columns: 1.4fr 1fr 1fr auto; gap: 16px; align-items: center; padding: 14px 20px; border-bottom: 1px solid var(--bd); background: var(--white); }
+  .m-row:last-child { border-bottom: none; }
+  .m-row.head { background: var(--gray); font-family: var(--font-d); font-size: 14px; font-weight: 700; }
+  .m-user { display: flex; align-items: center; gap: 12px; }
+  .ava { width: 36px; height: 36px; border-radius: 50%; background: var(--gray); color: var(--blue); font-family: var(--font-d); font-weight: 700; font-size: 14px; display: grid; place-items: center; flex-shrink: 0; }
+  .m-user b { font-family: var(--font-d); font-size: 15px; font-weight: 600; display: block; }
+  .m-user span { font-size: 13px; color: var(--text-2); }
+  .role-pill { display: inline-block; font-family: var(--font-d); font-size: 13px; font-weight: 600; background: var(--gray); border-radius: 56px; padding: 5px 14px; width: fit-content; }
+  .role-pill.owner { background: rgba(0, 82, 255, 0.1); color: var(--blue); }
+  .m-active { font-size: 14px; color: var(--text-2); }
+
+  /* API 密钥 */
+  .keys { border: 1px solid var(--bd); border-radius: 16px; overflow: hidden; }
+  .k-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 14px 20px; border-bottom: 1px solid var(--bd); }
+  .k-row:last-child { border-bottom: none; }
+  .k-row code { font-family: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace; font-size: 14px; color: var(--ink); }
+  .k-row .k-meta { font-size: 13px; color: var(--text-2); margin-top: 4px; }
+
+  /* ============ 账单：深色分区（白↔黑交替）============ */
+  .billing { background: var(--ink); padding: 72px 0 64px; }
+  .billing h2 { font-family: var(--font-d); font-size: clamp(28px, 4vw, 52px); font-weight: 400; line-height: 1.00; color: var(--white); margin-bottom: 8px; }
+  .billing .desc { font-size: 18px; line-height: 1.56; color: rgba(255, 255, 255, 0.65); margin-bottom: 36px; }
+  .b-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+  .b-card { background: var(--card-dark); border-radius: 24px; padding: 28px; }
+  .b-card h3 { font-family: var(--font-d); font-size: 18px; font-weight: 600; color: var(--white); margin-bottom: 4px; }
+  .b-card .b-sub { font-size: 14px; color: rgba(255, 255, 255, 0.55); margin-bottom: 20px; }
+  .plan-tag { display: inline-block; font-family: var(--font-d); font-size: 13px; font-weight: 600; background: var(--blue); color: var(--white); border-radius: 56px; padding: 5px 14px; margin-bottom: 16px; }
+  .b-price { font-family: var(--font-d); font-size: 36px; font-weight: 400; color: var(--white); }
+  .b-price span { font-size: 15px; color: rgba(255, 255, 255, 0.55); }
+  .b-bars { display: flex; align-items: flex-end; gap: 10px; height: 130px; margin: 8px 0 10px; }
+  .b-bars i { flex: 1; background: var(--blue-hover); border-radius: 8px 8px 0 0; opacity: 0.85; }
+  .b-bars i:last-child { background: var(--blue); opacity: 1; }
+  .b-cap { display: flex; justify-content: space-between; font-family: var(--font-d); font-size: 13px; font-weight: 600; color: rgba(255, 255, 255, 0.55); }
+  .inv-row { display: flex; justify-content: space-between; gap: 16px; padding: 12px 0; border-bottom: 1px solid rgba(255, 255, 255, 0.1); font-size: 14px; color: rgba(255, 255, 255, 0.8); }
+  .inv-row:last-child { border-bottom: none; }
+  .inv-row a { color: var(--blue-hover); font-family: var(--font-d); font-weight: 600; }
+  .inv-row a:hover { text-decoration: underline; }
+
+  /* ============ 页脚（延续深色分区）============ */
+  footer { background: var(--ink); border-top: 1px solid rgba(255, 255, 255, 0.1); padding: 48px 0 36px; color: rgba(255, 255, 255, 0.7); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px; }
+  .footer-grid .logo { color: var(--white); margin-bottom: 12px; }
+  .footer-grid p { font-size: 14px; line-height: 1.56; color: rgba(255, 255, 255, 0.5); max-width: 280px; }
+  .footer-grid h4 { font-family: var(--font-d); font-size: 14px; font-weight: 700; color: var(--white); margin-bottom: 12px; }
+  .footer-grid a { display: block; font-size: 14px; line-height: 1.5; padding: 4px 0; }
+  .footer-grid a:hover { color: var(--blue-hover); }
+  .footer-bottom { margin-top: 40px; padding-top: 20px; border-top: 1px solid rgba(255, 255, 255, 0.1); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: rgba(255, 255, 255, 0.45); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) {
+    .settings { grid-template-columns: 1fr; }
+    .side { position: static; flex-direction: row; overflow-x: auto; padding-bottom: 8px; }
+    .side button { white-space: nowrap; }
+    .models { grid-template-columns: 1fr; }
+    .b-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--bd); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .pagehead { padding: 48px 0 32px; }
+    .m-row { grid-template-columns: 1.4fr 1fr auto; }
+    .m-row .m-active { display: none; }
+    .m-row.head .col-active { display: none; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .pagehead h1 { font-size: 36px; }
+    .btn { width: 100%; }
+    .invite .btn { width: 100%; }
+    .save-row .btn { width: 100%; }
+    .m-row { grid-template-columns: 1fr auto; }
+    .m-row .role-cell { grid-column: 1; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .k-row { flex-wrap: wrap; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>neura</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">产品</a></li>
+      <li><a href="#">解决方案</a></li>
+      <li><a href="#">定价</a></li>
+      <li><a href="#" class="active">设置</a></li>
+    </ul>
+    <div style="display:flex;gap:12px;align-items:center">
+      <a href="#" style="font-family:var(--font-d);font-size:16px;font-weight:600;color:var(--blue-link)">登录</a>
+      <a href="#" class="btn btn-dark btn-sm">免费试用</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="pagehead">
+    <p class="crumb">settings / 工作台</p>
+    <h1>掌控你的<br>AI 工作台</h1>
+    <p>团队资料、模型配额、成员权限与账单——都在一处。当前工作区：星野设计 · neura。</p>
+  </header>
+
+  <div class="settings">
+    <div class="side" role="tablist" aria-label="设置分区">
+      <button class="active" data-panel="p-team">团队资料</button>
+      <button data-panel="p-model">模型与推理</button>
+      <button data-panel="p-members">成员与权限</button>
+      <button data-panel="p-security">安全</button>
+      <button data-panel="p-api">API 密钥</button>
+    </div>
+
+    <!-- 团队资料 -->
+    <section class="panel active" id="p-team">
+      <h2>团队资料</h2>
+      <div class="card">
+        <h3>基本信息</h3>
+        <p class="desc">工作区名称与域名将用于共享链接与邀请邮件。</p>
+        <div class="field">
+          <label for="t-name">工作区名称</label>
+          <input id="t-name" type="text" value="星野设计">
+        </div>
+        <div class="field">
+          <label for="t-domain">工作区域名</label>
+          <input id="t-domain" type="text" value="hoshino.neura.ai">
+          <p class="hint">小写字母、数字与连字符，创建后 30 天内可修改一次。</p>
+        </div>
+        <div class="field">
+          <label for="t-tz">默认时区</label>
+          <select id="t-tz">
+            <option>(GMT+08:00) 北京、上海</option>
+            <option>(GMT+09:00) 东京、首尔</option>
+            <option>(GMT+00:00) 伦敦</option>
+          </select>
+        </div>
+        <div class="save-row">
+          <span class="meta">上次保存：今天 11:32</span>
+          <button class="btn btn-dark btn-sm" id="saveBtn">保存更改</button>
+        </div>
+      </div>
+      <div class="card">
+        <h3>通知偏好</h3>
+        <div class="switch-row">
+          <div class="txt"><b>产品更新邮件</b><span>每月一封，只发重要变更</span></div>
+          <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+        </div>
+        <div class="switch-row">
+          <div class="txt"><b>用量达到 80% 提醒</b><span>token 或速率任一接近上限时通知管理员</span></div>
+          <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+        </div>
+        <div class="switch-row">
+          <div class="txt"><b>每周用量周报</b><span>按模型拆分的团队使用摘要</span></div>
+          <label class="sw"><input type="checkbox"><span class="track"></span></label>
+        </div>
+      </div>
+    </section>
+
+    <!-- 模型与推理 -->
+    <section class="panel" id="p-model">
+      <h2>模型与推理</h2>
+      <div class="card" style="border:none;padding:0;background:transparent">
+        <div class="models">
+          <label class="model sel">
+            <input type="radio" name="model" checked>
+            <span class="m-name"><i></i>neura-4o</span>
+            <p class="m-spec">旗舰多模态 · 128k 上下文 · 适合复杂推理与长文档</p>
+            <p class="m-price">¥0.036 / 1k tokens</p>
+          </label>
+          <label class="model">
+            <input type="radio" name="model">
+            <span class="m-name"><i></i>neura-4o mini</span>
+            <p class="m-spec">轻量高速 · 64k 上下文 · 适合分类与日常对话</p>
+            <p class="m-price">¥0.007 / 1k tokens</p>
+          </label>
+          <label class="model">
+            <input type="radio" name="model">
+            <span class="m-name"><i></i>自托管端点</span>
+            <p class="m-spec">接入私有部署模型 · 数据不出内网</p>
+            <p class="m-price">仅团队版及以上</p>
+          </label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>本月用量</h3>
+        <p class="desc">额度按自然月重置，超出部分按量计费。</p>
+        <div class="meter">
+          <div class="m-top"><span>token 用量</span><span>742M / 1,000M</span></div>
+          <div class="m-track"><div class="m-fill" style="width:74%"></div></div>
+        </div>
+        <div class="meter">
+          <div class="m-top"><span>每分钟速率</span><span>3,600 / 6,000 req</span></div>
+          <div class="m-track"><div class="m-fill" style="width:60%"></div></div>
+        </div>
+        <div class="save-row">
+          <span class="meta">用量明细每小时刷新一次</span>
+          <a href="#" class="btn btn-blue-border btn-sm">设置用量告警</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- 成员与权限 -->
+    <section class="panel" id="p-members">
+      <h2>成员与权限</h2>
+      <div class="card">
+        <h3>邀请成员</h3>
+        <p class="desc">通过邮箱邀请，成员加入后默认为编辑者角色。</p>
+        <div class="invite">
+          <input type="email" placeholder="同事的邮箱地址">
+          <button class="btn btn-blue-border btn-sm" id="inviteBtn">发送邀请</button>
+        </div>
+        <div class="members">
+          <div class="m-row head"><span>成员</span><span>角色</span><span class="col-active">最近活跃</span><span></span></div>
+          <div class="m-row">
+            <div class="m-user"><span class="ava">苏</span><div><b>苏挽</b><span>suwan@hoshino.design</span></div></div>
+            <span class="role-cell"><span class="role-pill owner">所有者</span></span>
+            <span class="m-active">刚刚</span>
+            <a href="#" class="btn btn-gray btn-sm">管理</a>
+          </div>
+          <div class="m-row">
+            <div class="m-user"><span class="ava">程</span><div><b>程一苇</b><span>yiwei@hoshino.design</span></div></div>
+            <span class="role-cell"><span class="role-pill">编辑者</span></span>
+            <span class="m-active">12 分钟前</span>
+            <a href="#" class="btn btn-gray btn-sm">管理</a>
+          </div>
+          <div class="m-row">
+            <div class="m-user"><span class="ava">林</span><div><b>林晚舟</b><span>wanzhou@hoshino.design</span></div></div>
+            <span class="role-cell"><span class="role-pill">编辑者</span></span>
+            <span class="m-active">昨天</span>
+            <a href="#" class="btn btn-gray btn-sm">管理</a>
+          </div>
+          <div class="m-row">
+            <div class="m-user"><span class="ava">周</span><div><b>周砚</b><span>zhouyan@hoshino.design</span></div></div>
+            <span class="role-cell"><span class="role-pill">查看者</span></span>
+            <span class="m-active">4 天前</span>
+            <a href="#" class="btn btn-gray btn-sm">管理</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- 安全 -->
+    <section class="panel" id="p-security">
+      <h2>安全</h2>
+      <div class="card">
+        <h3>认证策略</h3>
+        <div class="switch-row">
+          <div class="txt"><b>强制双因素认证</b><span>所有成员登录时必须通过验证器或短信验证</span></div>
+          <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+        </div>
+        <div class="switch-row">
+          <div class="txt"><b>单点登录（SSO）</b><span>通过 SAML 2.0 接入企业身份提供商</span></div>
+          <label class="sw"><input type="checkbox"><span class="track"></span></label>
+        </div>
+        <div class="switch-row">
+          <div class="txt"><b>会话自动登出</b><span>无操作 30 分钟后强制重新认证</span></div>
+          <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+        </div>
+      </div>
+      <div class="card">
+        <h3>活跃会话</h3>
+        <p class="desc">可远程注销任意设备上的会话。</p>
+        <div class="k-row"><div><code>MacBook Pro · Chrome</code><p class="k-meta">上海 · 当前会话 · 192.168.**.**</p></div><span class="role-pill owner">本机</span></div>
+        <div class="k-row"><div><code>iPhone 17 · neura app</code><p class="k-meta">上海 · 2 小时前</p></div><a href="#" class="btn btn-gray btn-sm">注销</a></div>
+        <div class="k-row"><div><code>Windows · Edge</code><p class="k-meta">深圳 · 3 天前</p></div><a href="#" class="btn btn-gray btn-sm">注销</a></div>
+      </div>
+    </section>
+
+    <!-- API 密钥 -->
+    <section class="panel" id="p-api">
+      <h2>API 密钥</h2>
+      <div class="card">
+        <h3>工作区密钥</h3>
+        <p class="desc">密钥仅在创建时完整显示一次，请妥善保管。</p>
+        <div class="keys">
+          <div class="k-row">
+            <div><code>nk_live_••••••••••••••7c21</code><p class="k-meta">生产环境 · 创建于 2026-06-02 · 上次使用 1 小时前</p></div>
+            <button class="btn btn-blue-border btn-sm" id="regenBtn">重新生成</button>
+          </div>
+          <div class="k-row">
+            <div><code>nk_test_••••••••••••••0e4f</code><p class="k-meta">测试环境 · 创建于 2026-05-18 · 上次使用 昨天</p></div>
+            <button class="btn btn-gray btn-sm">重新生成</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- 账单：深色分区 -->
+<section class="billing">
+  <div class="container">
+    <h2>账单与订阅</h2>
+    <p class="desc">当前方案、用量与发票记录。</p>
+    <div class="b-grid">
+      <div class="b-card">
+        <span class="plan-tag">团队版 · 年付</span>
+        <p class="b-price">¥8,280 <span>/ 年 · 8 席位</span></p>
+        <p class="b-sub" style="margin-top:14px">含 1,000M tokens/月、无限工作流与 SSO。下期续费：2027-06-02。</p>
+        <div style="display:flex;gap:12px;flex-wrap:wrap">
+          <a href="#" class="btn btn-light btn-sm">管理订阅</a>
+          <a href="#" class="btn btn-blue-border btn-sm" style="color:var(--blue-hover);border-color:var(--blue-hover)">升级企业版</a>
+        </div>
+      </div>
+      <div class="b-card">
+        <h3>近六个月 token 用量</h3>
+        <p class="b-sub">单位：百万 tokens</p>
+        <div class="b-bars" aria-label="用量柱状图">
+          <i style="height:38%"></i><i style="height:52%"></i><i style="height:47%"></i><i style="height:63%"></i><i style="height:70%"></i><i style="height:82%"></i>
+        </div>
+        <div class="b-cap"><span>3 月</span><span>8 月</span></div>
+      </div>
+      <div class="b-card" style="grid-column:1/-1">
+        <h3>发票记录</h3>
+        <div class="inv-row"><span>INV-2026-0812 · 2026-08-12</span><span>¥690.00 · 7 月超额用量</span><a href="#">下载 PDF</a></div>
+        <div class="inv-row"><span>INV-2026-0701 · 2026-07-01</span><span>¥690.00 · 6 月超额用量</span><a href="#">下载 PDF</a></div>
+        <div class="inv-row"><span>INV-2026-0602 · 2026-06-02</span><span>¥8,280.00 · 年度订阅</span><a href="#">下载 PDF</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>neura</a>
+        <p>企业级 AI 工作台。把模型、权限与知识装进同一个界面。</p>
+      </div>
+      <div>
+        <h4>产品</h4>
+        <a href="#">工作流</a><a href="#">知识库</a><a href="#">模型网关</a>
+      </div>
+      <div>
+        <h4>开发者</h4>
+        <a href="#">API 文档</a><a href="#">SDK</a><a href="#">状态</a>
+      </div>
+      <div>
+        <h4>公司</h4>
+        <a href="#">关于</a><a href="#">安全白皮书</a><a href="#">联系</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 neura labs · StyleForge 平台 AI 生成习作 · study of coinbase</span>
+      <span>zh-CN</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 侧栏分区切换
+  document.querySelectorAll('.side button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.side button').forEach((b) => b.classList.remove('active'));
+      document.querySelectorAll('.panel').forEach((p) => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById(btn.dataset.panel).classList.add('active');
+    });
+  });
+  // 模型选择卡
+  document.querySelectorAll('.model input').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      document.querySelectorAll('.model').forEach((m) => m.classList.remove('sel'));
+      radio.closest('.model').classList.add('sel');
+    });
+  });
+  // 保存反馈
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.addEventListener('click', () => {
+    const t = saveBtn.textContent;
+    saveBtn.textContent = '✓ 已保存';
+    setTimeout(() => { saveBtn.textContent = t; }, 1400);
+  });
+  // 邀请反馈
+  const inviteBtn = document.getElementById('inviteBtn');
+  inviteBtn.addEventListener('click', () => {
+    const t = inviteBtn.textContent;
+    inviteBtn.textContent = '✓ 已发送';
+    setTimeout(() => { inviteBtn.textContent = t; }, 1400);
+  });
+  // 密钥重新生成（两段确认）
+  const regenBtn = document.getElementById('regenBtn');
+  regenBtn.addEventListener('click', () => {
+    if (regenBtn.dataset.armed) {
+      regenBtn.textContent = '✓ 已重新生成（演示）';
+      regenBtn.dataset.armed = '';
+      setTimeout(() => { regenBtn.textContent = '重新生成'; }, 2000);
+      return;
+    }
+    regenBtn.dataset.armed = '1';
+    regenBtn.textContent = '再点一次确认';
+    setTimeout(() => { if (regenBtn.dataset.armed) { regenBtn.dataset.armed = ''; regenBtn.textContent = '重新生成'; } }, 3000);
+  });
+</script>
+</body>
+</html>

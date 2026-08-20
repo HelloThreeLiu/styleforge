@@ -1,0 +1,39 @@
+{
+  "id": "20260820-waymap-flight-api-pricing",
+  "title": "航图 Waymap · 航班数据 API 定价页",
+  "created_at": "2026-08-20T12:06:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "cursor"
+  ],
+  "page_type": "pricing",
+  "industry": [
+    "travel",
+    "dev-tool"
+  ],
+  "mood": [
+    "minimal",
+    "editorial",
+    "premium"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "暖奶油纸画布",
+    "三声部字体系统",
+    "hover变暖绯红签名",
+    "时间线四色语法高亮",
+    "衬线权益清单",
+    "药丸计费切换"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

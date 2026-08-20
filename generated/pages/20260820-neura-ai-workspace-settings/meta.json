@@ -1,0 +1,38 @@
+{
+  "id": "20260820-neura-ai-workspace-settings",
+  "title": "neura 奈拉 · 企业 AI 工作台设置页",
+  "created_at": "2026-08-20T12:12:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "coinbase"
+  ],
+  "page_type": "settings",
+  "industry": [
+    "ai"
+  ],
+  "mood": [
+    "minimal",
+    "premium",
+    "dense"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "蓝白二元色制",
+    "56px药丸CTA",
+    "行高1.0展示标题",
+    "深浅交替分区",
+    "纯蓝用量计量条",
+    "侧栏分区切换设置"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "promoted",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}
