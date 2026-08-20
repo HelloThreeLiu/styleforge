@@ -10,7 +10,7 @@
     },
     "industry_enum": {
       "type": "string",
-      "enum": ["fintech", "dev-tool", "ai", "travel", "health", "education", "social", "media", "enterprise", "consumer"]
+      "enum": ["fintech", "dev-tool", "ai", "travel", "health", "education", "social", "media", "enterprise", "consumer", "music", "gaming", "sports", "food", "fashion", "real-estate", "entertainment", "science"]
     },
     "mood_enum": {
       "type": "string",

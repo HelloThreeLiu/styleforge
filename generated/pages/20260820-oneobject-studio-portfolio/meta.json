@@ -1,0 +1,38 @@
+{
+  "id": "20260820-oneobject-studio-portfolio",
+  "title": "一器 ONEOBJECT · 器物设计工作室作品集",
+  "created_at": "2026-08-20T22:30:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "vercel"
+  ],
+  "page_type": "portfolio",
+  "industry": [
+    "consumer"
+  ],
+  "mood": [
+    "minimal",
+    "premium",
+    "editorial"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "阴影即边框卡片",
+    "四层卡片阴影栈",
+    "工作流三色管线",
+    "CSS器物静物",
+    "药丸状态徽章",
+    "全宽深分隔线"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

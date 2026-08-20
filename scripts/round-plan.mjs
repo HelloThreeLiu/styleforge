@@ -5,7 +5,8 @@
  * 阶段一（沉淀候选）：status == "published" 且 rating >= 4，且尚无派生风格指向它的页面。
  *   单轮最多沉淀 3 个，其余顺延下一轮。
  * 阶段二（随机学习）：从白名单（54 个种子 + rating >= 4 的派生风格）随机抽取 2 个
- *   不同风格（避开最近 8 个页面已使用的风格，池不足时回退全量），并附页面类型/行业建议。
+ *   不同风格（避开最近 8 个页面已使用的风格，池不足时回退全量），并附页面类型/行业/主题建议
+ *   ——类型与行业自动避开最近 8 页已用值，主题取自非商品化主题池，防止题材向"商品定价页"扎堆。
  * 附带输出：pending_rating（rating 为 null 的待评分页面）与 rated_below_threshold（已评分但 <4），
  *   供收尾汇报直接引用，杜绝手工枚举出错——已评分页面绝不计入待评分。
  *
@@ -20,7 +21,35 @@ const STYLES_DIR = path.join(root, 'generated', 'styles');
 const SEED_DIR = path.join(root, 'awesome-design-md', 'design-md');
 
 const PAGE_TYPES = ['landing', 'dashboard', 'pricing', 'portfolio', 'blog', 'docs', 'login', 'e-commerce', 'settings', 'marketing'];
-const INDUSTRIES = ['fintech', 'dev-tool', 'ai', 'travel', 'health', 'education', 'social', 'media', 'enterprise', 'consumer'];
+const INDUSTRIES = ['fintech', 'dev-tool', 'ai', 'travel', 'health', 'education', 'social', 'media', 'enterprise', 'consumer', 'music', 'gaming', 'sports', 'food', 'fashion', 'real-estate', 'entertainment', 'science'];
+// 非商品化主题池：每项自带行业与页面类型提示，保证建议内部自洽（工具、内容、社区、文化方向，
+// 刻意不含商品展示/定价类主题，防止题材向"卖东西"塌缩）
+const THEMES = [
+  { theme: '城市公共交通实时看板', industry: 'travel', page_type: 'dashboard' },
+  { theme: '天文观测与星图日志', industry: 'science', page_type: 'blog' },
+  { theme: '博物馆数字导览', industry: 'entertainment', page_type: 'docs' },
+  { theme: '播客发现与订阅', industry: 'media', page_type: 'blog' },
+  { theme: '独立杂志深度阅读器', industry: 'media', page_type: 'blog' },
+  { theme: '食谱社区与菜单规划', industry: 'food', page_type: 'blog' },
+  { theme: '健身训练追踪', industry: 'health', page_type: 'dashboard' },
+  { theme: '语言学习闪卡进度', industry: 'education', page_type: 'dashboard' },
+  { theme: '加密邮箱客户端', industry: 'dev-tool', page_type: 'login' },
+  { theme: '项目看板与任务流', industry: 'dev-tool', page_type: 'dashboard' },
+  { theme: '数据可视化探索器', industry: 'ai', page_type: 'dashboard' },
+  { theme: '个人音乐收藏馆', industry: 'music', page_type: 'settings' },
+  { theme: '游戏库与成就墙', industry: 'gaming', page_type: 'portfolio' },
+  { theme: '图书馆检索系统', industry: 'education', page_type: 'docs' },
+  { theme: '宠物领养信息页', industry: 'social', page_type: 'marketing' },
+  { theme: '志愿活动报名', industry: 'social', page_type: 'landing' },
+  { theme: '婚礼邀请与回函', industry: 'consumer', page_type: 'marketing' },
+  { theme: '极端天气监控终端', industry: 'science', page_type: 'dashboard' },
+  { theme: '园艺种植日志', industry: 'food', page_type: 'blog' },
+  { theme: '社区垃圾分类指南', industry: 'social', page_type: 'docs' },
+  { theme: '电台直播间', industry: 'music', page_type: 'landing' },
+  { theme: '漫画阅读器书架', industry: 'entertainment', page_type: 'settings' },
+  { theme: '球赛比分直播页', industry: 'sports', page_type: 'dashboard' },
+  { theme: '开源项目文档中心', industry: 'dev-tool', page_type: 'docs' },
+];
 const PROMOTE_CAP = 3;
 const RECENT_WINDOW = 8;
 
@@ -88,9 +117,28 @@ let candidates = pool.filter((s) => !recentLineages.has(s.id));
 if (candidates.length < 2) candidates = pool;
 
 const picked = shuffle(candidates).slice(0, 2);
-const types = shuffle(PAGE_TYPES);
-const industries = shuffle(INDUSTRIES);
-const picks = picked.map((s, i) => ({ ...s, suggest_page_type: types[i], suggest_industry: industries[i] }));
+
+// 多样性约束：类型/行业建议避开最近 8 页已用值。主题自带行业与类型提示，
+// 优先挑提示完全合规的主题（不足 2 个时逐级放宽：仅类型合规 → 全量），并在本轮内避免撞类型/撞行业
+const recentTypes = new Set(recent.map((p) => p.meta?.page_type).filter(Boolean));
+const recentIndustries = new Set(recent.flatMap((p) => p.meta?.industry ?? []));
+const fitBoth = THEMES.filter((t) => !recentTypes.has(t.page_type) && !recentIndustries.has(t.industry));
+const fitType = THEMES.filter((t) => !recentTypes.has(t.page_type));
+const shuffled = shuffle(fitBoth.length >= 2 ? fitBoth : fitType);
+const chosen = shuffled.length ? [shuffled[0]] : [];
+for (const t of shuffled) {
+  if (chosen.length >= 2) break;
+  if (chosen.some((c) => c.page_type === t.page_type || c.industry === t.industry)) continue;
+  chosen.push(t);
+}
+for (const t of shuffled) {
+  if (chosen.length >= 2) break;
+  if (chosen.some((c) => c.page_type === t.page_type)) continue;
+  chosen.push(t);
+}
+const picks = picked
+  .map((s, i) => (chosen[i] ? { ...s, suggest_page_type: chosen[i].page_type, suggest_industry: chosen[i].industry, suggest_theme: chosen[i].theme } : null))
+  .filter(Boolean);
 
 const plan = {
   round_at: new Date().toISOString(),
@@ -114,8 +162,9 @@ if (asJson) {
   picks.forEach((p, i) => {
     console.log(`  ${i + 1}. [${p.kind === 'seed' ? '种子' : '派生'}] ${p.id}`);
     console.log(`     DESIGN.md: ${p.kind === 'seed' ? `awesome-design-md/design-md/${p.id}/DESIGN.md` : `generated/styles/${p.id}/DESIGN.md`}`);
-    console.log(`     建议页面类型: ${p.suggest_page_type} · 建议行业: ${p.suggest_industry}`);
+    console.log(`     建议页面类型: ${p.suggest_page_type} · 建议行业: ${p.suggest_industry} · 建议主题: ${p.suggest_theme}`);
   });
+  console.log('  （类型/行业建议已避开最近 8 页使用过的值；主题来自非商品化主题池，生成时遵守 §11 多样性约束）');
   console.log(`\n[待评分提醒] rating 为 null 的页面：${pendingRating.length} 个（收尾汇报的待评分清单 = 此清单 + 本轮新生成页面）`);
   if (!pendingRating.length) console.log('  （无——画廊无积压）');
   for (const p of pendingRating) console.log(`  - ${p.page}  ${p.title}（${p.status}）`);

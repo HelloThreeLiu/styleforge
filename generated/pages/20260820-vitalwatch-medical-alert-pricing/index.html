@@ -1,0 +1,342 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>守望 VitalWatch — 医疗设备遥测与告警 · 定价</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Rubik:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Sentry Tokens（来源：design-md/sentry/DESIGN.md）============ */
+  :root {
+    --bg: #1f1633;          /* 深紫黑主背景——永不用纯黑 */
+    --bg-deep: #150f23;     /* 更深分区/页脚 */
+    --bd-purple: #362d59;   /* 紫调结构线 */
+    --purple: #6a5fc1;      /* 主交互紫：链接/hover/焦点环 */
+    --purple-muted: #79628c;/* 按钮紫 */
+    --purple-btn-bd: #584674;
+    --violet: #422082;      /* 深紫罗兰：激活/高强调面 */
+    --lime: #c2ef4e;        /* 荧光绿：高可见点睛，每区至多一次 */
+    --coral: #ffb287;       /* 珊瑚：焦点底 */
+    --pink: #fa7faa;        /* 粉：焦点描边/装饰 */
+    --text: #ffffff;
+    --text-2: #e5e7eb;
+    --code-yellow: #dcdcaa;
+    --glass: rgba(255, 255, 255, 0.18);
+    --glass-hover: rgba(54, 22, 107, 0.14);
+    /* 阴影体系：内凹按钮 + 紫调环境辉光 */
+    --inset-btn: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px inset;
+    --hover-elev: rgba(0, 0, 0, 0.18) 0px 0.5rem 1.5rem;
+    --card-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px;
+    --ambient: rgba(22, 15, 36, 0.9) 0px 4px 4px 9px;
+    --display: 'Space Grotesk', 'Dammit Sans', system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --ui: 'Rubik', -apple-system, system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: Monaco, Menlo, Consolas, 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1152px; margin: 0 auto; padding: 0 32px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); }
+  :focus-visible { outline: 0.125rem solid var(--purple); }
+
+  /* ============ 导航：暗色透明 + 玻璃 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(31, 22, 51, 0.8); backdrop-filter: blur(18px) saturate(180%); border-bottom: 1px solid var(--bd-purple); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; }
+  .logo { font-family: var(--display); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .logo i { width: 12px; height: 12px; background: var(--lime); border-radius: 3px; transform: rotate(45deg); font-style: normal; box-shadow: 0 0 14px rgba(194, 239, 78, 0.5); }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--text); padding: 8px 12px; border-radius: 8px; transition: color .15s; }
+  .nav-links a:hover { color: var(--purple); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--text); margin: 4px auto; }
+
+  /* ============ 按钮体系：内凹触感 + 全大写 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: 0.2px; text-transform: uppercase; line-height: 1.14; padding: 12px 16px; border-radius: 13px; cursor: pointer; border: 1px solid var(--purple-btn-bd); background: var(--purple-muted); color: #ffffff; box-shadow: var(--inset-btn); transition: box-shadow .15s, background .15s, color .15s; min-height: 44px; }
+  .btn:hover { box-shadow: var(--hover-elev); }
+  .btn-white { background: #ffffff; color: var(--bg); border: none; border-radius: 8px; }
+  .btn-white:hover { background: var(--purple); color: #ffffff; }
+  .btn-white:focus-visible { background: var(--coral); color: var(--bg); }
+  .btn-violet { background: var(--violet); border: none; border-radius: 8px; }
+  .btn-sm { padding: 9px 14px; min-height: 40px; }
+
+  /* ============ 英雄区：88px 展示 + 紫调环境辉光 ============ */
+  .hero { position: relative; padding: 112px 0 88px; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -160px; left: 50%; transform: translateX(-50%); width: 780px; height: 560px; background: radial-gradient(ellipse at center, rgba(106, 95, 193, 0.35), rgba(22, 15, 36, 0.9) 70%); filter: blur(20px); pointer-events: none; } /* 生物发光式环境辉光 */
+  .hero .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--lime); margin-bottom: 22px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(42px, 7.6vw, 88px); font-weight: 700; line-height: 1.2; position: relative; }
+  .hero p.sub { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--text-2); max-width: 520px; margin: 24px 0 34px; position: relative; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; position: relative; }
+
+  /* 数据玻璃卡 */
+  .glass-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; position: relative; }
+  .glass { background: var(--glass); backdrop-filter: blur(18px) saturate(180%); border-radius: 12px; padding: 22px 24px; box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 8px; }
+  .glass b { font-family: var(--display); font-size: 30px; font-weight: 700; display: block; }
+  .glass span { font-size: 14px; font-weight: 500; line-height: 1.43; color: var(--text-2); }
+
+  /* ============ 特性区（更深紫底）============ */
+  section.features { background: var(--bg-deep); border-top: 1px solid var(--bd-purple); border-bottom: 1px solid var(--bd-purple); padding: 80px 0; }
+  .sec-label { font-size: 14px; font-weight: 500; letter-spacing: 0.2px; text-transform: uppercase; color: var(--lime); margin-bottom: 10px; }
+  .sec-title { font-family: var(--ui); font-size: 30px; font-weight: 400; line-height: 1.2; margin-bottom: 40px; }
+  .feat-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .feat { background: rgba(54, 45, 89, 0.35); border: 1px solid var(--bd-purple); border-radius: 12px; padding: 26px; transition: background .15s, box-shadow .15s; }
+  .feat:hover { background: var(--glass-hover); box-shadow: var(--card-shadow); }
+  .feat h3 { font-size: 24px; font-weight: 500; line-height: 1.25; margin-bottom: 10px; display: flex; align-items: center; gap: 10px; }
+  .feat h3 i { width: 9px; height: 9px; border-radius: 50%; background: var(--purple); font-style: normal; flex-shrink: 0; }
+  .feat h3 i.lime { background: var(--lime); }
+  .feat h3 i.pink { background: var(--pink); }
+  .feat p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--text-2); }
+
+  /* ============ 告警规则代码卡（Monaco 层）============ */
+  .rule-card { background: var(--bg-deep); border: 1px solid var(--bd-purple); border-radius: 12px; box-shadow: var(--card-shadow); overflow: hidden; margin-top: 56px; }
+  .rule-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--bd-purple); }
+  .rule-bar span { font-family: var(--mono); font-size: 12px; color: var(--text-2); }
+  .rule-bar .ok { color: var(--lime); }
+  .rule-card pre { font-family: var(--mono); font-size: 14px; line-height: 1.7; padding: 20px 22px; overflow-x: auto; color: var(--text-2); }
+  .c { color: rgba(229, 231, 235, 0.45); }  /* 注释 */
+  .k { color: var(--lime); }                /* 关键字 */
+  .s { color: var(--code-yellow); }         /* 字符串 */
+  .n { color: #ffffff; }                    /* 数值/纯文本 */
+
+  /* ============ 定价区 ============ */
+  section.pricing { padding: 80px 0; }
+  .cycle { display: inline-flex; gap: 4px; background: rgba(54, 45, 89, 0.5); border: 1px solid var(--bd-purple); border-radius: 13px; padding: 4px; margin-bottom: 36px; }
+  .cycle button { font-size: 14px; font-weight: 500; letter-spacing: 0.2px; text-transform: uppercase; background: transparent; border: none; color: var(--text-2); padding: 8px 16px; border-radius: 10px; cursor: pointer; transition: background .15s, color .15s; min-height: 40px; }
+  .cycle button.active { background: var(--violet); color: #ffffff; }
+  .cycle b { font-weight: 700; color: var(--lime); margin-left: 4px; }
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; align-items: stretch; }
+  .plan { background: rgba(54, 45, 89, 0.35); border: 1px solid var(--bd-purple); border-radius: 12px; padding: 28px; display: flex; flex-direction: column; }
+  .plan h3 { font-family: var(--ui); font-size: 24px; font-weight: 500; line-height: 1.25; }
+  .plan .for { font-size: 14px; line-height: 1.43; color: var(--text-2); margin: 6px 0 20px; }
+  .plan .price { font-family: var(--display); font-size: 40px; font-weight: 700; line-height: 1.1; }
+  .plan .price span { font-family: var(--ui); font-size: 14px; font-weight: 400; color: var(--text-2); }
+  .plan .note { font-family: var(--mono); font-size: 12px; color: var(--text-2); line-height: 2; min-height: 24px; margin-bottom: 18px; }
+  .plan ul { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 26px; }
+  .plan li { font-size: 16px; line-height: 1.5; display: flex; gap: 10px; color: var(--text-2); }
+  .plan li::before { content: '→'; color: var(--purple); flex-shrink: 0; }
+  .plan .btn { margin-top: auto; width: 100%; }
+  .plan.featured { border-color: var(--purple); background: var(--glass-hover); box-shadow: var(--card-shadow); position: relative; }
+  .plan .tag { position: absolute; top: -13px; left: 24px; background: var(--lime); color: var(--bg-deep); font-size: 12px; font-weight: 700; letter-spacing: 0.2px; text-transform: uppercase; border-radius: 18px; padding: 4px 12px; }
+  .plan.featured .btn { background: #ffffff; color: var(--bg); border: none; border-radius: 8px; box-shadow: none; }
+  .plan.featured .btn:hover { background: var(--lime); }
+
+  /* ============ 客户条 ============ */
+  .clients { padding: 24px 0 80px; }
+  .clients p { font-size: 14px; font-weight: 500; letter-spacing: 0.2px; text-transform: uppercase; color: var(--text-2); text-align: center; margin-bottom: 24px; }
+  .clients .row { display: flex; justify-content: center; gap: 44px; flex-wrap: wrap; }
+  .clients span { font-size: 16px; font-weight: 500; color: var(--bd-purple); transition: color .15s; }
+  .clients span:hover { color: #ffffff; }
+
+  /* ============ 页脚 ============ */
+  footer { background: var(--bg-deep); border-top: 1px solid var(--bd-purple); padding: 56px 0 36px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px; }
+  .footer-grid p { font-size: 14px; line-height: 1.5; color: var(--text-2); max-width: 300px; margin-top: 14px; }
+  .footer-grid h4 { font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--purple); margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--text-2); padding: 5px 0; }
+  .footer-grid a:hover { color: var(--purple); }
+  .footer-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--bd-purple); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--text-2); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 992px) {
+    .plans { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+    .plan.featured { order: -1; }
+    .feat-grid { grid-template-columns: 1fr; }
+    .glass-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--bg-deep); flex-direction: column; padding: 12px 32px 20px; gap: 2px; border-bottom: 1px solid var(--bd-purple); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; }
+    .menu-btn { display: block; }
+    .container { padding: 0 24px; }
+    .hero { padding: 72px 0 64px; }
+    section.features, section.pricing { padding: 56px 0; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 42px; }
+    .hero-actions .btn { width: 100%; }
+    .plans { max-width: none; }
+    .footer-grid { grid-template-columns: 1fr; }
+    .clients .row { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>VitalWatch</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#features">平台能力</a></li>
+      <li><a href="#pricing" style="color:var(--purple)">定价</a></li>
+      <li><a href="#rule">告警规则</a></li>
+      <li><a href="#">文档</a></li>
+    </ul>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" class="btn btn-sm">预约演示</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <p class="kicker">医疗物联网 · 遥测与告警平台</p>
+    <h1>设备异常，<br>更早知道。</h1>
+    <p class="sub">守望接入全院输液泵、监护仪与呼吸机的实时遥测流，在故障变成事件之前，把正确的告警送到正确的值班人手上。</p>
+    <div class="hero-actions">
+      <a href="#" class="btn btn-white">免费接入 50 台</a>
+      <a href="#pricing" class="btn">查看定价</a>
+    </div>
+    <div class="glass-strip">
+      <div class="glass"><b>38s</b><span>告警中位触达时延（含升级链路）</span></div>
+      <div class="glass"><b>12,000+</b><span>台在网医疗设备，7×24 遥测</span></div>
+      <div class="glass"><b>99.99%</b><span>平台可用性 · 等保三级部署</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="features" id="features">
+  <div class="container">
+    <p class="sec-label">Platform · 平台能力</p>
+    <h2 class="sec-title">从遥测到处置，一条链路</h2>
+    <div class="feat-grid">
+      <div class="feat">
+        <h3><i></i>实时遥测管道</h3>
+        <p>HL7 与私有协议统一解析，秒级入库。设备电池、传感器漂移、通讯掉线，全部成为可查询的时序数据。</p>
+      </div>
+      <div class="feat">
+        <h3><i class="lime"></i>智能告警路由</h3>
+        <p>按病区、班次与值守表路由告警，两分钟未认领自动升级夜班主管。误报率较固定群发下降 76%。</p>
+      </div>
+      <div class="feat">
+        <h3><i></i>交接班看板</h3>
+        <p>夜班结束时自动生成设备风险简报，白班接班即读。每一条未闭环告警都有来龙去脉。</p>
+      </div>
+      <div class="feat">
+        <h3><i class="pink"></i>合规审计留痕</h3>
+        <p>告警触达、认领、处置全程留痕，满足等级保护与院内审计要求，随时导出报告。</p>
+      </div>
+    </div>
+
+    <div class="rule-card" id="rule">
+      <div class="rule-bar"><span>alert_rules/infusion_pump.yml</span><span class="ok">● 3 rules active</span></div>
+<pre><span class="c"># 输液泵电池告警 · ICU 七病区</span>
+<span class="k">rule</span> infusion_pump_battery_low:
+  <span class="k">source</span>: telemetry.device = <span class="s">"infusion-pump"</span>
+  <span class="k">when</span>: battery_pct &lt; <span class="n">20</span> <span class="k">for</span> <span class="n">5m</span>
+  <span class="k">route</span>: [<span class="s">icu-nurse-station</span>, <span class="s">night-supervisor</span>]
+  <span class="k">escalate_after</span>: <span class="n">2m</span> <span class="c"># 未认领即升级</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="pricing" id="pricing">
+  <div class="container">
+    <p class="sec-label">Pricing · 定价</p>
+    <h2 class="sec-title">按在网设备数计费</h2>
+    <div class="cycle" role="group" aria-label="计费周期">
+      <button class="active" data-cycle="m">月付</button>
+      <button data-cycle="y">年付<b>省 15%</b></button>
+    </div>
+    <div class="plans">
+      <div class="plan">
+        <h3>病区版</h3>
+        <p class="for">单个病区或科室起步</p>
+        <div class="price"><span>¥</span><span class="p-num" data-m="1,299" data-y="1,104">1,299</span><span> / 月</span></div>
+        <p class="note p-note" data-m="按月计费 · 5 台起" data-y="按年计费 · 折合省 15%">按月计费 · 5 台起</p>
+        <ul>
+          <li>最多 500 台在网设备</li>
+          <li>30 天遥测数据留存</li>
+          <li>5 条告警路由规则</li>
+          <li>工作日工单支持</li>
+        </ul>
+        <a href="#" class="btn">开始接入</a>
+      </div>
+      <div class="plan featured">
+        <span class="tag">Most Popular</span>
+        <h3>院区版</h3>
+        <p class="for">整院设备统一守望</p>
+        <div class="price"><span>¥</span><span class="p-num" data-m="4,999" data-y="4,249">4,999</span><span> / 月</span></div>
+        <p class="note p-note" data-m="按月计费 · 随时调整" data-y="按年计费 · 折合省 15%">按月计费 · 随时调整</p>
+        <ul>
+          <li>最多 3,000 台在网设备</li>
+          <li>180 天留存 + 交接班看板</li>
+          <li>无限告警路由与升级链</li>
+          <li>7×24 电话与工单支持</li>
+          <li>审计报告一键导出</li>
+        </ul>
+        <a href="#" class="btn">预约演示</a>
+      </div>
+      <div class="plan">
+        <h3>集团版</h3>
+        <p class="for">多院区与医联体</p>
+        <div class="price">定制</div>
+        <p class="note">两个工作日内回复</p>
+        <ul>
+          <li>无限设备 · 多院区联邦视图</li>
+          <li>私有化或专有云部署</li>
+          <li>与 HIS/EMR 定制对接</li>
+          <li>专属 SLA 与驻场实施</li>
+        </ul>
+        <a href="#" class="btn">联系销售</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="clients">
+  <div class="container">
+    <p>Trusted by · 夜班因为它们更安心</p>
+    <div class="row">
+      <span>仁济医疗集团</span><span>沧江市第一医院</span><span>明州康复中心</span><span>望京诊所联盟</span><span>临安妇幼保健院</span>
+    </div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>VitalWatch</a>
+        <p>为医疗物联网而生的遥测与告警平台。设备异常，更早知道。</p>
+      </div>
+      <div>
+        <h4>Platform</h4>
+        <a href="#">遥测管道</a><a href="#">告警路由</a><a href="#">交接看板</a>
+      </div>
+      <div>
+        <h4>Developers</h4>
+        <a href="#">文档</a><a href="#">规则语法</a><a href="#">集成清单</a>
+      </div>
+      <div>
+        <h4>Company</h4>
+        <a href="#">关于</a><a href="#">安全与合规</a><a href="#">联系</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 VitalWatch · StyleForge 平台 AI 生成习作 · study of sentry</span>
+      <span>zh-CN</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 月付/年付切换（violet 激活态）
+  document.querySelectorAll('.cycle button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.cycle button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const c = btn.dataset.cycle;
+      document.querySelectorAll('.p-num').forEach((el) => { el.textContent = el.dataset[c]; });
+      document.querySelectorAll('.p-note').forEach((el) => { el.textContent = el.dataset[c]; });
+    });
+  });
+</script>
+</body>
+</html>

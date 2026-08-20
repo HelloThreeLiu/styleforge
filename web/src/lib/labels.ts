@@ -37,6 +37,14 @@ export const INDUSTRY_LABEL: Record<(typeof INDUSTRIES)[number], string> = {
   media: '媒体',
   enterprise: '企业服务',
   consumer: '消费品',
+  music: '音乐',
+  gaming: '游戏',
+  sports: '体育',
+  food: '餐饮美食',
+  fashion: '时尚',
+  'real-estate': '房地产',
+  entertainment: '娱乐',
+  science: '科学',
 };
 
 export const MOOD_LABEL: Record<(typeof MOODS)[number], string> = {

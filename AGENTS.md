@@ -111,11 +111,11 @@ generated/styles/<style-id>/
 }
 ```
 
-受控字段取值（词表 v0.1，见 `schema/meta.schema.json`）：
+受控字段取值（词表 v0.2，见 `schema/meta.schema.json`）：
 
 - `origin`：`study` | `remix` | `original`
 - `page_type`：`landing` | `dashboard` | `pricing` | `portfolio` | `blog` | `docs` | `login` | `e-commerce` | `settings` | `marketing`
-- `industry`（多选）：`fintech` | `dev-tool` | `ai` | `travel` | `health` | `education` | `social` | `media` | `enterprise` | `consumer`
+- `industry`（多选）：`fintech` | `dev-tool` | `ai` | `travel` | `health` | `education` | `social` | `media` | `enterprise` | `consumer` | `music` | `gaming` | `sports` | `food` | `fashion` | `real-estate` | `entertainment` | `science`
 - `mood`（多选）：`minimal` | `dense` | `playful` | `premium` | `brutalist` | `soft` | `dark-first` | `editorial` | `retro` | `futuristic`
 - `innovation`：`0` 纯复刻 | `1` 微调 | `2` 混血 | `3` 原创
 - `status`：`draft` | `published` | `promoted` | `archived`
@@ -222,7 +222,7 @@ generated/styles/<style-id>/
    - 候选为空时直接跳过本阶段。
 3. **学习阶段**：按计划抽取的 2 个风格**各生成 1 个页面**（共 2 页）：
    - `origin=study`，`lineage` 指向所学风格；生成前必须通读该风格 DESIGN.md（§3）；
-   - 页面类型与行业可采纳计划建议，也可结合内容自行判断；**两页的类型、行业或主题不得雷同**；
+   - 页面类型与行业优先采纳计划建议（已自动避开最近 8 页使用过的类型/行业，并附非商品化主题方向建议 `suggest_theme`）；若结合内容自行改选，也必须满足：**两页的类型、行业、主题互不雷同，且 page_type / industry 不得与最近 8 页重复**。题材优先向工具、内容、社区、文化等非商品化方向发散，避免默认滑向"商品展示/定价"套路；
    - 产出规范、笔记、预打标签、响应式、自检全部照常执行（§5–§9）。
 4. **补截图**：运行 `npm run snapshot`。
 5. **全量校验**：`npm run verify && npm run validate`，任一失败必须修复后重跑。

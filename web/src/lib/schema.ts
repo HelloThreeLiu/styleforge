@@ -2,7 +2,7 @@ import { z } from 'zod';
 
 /** 与 schema/meta.schema.json 保持同步（唯一真源） */
 export const PAGE_TYPES = ['landing', 'dashboard', 'pricing', 'portfolio', 'blog', 'docs', 'login', 'e-commerce', 'settings', 'marketing'] as const;
-export const INDUSTRIES = ['fintech', 'dev-tool', 'ai', 'travel', 'health', 'education', 'social', 'media', 'enterprise', 'consumer'] as const;
+export const INDUSTRIES = ['fintech', 'dev-tool', 'ai', 'travel', 'health', 'education', 'social', 'media', 'enterprise', 'consumer', 'music', 'gaming', 'sports', 'food', 'fashion', 'real-estate', 'entertainment', 'science'] as const;
 export const MOODS = ['minimal', 'dense', 'playful', 'premium', 'brutalist', 'soft', 'dark-first', 'editorial', 'retro', 'futuristic'] as const;
 export const ORIGINS = ['study', 'remix', 'original'] as const;
 export const STATUSES = ['draft', 'published', 'promoted', 'archived'] as const;

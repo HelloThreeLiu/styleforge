@@ -1,0 +1,38 @@
+{
+  "id": "20260820-vitalwatch-medical-alert-pricing",
+  "title": "守望 VitalWatch · 医疗遥测告警平台定价页",
+  "created_at": "2026-08-20T18:10:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "sentry"
+  ],
+  "page_type": "pricing",
+  "industry": [
+    "health"
+  ],
+  "mood": [
+    "dark-first",
+    "dense",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "深紫黑夜航画布",
+    "内凹触感紫按钮",
+    "荧光绿单点点睛",
+    "玻璃拟态数据卡",
+    "Monaco告警规则码",
+    "紫调环境辉光"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

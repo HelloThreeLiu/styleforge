@@ -1,0 +1,39 @@
+{
+  "id": "20260820-solderhub-hardware-ecommerce",
+  "title": "焊点 SolderHub · 创客硬件商店",
+  "created_at": "2026-08-20T22:36:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "expo"
+  ],
+  "page_type": "e-commerce",
+  "industry": [
+    "dev-tool",
+    "consumer"
+  ],
+  "mood": [
+    "minimal",
+    "playful",
+    "soft"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "云灰画布白卡",
+    "药丸几何阶梯",
+    "64px纯黑压缩标题",
+    "CSS带色产品图",
+    "设备预览三联框",
+    "绿点状态徽章"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

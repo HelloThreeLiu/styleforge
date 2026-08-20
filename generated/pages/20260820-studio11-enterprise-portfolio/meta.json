@@ -1,0 +1,38 @@
+{
+  "id": "20260820-studio11-enterprise-portfolio",
+  "title": "十一维 Studio Eleven · 企业设计事务所作品集",
+  "created_at": "2026-08-20T18:16:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "superhuman"
+  ],
+  "page_type": "portfolio",
+  "industry": [
+    "enterprise"
+  ],
+  "mood": [
+    "premium",
+    "minimal",
+    "editorial"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "紫幕渐变褪白英雄区",
+    "非常规字重460",
+    "奶油色主CTA",
+    "薰衣草单强调色",
+    "CSS产品UI缩略图",
+    "双圆角制8和16"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}
