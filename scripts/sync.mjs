@@ -85,7 +85,7 @@ if (dry) {
 }
 
 const msg =
-  process.argv.slice(2).filter((a) => a !== '--dry').join(' ').trim() ||
+  process.argv.slice(2).filter((a) => a !== '--dry' && a !== '--').join(' ').trim() ||
   `sync: ${toCommit.length} 个文件变更 (${new Date().toISOString().slice(0, 10)})`;
 
 run('git add -- ' + toCommit.map((p) => JSON.stringify(p)).join(' '));
