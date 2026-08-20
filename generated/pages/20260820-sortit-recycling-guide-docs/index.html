@@ -1,0 +1,316 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>分好类 SortIt — 社区垃圾分类指南</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  /* ============ Airtable Tokens（来源：design-md/airtable/DESIGN.md）============ */
+  :root {
+    --bg: #ffffff;
+    --surface: #f8fafc;        /* 浅表面 */
+    --navy: #181d26;           /* 深海军蓝文本 */
+    --blue: #1b61c9;           /* Airtable Blue：CTA 与链接 */
+    --blue-mid: #254fad;
+    --text-2: #333333;
+    --text-weak: rgba(4, 14, 32, 0.69);
+    --success: #006400;
+    --border: #e0e2e6;
+    --shadow-blue: rgba(0,0,0,0.32) 0px 0px 1px, rgba(0,0,0,0.08) 0px 0px 2px, rgba(45,127,249,0.28) 0px 1px 3px, rgba(0,0,0,0.06) 0px 0px 0px 0.5px inset;
+    --shadow-soft: rgba(15, 48, 106, 0.05) 0px 0px 20px;
+    --font: 'Inter', 'Haas', -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--navy); letter-spacing: 0.18px; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  ::selection { background: rgba(27, 97, 201, 0.12); }
+
+  /* ============ 顶栏 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: #ffffff; border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .logo { font-size: 19px; font-weight: 900; letter-spacing: 0.12px; display: flex; align-items: center; gap: 9px; white-space: nowrap; }
+  .logo i { width: 16px; height: 16px; background: var(--blue); border-radius: 4px; clip-path: polygon(0 38%, 38% 38%, 38% 0, 62% 0, 62% 38%, 100% 38%, 100% 62%, 62% 62%, 62% 100%, 38% 100%, 38% 62%, 0 62%); font-style: normal; }
+  .search { display: flex; align-items: center; gap: 8px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 9px 14px; flex: 1; max-width: 320px; }
+  .search input { border: none; background: transparent; font-family: var(--font); font-size: 14px; letter-spacing: 0.08px; color: var(--navy); outline: none; width: 100%; }
+  .search input::placeholder { color: var(--text-weak); }
+  .search i { width: 13px; height: 13px; border: 2px solid var(--text-weak); border-radius: 50%; position: relative; flex-shrink: 0; }
+  .search i::after { content: ''; position: absolute; width: 6px; height: 2px; background: var(--text-weak); transform: rotate(45deg); right: -5px; bottom: -2px; }
+  .nav-links { display: flex; gap: 4px; list-style: none; margin-left: auto; }
+  .nav-links a { font-size: 14px; font-weight: 500; letter-spacing: 0.08px; color: var(--text-2); padding: 8px 12px; border-radius: 12px; transition: background .15s, color .15s; }
+  .nav-links a:hover { background: var(--surface); color: var(--navy); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--navy); margin: 4px auto; }
+
+  /* ============ 按钮 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; letter-spacing: 0.08px; padding: 12px 20px; border-radius: 12px; cursor: pointer; border: none; min-height: 44px; transition: box-shadow .15s, transform .15s; }
+  .btn-blue { background: var(--blue); color: #ffffff; }
+  .btn-blue:hover { box-shadow: var(--shadow-blue); transform: translateY(-1px); }
+  .btn-white { background: #ffffff; color: var(--navy); box-shadow: 0 0 0 1px var(--border); }
+  .btn-white:hover { box-shadow: var(--shadow-blue); transform: translateY(-1px); }
+
+  /* ============ 文档布局：侧栏 + 正文 ============ */
+  .doc-layout { display: grid; grid-template-columns: 232px 1fr; gap: 48px; max-width: 1120px; margin: 0 auto; padding: 48px 24px 96px; align-items: start; }
+  .side { position: sticky; top: 88px; }
+  .side h4 { font-size: 12px; font-weight: 700; letter-spacing: 0.28px; text-transform: uppercase; color: var(--text-weak); margin: 22px 0 10px; }
+  .side h4:first-child { margin-top: 0; }
+  .side a { display: block; font-size: 14px; font-weight: 500; letter-spacing: 0.07px; color: var(--text-2); padding: 8px 12px; border-radius: 8px; transition: background .15s, color .15s; }
+  .side a:hover { background: var(--surface); color: var(--navy); }
+  .side a.active { background: rgba(27, 97, 201, 0.08); color: var(--blue); font-weight: 700; }
+  .side-cta { margin-top: 28px; background: var(--surface); border-radius: 16px; padding: 18px; }
+  .side-cta p { font-size: 13px; letter-spacing: 0.07px; color: var(--text-weak); margin: 8px 0 14px; line-height: 1.5; }
+  .side-cta .btn { width: 100%; padding: 10px; font-size: 14px; }
+
+  /* 正文 */
+  .crumb { font-size: 13px; letter-spacing: 0.07px; color: var(--text-weak); margin-bottom: 10px; }
+  .crumb b { color: var(--blue); font-weight: 500; }
+  .doc h1 { font-size: clamp(30px, 4vw, 40px); font-weight: 400; line-height: 1.25; margin-bottom: 8px; }
+  .doc .updated { font-size: 13px; letter-spacing: 0.07px; color: var(--text-weak); margin-bottom: 28px; }
+  .doc h2 { font-size: 24px; font-weight: 700; letter-spacing: 0.12px; margin: 44px 0 14px; }
+  .doc h3 { font-size: 18px; font-weight: 500; letter-spacing: 0.1px; margin: 28px 0 10px; }
+  .doc p { font-size: 16px; line-height: 1.65; letter-spacing: 0.18px; color: var(--text-2); margin-bottom: 14px; max-width: 720px; }
+  .doc .lead { font-size: 18px; line-height: 1.6; color: var(--text-weak); }
+  .doc a.inline { color: var(--blue); font-weight: 500; }
+  .doc a.inline:hover { color: var(--blue-mid); text-decoration: underline; text-underline-offset: 4px; }
+
+  /* 提示卡（浅表面）*/
+  .callout { background: var(--surface); border-radius: 16px; padding: 22px 24px; margin: 24px 0; display: flex; gap: 14px; align-items: flex-start; box-shadow: var(--shadow-soft); }
+  .callout i { width: 26px; height: 26px; border-radius: 8px; background: rgba(27, 97, 201, 0.1); color: var(--blue); display: grid; place-items: center; font-style: normal; font-weight: 700; font-size: 14px; flex-shrink: 0; }
+  .callout b { display: block; font-size: 15px; font-weight: 700; letter-spacing: 0.1px; margin-bottom: 4px; }
+  .callout p { font-size: 15px; margin: 0; line-height: 1.6; }
+
+  /* 数据表（Airtable 基因）*/
+  .table-wrap { border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin: 20px 0; box-shadow: var(--shadow-soft); }
+  table { width: 100%; border-collapse: collapse; }
+  th { text-align: left; font-size: 12px; font-weight: 700; letter-spacing: 0.28px; text-transform: uppercase; color: var(--text-weak); background: var(--surface); padding: 12px 18px; border-bottom: 1px solid var(--border); }
+  td { font-size: 15px; letter-spacing: 0.08px; padding: 13px 18px; border-bottom: 1px solid var(--border); color: var(--text-2); }
+  tr:last-child td { border-bottom: none; }
+  td b { color: var(--navy); font-weight: 700; }
+  td .ok { color: var(--success); font-weight: 500; }
+  td .no { color: #c0392b; font-weight: 500; }
+  tbody tr:hover td { background: rgba(27, 97, 201, 0.03); }
+
+  /* 疑难问答 */
+  .qa { border: 1px solid var(--border); border-radius: 16px; padding: 20px 22px; margin-bottom: 14px; transition: box-shadow .15s; }
+  .qa:hover { box-shadow: var(--shadow-blue); }
+  .qa h3 { margin: 0 0 8px; font-size: 16px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .qa h3 span { font-size: 11px; font-weight: 700; letter-spacing: 0.14px; color: var(--blue); background: rgba(27, 97, 201, 0.08); border-radius: 9999px; padding: 3px 10px; }
+  .qa p { margin: 0; }
+  .qa-empty { display: none; text-align: center; color: var(--text-weak); font-size: 15px; padding: 24px 0; }
+
+  /* 四分类速记卡 */
+  .four { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 20px 0; }
+  .f-card { border: 1px solid var(--border); border-radius: 16px; padding: 18px; transition: box-shadow .15s, transform .15s; }
+  .f-card:hover { box-shadow: var(--shadow-blue); transform: translateY(-2px); }
+  .f-card i { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; font-style: normal; font-size: 15px; font-weight: 700; margin-bottom: 12px; }
+  .f-rec i { background: rgba(27, 97, 201, 0.1); color: var(--blue); }
+  .f-wet i { background: rgba(0, 100, 0, 0.1); color: var(--success); }
+  .f-haz i { background: rgba(192, 57, 43, 0.1); color: #c0392b; }
+  .f-oth i { background: rgba(51, 51, 51, 0.08); color: var(--text-2); }
+  .f-card b { display: block; font-size: 16px; font-weight: 700; letter-spacing: 0.12px; margin-bottom: 4px; }
+  .f-card span { font-size: 13px; letter-spacing: 0.07px; color: var(--text-weak); }
+
+  /* CTA 横幅 */
+  .banner { background: linear-gradient(135deg, rgba(27, 97, 201, 0.06), rgba(27, 97, 201, 0.02)); border: 1px solid rgba(27, 97, 201, 0.2); border-radius: 24px; padding: 32px; margin-top: 48px; display: flex; justify-content: space-between; align-items: center; gap: 24px; flex-wrap: wrap; }
+  .banner h2 { margin: 0 0 6px; font-size: 22px; font-weight: 400; }
+  .banner p { margin: 0; font-size: 15px; color: var(--text-weak); max-width: 480px; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--border); background: #ffffff; padding: 44px 0 32px; }
+  .foot { max-width: 1120px; margin: 0 auto; padding: 0 24px; display: flex; justify-content: space-between; align-items: center; gap: 20px; flex-wrap: wrap; }
+  .foot p { font-size: 13px; letter-spacing: 0.07px; color: var(--text-weak); }
+  .foot .links { display: flex; gap: 22px; }
+  .foot a { font-size: 13px; letter-spacing: 0.07px; color: var(--text-2); }
+  .foot a:hover { color: var(--blue); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) {
+    .four { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links, .search { display: none; }
+    .menu-btn { display: block; }
+    .nav-links.open { display: flex; position: absolute; top: 64px; left: 0; right: 0; background: #fff; flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--border); }
+    .doc-layout { grid-template-columns: 1fr; padding-top: 32px; }
+    .side { position: static; }
+    .side-cta { display: none; }
+    .four { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .doc h1 { font-size: 30px; }
+    .banner { padding: 24px; }
+    .banner .btn { width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner" style="max-width:1120px;margin:0 auto;padding:0 24px">
+    <a class="logo" href="#"><i></i>分好类 <span style="font-weight:400;color:var(--text-weak);font-size:14px">SortIt</span></a>
+    <label class="search"><i></i><input type="search" id="pageSearch" placeholder="搜索疑难物品，如"外卖盒""></label>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#four">四大分类</a></li>
+      <li><a href="#qa">常见疑难</a></li>
+      <li><a href="#schedule">投放时间</a></li>
+      <li><a href="#volunteer">志愿者</a></li>
+    </ul>
+    <a href="#" class="btn btn-blue" style="padding:10px 16px;font-size:14px">下载打印版</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<div class="doc-layout">
+  <aside class="side">
+    <h4>入门</h4>
+    <a href="#intro" class="active">为什么要分类</a>
+    <a href="#four">四大分类速记</a>
+    <h4>分类详解</h4>
+    <a href="#recycle">可回收物清单</a>
+    <a href="#schedule">投放时间与点位</a>
+    <h4>疑难解答</h4>
+    <a href="#qa">常见疑难物品</a>
+    <h4>社区参与</h4>
+    <a href="#volunteer">加入志愿守桶队</a>
+    <div class="side-cta">
+      <b style="font-size:14px;font-weight:700;letter-spacing:0.1px">打印贴冰箱</b>
+      <p>一页 A4 速查表，四大分类 + 30 件高频疑难物品。</p>
+      <a href="#" class="btn btn-blue">获取速查表</a>
+    </div>
+  </aside>
+
+  <main class="doc">
+    <p class="crumb">文档 / <b>社区指南</b> / 总则</p>
+    <h1 id="intro">社区垃圾分类指南：从今晚这袋垃圾开始</h1>
+    <p class="updated">最后更新 2026-08-18 · 由望春里社区居委会与 42 位志愿者共同维护</p>
+
+    <p class="lead">本指南适用于望春里社区 11 个投放点位。分类不需要一步到位——先把"干湿分开"这一件事做对，就解决了八成的投放错误。</p>
+
+    <div class="callout">
+      <i>!</i>
+      <div>
+        <b>先记住一句话口诀</b>
+        <p>能卖拿去卖（可回收），干湿要分开（厨余/其他），有害单独放（灯管电池药），大件约回收。</p>
+      </div>
+    </div>
+
+    <h2 id="four">四大分类速记</h2>
+    <div class="four">
+      <div class="f-card f-rec"><i>回</i><b>可回收物</b><span>纸张 · 塑料 · 金属 · 玻璃 · 织物</span></div>
+      <div class="f-card f-wet"><i>厨</i><b>厨余垃圾</b><span>剩饭剩菜 · 果皮菜叶 · 茶渣</span></div>
+      <div class="f-card f-haz"><i>害</i><b>有害垃圾</b><span>电池 · 灯管 · 药品 · 油漆</span></div>
+      <div class="f-card f-oth"><i>其</i><b>其他垃圾</b><span>污染纸巾 · 陶瓷 · 尘土 · 烟头</span></div>
+    </div>
+
+    <h2 id="recycle">可回收物清单</h2>
+    <p>投放到蓝色回收桶前，请尽量<b>清空、晾干、压扁</b>。下表覆盖社区回收站高频接受的五类材质：</p>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>材质</th><th>常见举例</th><th>投放要求</th><th>常见误区</th></tr></thead>
+        <tbody>
+          <tr><td><b>纸张</b></td><td>快递箱 · 报纸 · 书本</td><td class="ok">压扁捆扎</td><td class="no">外卖油污纸盒不收</td></tr>
+          <tr><td><b>塑料</b></td><td>饮料瓶 · 洗涤瓶 · 保鲜盒</td><td class="ok">清空冲洗</td><td class="no">膜类塑料需另行投放</td></tr>
+          <tr><td><b>金属</b></td><td>易拉罐 · 罐头盒 · 金属餐具</td><td class="ok">压扁排空</td><td>压力罐请先排空</td></tr>
+          <tr><td><b>玻璃</b></td><td>玻璃瓶 · 玻璃杯</td><td class="ok">轻投轻放</td><td class="no">碎玻璃请包好标注</td></tr>
+          <tr><td><b>织物</b></td><td>旧衣 · 床单 · 毛巾</td><td class="ok">洗净干燥</td><td class="no">内衣袜不进回收箱</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="schedule">投放时间与点位</h2>
+    <div class="table-wrap">
+      <table>
+        <thead><tr><th>时段</th><th>开放点位</th><th>值守志愿者</th><th>备注</th></tr></thead>
+        <tbody>
+          <tr><td><b>07:00 – 09:00</b></td><td>全部 11 个点位</td><td>每点 2 人</td><td>高峰时段，厨余桶优先</td></tr>
+          <tr><td><b>18:30 – 20:30</b></td><td>全部 11 个点位</td><td>每点 2 人</td><td>有害垃圾每周三晚统一收运</td></tr>
+          <tr><td><b>其余时间</b></td><td>误时投放点（3 号、7 号）</td><td>无值守</td><td>仅其他垃圾与可回收物</td></tr>
+        </tbody>
+      </table>
+    </div>
+
+    <h2 id="qa">常见疑难物品</h2>
+    <p>顶栏搜索框可以按物品名过滤下面的疑难解答。</p>
+    <div id="qaList">
+      <div class="qa" data-k="外卖 餐盒 塑料盒 污染">
+        <h3>外卖餐盒算可回收吗？<span>高频</span></h3>
+        <p>干净的部分算：冲净无油渍的 PP 塑料盒可回收。油污严重的餐盒请投入其他垃圾——"洗干净是资源，带油污是垃圾"。</p>
+      </div>
+      <div class="qa" data-k="电池 充电宝 有害">
+        <h3>用完的电池、充电宝扔哪里？<span>高频</span></h3>
+        <p>纽扣电池、充电宝、灯管与过期药品统一投入红色有害垃圾桶；普通碱性干电池现可随其他垃圾处理，鼓励集中投放。</p>
+      </div>
+      <div class="qa" data-k="旧衣 捐赠 织物 回收箱">
+        <h3>旧衣服除了回收箱还能去哪？<span>便民</span></h3>
+        <p>社区服务中心一层设有衣物捐赠角（八成新以上），回收箱接收日常旧织物；破旧抹布类请直接投入其他垃圾。</p>
+      </div>
+      <div class="qa" data-k="大件 家具 沙发 预约">
+        <h3>大件家具怎么处理？<span>预约</span></h3>
+        <p>沙发、床垫等大件请通过物业预约上门回收（每户每月 2 次免费），切勿堆放在投放点旁——这是本月投诉最多的一项。</p>
+      </div>
+      <div class="qa" data-k="猫砂 宠物 粪便">
+        <h3>猫砂和宠物粪便属于什么垃圾？</h3>
+        <p>猫砂（无论矿物或豆腐材质）投入其他垃圾；宠物粪便建议冲入马桶，不便时包好投入其他垃圾，切勿投入厨余。</p>
+      </div>
+      <div class="qa" data-k="茶叶渣 咖啡渣 果皮 厨余">
+        <h3>茶渣、咖啡渣是厨余吗？</h3>
+        <p>是。茶叶渣、咖啡渣、果皮菜叶均属厨余垃圾，也是社区堆肥点最受欢迎的原料——3 号点位旁有专门收集口。</p>
+      </div>
+      <div class="qa" data-k="碎玻璃 灯泡 划伤">
+        <h3>碎玻璃、碎灯泡怕划伤怎么办？</h3>
+        <p>请用厚纸包好并在外层标注"碎玻璃"，投放到值守点的专用收集箱；灯泡属有害垃圾，切勿与玻璃瓶混投。</p>
+      </div>
+      <div class="qa" data-k="快递 气泡膜 纸箱 胶带">
+        <h3>快递纸箱上的胶带要撕掉吗？</h3>
+        <p>大量胶带会影响纸浆回收，寄卖型纸箱请尽量撕除；少量残留可接受。气泡膜与填充物属其他垃圾（膜类塑料）。</p>
+      </div>
+    </div>
+    <p class="qa-empty" id="qaEmpty">没有匹配的疑难物品——试着换个说法，或到社区群里问一句。</p>
+
+    <div class="banner" id="volunteer">
+      <div>
+        <h2>加入志愿守桶队，每週只需一小时。</h2>
+        <p>42 位邻居轮流在早晚投放时段值守，帮大家把口诀变成习惯。新人跟着老志愿者值守两次即可独立上岗。</p>
+      </div>
+      <a href="#" class="btn btn-blue">报名值守</a>
+    </div>
+  </main>
+</div>
+
+<footer>
+  <div class="foot">
+    <p>© 2026 望春里社区 · 分好类 SortIt · StyleForge 平台 AI 生成习作 · study of airtable</p>
+    <div class="links"><a href="#">点位地图</a><a href="#">收运日历</a><a href="#">联系居委会</a></div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 侧栏目录：滚动高亮 + 平滑跳转
+  document.querySelectorAll('.side a').forEach((link) => {
+    link.addEventListener('click', () => {
+      document.querySelectorAll('.side a').forEach((l) => l.classList.remove('active'));
+      link.classList.add('active');
+    });
+  });
+  // 疑难物品搜索：按物品关键词实时过滤
+  document.getElementById('pageSearch').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    let visible = 0;
+    document.querySelectorAll('.qa').forEach((item) => {
+      const hit = !q || item.dataset.k.includes(q) || item.textContent.toLowerCase().includes(q);
+      item.style.display = hit ? '' : 'none';
+      if (hit) visible++;
+    });
+    document.getElementById('qaEmpty').style.display = visible ? 'none' : 'block';
+  });
+</script>
+</body>
+</html>

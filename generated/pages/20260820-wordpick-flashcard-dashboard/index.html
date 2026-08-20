@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拾词 WordPick — 闪卡学习进度</title>
+<style>
+  /* ============ Pinterest Tokens（来源：design-md/pinterest/DESIGN.md）============ */
+  :root {
+    --plum: #211922;          /* 梅紫黑：主文本 */
+    --olive: #62625b;         /* 橄榄灰：次级文本 */
+    --silver: #91918c;        /* 暖银：边框/禁用 */
+    --sand: #e5e5e0;          /* 沙灰：次级按钮底 */
+    --warm-light: #e0e0d9;    /* 暖光：圆形按钮底 */
+    --wash: hsla(60, 20%, 98%, 0.5); /* 暖洗徽章底 */
+    --fog: rgba(246, 246, 243, 0.5); /* 雾面浅底 */
+    --red: #e60023;           /* Pinterest Red：唯一大胆强调（黑字！） */
+    --green: #103c25;         /* 绿 700：成功/打卡 */
+    --purple: #7e238b;        /* 推荐紫：AI 推荐语义 */
+    --dark: #33332e;          /* 深色页脚 */
+    --focus: #435ee5;         /* 焦点蓝 */
+    --font: 'Pin Sans', -apple-system, system-ui, 'Segoe UI', Roboto, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', Arial, sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: #ffffff; color: var(--plum); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1240px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+
+  /* ============ 顶栏：logo + 居中搜索 + 圆形动作钮 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: #ffffff; border-bottom: 1px solid var(--sand); }
+  .nav-inner { display: flex; align-items: center; gap: 16px; height: 72px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 20px; font-weight: 700; white-space: nowrap; }
+  .logo i { width: 28px; height: 28px; border-radius: 50%; background: var(--red); color: #ffffff; font-style: normal; font-size: 14px; font-weight: 700; display: grid; place-items: center; }
+  .search { display: flex; align-items: center; flex: 1; max-width: 400px; margin: 0 auto; background: #ffffff; border: 1px solid var(--silver); border-radius: 16px; padding: 11px 15px; gap: 8px; }
+  .search input { border: none; outline: none; background: transparent; font-family: var(--font); font-size: 15px; color: var(--plum); width: 100%; }
+  .search input::placeholder { color: var(--silver); }
+  .search b { color: var(--silver); font-weight: 400; font-size: 14px; }
+  .nav-right { display: flex; align-items: center; gap: 10px; }
+  .circ { width: 44px; height: 44px; border-radius: 50%; background: var(--warm-light); color: var(--plum); border: none; display: grid; place-items: center; font-size: 16px; font-weight: 700; }
+
+  /* ============ 按钮：红底黑字（16px 圆角，非药丸）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; padding: 10px 16px; border-radius: 16px; border: 2px solid transparent; cursor: pointer; transition: transform .15s, background .15s; min-height: 44px; }
+  .btn-red { background: var(--red); color: #000000; }
+  .btn-red:hover { transform: translateY(-1px); }
+  .btn-sand { background: var(--sand); color: #000000; }
+  .btn-sand:hover { background: #d8d8d2; }
+
+  /* ============ 页头 ============ */
+  .pagehead { padding: 40px 0 24px; display: flex; align-items: flex-end; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .pagehead h1 { font-size: 28px; font-weight: 700; letter-spacing: -1.2px; }
+  .pagehead p { font-size: 14px; color: var(--olive); margin-top: 6px; }
+
+  /* ============ 瀑布流（签名布局）============ */
+  .masonry { column-count: 3; column-gap: 16px; padding-bottom: 72px; }
+  .card { break-inside: avoid; margin-bottom: 16px; background: #ffffff; border-radius: 20px; border: 1px solid var(--sand); overflow: hidden; }
+  .card-body { padding: 18px 20px 20px; }
+  .cap { font-size: 12px; color: var(--olive); }
+  .cap b { color: var(--plum); font-weight: 700; }
+
+  /* 今日复习卡 */
+  .today .card-body { padding: 22px 24px 24px; }
+  .today .big { font-size: 44px; font-weight: 700; line-height: 1.1; letter-spacing: -1px; display: block; margin: 8px 0 2px; }
+  .track { height: 8px; border-radius: 8px; background: var(--sand); margin: 14px 0 6px; overflow: hidden; }
+  .track i { display: block; height: 100%; border-radius: 8px; background: var(--red); }
+  .flip { perspective: 1000px; height: 132px; margin: 16px 0; cursor: pointer; }
+  .flip-inner { position: relative; width: 100%; height: 100%; transition: transform .5s; transform-style: preserve-3d; }
+  .flip.on .flip-inner { transform: rotateY(180deg); }
+  .flip-face { position: absolute; inset: 0; backface-visibility: hidden; border-radius: 12px; display: grid; place-items: center; text-align: center; padding: 16px; }
+  .flip-front { background: var(--sand); }
+  .flip-front b { font-size: 26px; font-weight: 700; letter-spacing: -0.6px; display: block; }
+  .flip-front span { font-size: 12px; color: var(--olive); }
+  .flip-back { background: var(--plum); color: #ffffff; transform: rotateY(180deg); }
+  .flip-back b { font-size: 22px; font-weight: 700; display: block; }
+  .flip-back span { font-size: 12px; color: var(--silver); }
+  .flip-hint { font-size: 12px; color: var(--silver); text-align: center; margin-bottom: 14px; }
+  .today .btn { width: 100%; }
+
+  /* 打卡卡 */
+  .streak .big { font-size: 32px; font-weight: 700; display: block; margin: 6px 0 12px; }
+  .streak .big span { font-size: 14px; color: var(--olive); font-weight: 400; }
+  .week { display: flex; gap: 8px; }
+  .week i { flex: 1; height: 34px; border-radius: 12px; background: var(--warm-light); display: grid; place-items: center; font-style: normal; font-size: 11px; color: var(--olive); }
+  .week i.hit { background: var(--green); color: #ffffff; }
+  .week i.today-dot { box-shadow: 0 0 0 2px var(--red); }
+
+  /* 词集卡 */
+  .cover { height: 108px; position: relative; }
+  .ring { position: absolute; right: 14px; bottom: -22px; width: 52px; height: 52px; border-radius: 50%; display: grid; place-items: center; font-size: 12px; font-weight: 700; border: 4px solid #ffffff; }
+  .ring::before { content: ''; position: absolute; inset: -4px; border-radius: 50%; background: conic-gradient(var(--red) var(--p), var(--sand) 0); z-index: -1; }
+  .deck h3 { font-size: 16px; font-weight: 700; margin: 26px 0 4px; }
+  .deck .stats { display: flex; gap: 14px; margin: 8px 0 14px; }
+  .deck .stats span { font-size: 12px; color: var(--olive); }
+  .deck .stats b { color: var(--plum); font-weight: 700; }
+  .deck .btn { width: 100%; }
+  .c-jp { background: linear-gradient(140deg, #e5e5e0, #bcbcb3); }
+  .c-es { background: linear-gradient(140deg, #e0d4e6, #b9a6c4); }
+  .c-med { background: linear-gradient(140deg, #e6e0d4, #c4b9a6); }
+  .c-yue { background: linear-gradient(140deg, #d4e0d8, #a6c4b3); }
+
+  /* 记忆曲线卡 */
+  .chart { display: flex; align-items: flex-end; gap: 8px; height: 96px; margin-top: 14px; }
+  .chart .bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; gap: 2px; }
+  .chart .bar i { display: block; border-radius: 6px 6px 0 0; background: var(--green); opacity: 0.85; }
+  .chart .bar span { font-size: 10px; color: var(--silver); text-align: center; }
+  .chart-note { font-size: 12px; color: var(--olive); margin-top: 10px; line-height: 1.5; }
+
+  /* 推荐卡 */
+  .rec-tag { display: inline-block; font-size: 11px; font-weight: 700; color: var(--purple); background: rgba(126, 35, 139, 0.08); border-radius: 12px; padding: 3px 10px; margin-bottom: 10px; }
+  .rec-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--fog); }
+  .rec-item:last-child { border-bottom: none; }
+  .rec-item .t { flex: 1; }
+  .rec-item b { font-size: 14px; font-weight: 700; display: block; }
+  .rec-item span { font-size: 12px; color: var(--olive); }
+  .rec-add { width: 36px; height: 36px; border-radius: 50%; background: var(--warm-light); border: none; color: var(--plum); font-size: 16px; font-weight: 700; flex-shrink: 0; }
+  .rec-add:hover { background: var(--sand); }
+
+  /* 成就卡 */
+  .badges { display: flex; gap: 12px; margin-top: 12px; }
+  .badge { flex: 1; text-align: center; }
+  .badge i { width: 48px; height: 48px; border-radius: 50%; display: grid; place-items: center; font-style: normal; font-size: 18px; margin: 0 auto 6px; background: var(--warm-light); }
+  .badge.g i { background: var(--green); color: #fff; }
+  .badge.r i { background: var(--red); color: #fff; }
+  .badge span { font-size: 11px; color: var(--olive); display: block; line-height: 1.4; }
+
+  /* ============ 页脚（深色）============ */
+  footer { background: var(--dark); padding: 44px 0 32px; }
+  .foot { display: flex; align-items: center; justify-content: space-between; gap: 20px; flex-wrap: wrap; }
+  .foot .logo { color: #ffffff; }
+  .foot .logo i { font-size: 12px; }
+  .foot-links { display: flex; gap: 20px; flex-wrap: wrap; }
+  .foot-links a { font-size: 12px; color: var(--silver); }
+  .foot-links a:hover { color: #ffffff; }
+  .foot p { font-size: 12px; color: var(--silver); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) { .masonry { column-count: 2; } }
+  @media (max-width: 768px) {
+    .search { display: none; }
+    .pagehead { padding-top: 28px; }
+    .masonry { column-count: 1; }
+  }
+  @media (max-width: 480px) {
+    .nav-inner { gap: 8px; }
+    .circ { width: 40px; height: 40px; }
+    .pagehead h1 { font-size: 24px; letter-spacing: -0.8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i>拾</i>WordPick</a>
+    <label class="search">
+      <input type="search" id="deckSearch" placeholder="搜索你的词集…">
+      <b>/</b>
+    </label>
+    <div class="nav-right">
+      <button class="circ" aria-label="通知">3</button>
+      <button class="circ" aria-label="我的">陆</button>
+      <button class="btn btn-red">创建词集</button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="pagehead">
+    <div>
+      <h1>早上好，陆拾词。</h1>
+      <p>今日有 48 张卡片到了最佳复习时间。</p>
+    </div>
+    <span class="cap"><b>学习 187 天</b> · 四门语言进行中</span>
+  </header>
+
+  <div class="masonry">
+    <!-- 今日复习 -->
+    <section class="card today">
+      <div class="card-body">
+        <span class="cap">今日复习 · Due Today</span>
+        <span class="big">48 张</span>
+        <span class="cap">已完成 12 · 剩余 36（25%）</span>
+        <div class="track"><i style="width:25%"></i></div>
+        <div class="flip" id="flip" role="button" tabindex="0" aria-label="点击翻转示例卡片">
+          <div class="flip-inner">
+            <div class="flip-face flip-front"><div><b>答える</b><span>こたえる · 第 3 类动词</span></div></div>
+            <div class="flip-face flip-back"><div><b>回答；答复</b><span>例：質問に答える</span></div></div>
+          </div>
+        </div>
+        <p class="flip-hint">点击卡片试试翻面</p>
+        <button class="btn btn-red">开始复习</button>
+      </div>
+    </section>
+
+    <!-- 打卡 -->
+    <section class="card streak">
+      <div class="card-body">
+        <span class="cap">连续打卡 · Streak</span>
+        <span class="big">24 <span>天</span></span>
+        <div class="week">
+          <i class="hit">一</i><i class="hit">二</i><i class="hit">三</i><i class="hit">四</i><i class="hit">五</i><i class="today-dot">六</i><i>日</i>
+        </div>
+        <p class="chart-note" style="margin-top:12px">再坚持 3 天解锁「月度不断签」徽章。</p>
+      </div>
+    </section>
+
+    <!-- 词集：日语 N3 -->
+    <section class="card deck" data-k="日语 n3 词汇">
+      <div class="cover c-jp"><span class="ring" style="--p:62%">62%</span></div>
+      <div class="card-body">
+        <h3>日语 N3 核心词汇</h3>
+        <span class="cap">420 张 · 已学 260</span>
+        <div class="stats"><span>掌握 <b>182</b></span><span>生疏 <b>78</b></span><span>新增 <b>12/天</b></span></div>
+        <button class="btn btn-sand">继续学习</button>
+      </div>
+    </section>
+
+    <!-- 记忆曲线 -->
+    <section class="card">
+      <div class="card-body">
+        <span class="cap">记忆保持率 · 最近 7 次复习</span>
+        <div class="chart">
+          <div class="bar"><i style="height:58%"></i><span>D1</span></div>
+          <div class="bar"><i style="height:44%"></i><span>D2</span></div>
+          <div class="bar"><i style="height:66%"></i><span>D4</span></div>
+          <div class="bar"><i style="height:71%"></i><span>D7</span></div>
+          <div class="bar"><i style="height:79%"></i><span>D14</span></div>
+          <div class="bar"><i style="height:86%"></i><span>D30</span></div>
+          <div class="bar"><i style="height:92%"></i><span>D60</span></div>
+        </div>
+        <p class="chart-note">复习间隔越长，遗忘曲线越平缓——你在第 14 天后的保持率稳定在 85% 以上。</p>
+      </div>
+    </section>
+
+    <!-- 词集：西语 -->
+    <section class="card deck" data-k="西语 西班牙语 动词变位">
+      <div class="cover c-es"><span class="ring" style="--p:38%">38%</span></div>
+      <div class="card-body">
+        <h3>西语动词变位 · 常用 180</h3>
+        <span class="cap">180 张 · 已学 68</span>
+        <div class="stats"><span>掌握 <b>41</b></span><span>生疏 <b>27</b></span><span>新增 <b>8/天</b></span></div>
+        <button class="btn btn-sand">继续学习</button>
+      </div>
+    </section>
+
+    <!-- 智能推荐 -->
+    <section class="card">
+      <div class="card-body">
+        <span class="rec-tag">智能推荐</span>
+        <span class="cap" style="display:block;margin-bottom:6px">根据你的遗忘曲线挑选的下一个词集</span>
+        <div class="rec-item">
+          <div class="t"><b>日语 N2 听力词汇</b><span>衔接你的 N3 进度 · 300 张</span></div>
+          <button class="rec-add" aria-label="添加">+</button>
+        </div>
+        <div class="rec-item">
+          <div class="t"><b>旅行西语 300 句</b><span>与动词变位交叉强化 · 300 张</span></div>
+          <button class="rec-add" aria-label="添加">+</button>
+        </div>
+        <div class="rec-item">
+          <div class="t"><b>英语词根词缀 · 进阶</b><span>基于医学英语学习记录 · 240 张</span></div>
+          <button class="rec-add" aria-label="添加">+</button>
+        </div>
+      </div>
+    </section>
+
+    <!-- 词集：医学英语 -->
+    <section class="card deck" data-k="医学英语 词根">
+      <div class="cover c-med"><span class="ring" style="--p:81%">81%</span></div>
+      <div class="card-body">
+        <h3>医学英语词根 · 前缀后缀</h3>
+        <span class="cap">260 张 · 已学 232</span>
+        <div class="stats"><span>掌握 <b>201</b></span><span>生疏 <b>31</b></span><span>新增 <b>5/天</b></span></div>
+        <button class="btn btn-sand">继续学习</button>
+      </div>
+    </section>
+
+    <!-- 成就 -->
+    <section class="card">
+      <div class="card-body">
+        <span class="cap">本周成就 · Achievements</span>
+        <div class="badges">
+          <div class="badge r"><i>七</i><span>七日全勤</span></div>
+          <div class="badge g"><i>百</i><span>单周百卡</span></div>
+          <div class="badge"><i>早</i><span>五个清晨</span></div>
+        </div>
+        <p class="chart-note">下周目标：完成日语 N3 剩余 160 张的首轮学习。</p>
+      </div>
+    </section>
+
+    <!-- 词集：粤语 -->
+    <section class="card deck" data-k="粤语 口语">
+      <div class="cover c-yue"><span class="ring" style="--p:15%">15%</span></div>
+      <div class="card-body">
+        <h3>粤语口语 500 句</h3>
+        <span class="cap">500 张 · 已学 74</span>
+        <div class="stats"><span>掌握 <b>52</b></span><span>生疏 <b>22</b></span><span>新增 <b>10/天</b></span></div>
+        <button class="btn btn-sand">继续学习</button>
+      </div>
+    </section>
+  </div>
+</div>
+
+<footer>
+  <div class="container foot">
+    <a class="logo" href="#"><i>拾</i>WordPick</a>
+    <div class="foot-links">
+      <a href="#">词集广场</a><a href="#">学习指南</a><a href="#">间隔重复算法</a><a href="#">帮助中心</a>
+    </div>
+    <p>© 2026 WordPick · StyleForge 平台 AI 生成习作 · study of pinterest</p>
+  </div>
+</footer>
+
+<script>
+  // 闪卡翻转
+  const flip = document.getElementById('flip');
+  const toggle = () => flip.classList.toggle('on');
+  flip.addEventListener('click', toggle);
+  flip.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); toggle(); } });
+  // 词集搜索过滤
+  document.getElementById('deckSearch').addEventListener('input', (e) => {
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll('.deck').forEach((d) => {
+      d.style.display = (!q || d.dataset.k.includes(q)) ? '' : 'none';
+    });
+  });
+  // 添加推荐词集反馈
+  document.querySelectorAll('.rec-add').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      btn.textContent = '✓';
+      btn.style.background = 'var(--sand)';
+    });
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,38 @@
+{
+  "id": "20260820-sonar-live-radio-landing",
+  "title": "声呐 SONAR · 24 小时直播电台落地页",
+  "created_at": "2026-08-20T23:38:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "nvidia"
+  ],
+  "page_type": "landing",
+  "industry": [
+    "music"
+  ],
+  "mood": [
+    "dark-first",
+    "dense",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "信号绿只做边框",
+    "绿色均衡器动画",
+    "绿下划线关键指标",
+    "工业规格节目表",
+    "深浅交替节奏",
+    "2px方角工业几何"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}
