@@ -6,6 +6,8 @@
  *   单轮最多沉淀 3 个，其余顺延下一轮。
  * 阶段二（随机学习）：从白名单（54 个种子 + rating >= 4 的派生风格）随机抽取 2 个
  *   不同风格（避开最近 8 个页面已使用的风格，池不足时回退全量），并附页面类型/行业建议。
+ * 附带输出：pending_rating（rating 为 null 的待评分页面）与 rated_below_threshold（已评分但 <4），
+ *   供收尾汇报直接引用，杜绝手工枚举出错——已评分页面绝不计入待评分。
  *
  * 用法：node scripts/round-plan.mjs [--json]
  */
@@ -63,6 +65,14 @@ const promote = promoteAll.slice(0, PROMOTE_CAP).map((p) => ({
   lineage: p.meta.lineage ?? [],
 }));
 
+// —— 待评分 / 已评分未达沉淀线（收尾汇报引用，禁止凭记忆枚举）——
+const pendingRating = pages
+  .filter((p) => p.meta && p.meta.rating == null)
+  .map((p) => ({ page: p.meta.id ?? p.dir, title: p.meta.title, status: p.meta.status }));
+const ratedBelow = pages
+  .filter((p) => p.meta && typeof p.meta.rating === 'number' && p.meta.rating < 4 && p.meta.status !== 'archived')
+  .map((p) => ({ page: p.meta.id ?? p.dir, title: p.meta.title, rating: p.meta.rating, status: p.meta.status }));
+
 // —— 阶段二：随机抽取两个风格 ——
 const pool = [
   ...seeds.map((name) => ({ id: name, kind: 'seed' })),
@@ -86,6 +96,8 @@ const plan = {
   round_at: new Date().toISOString(),
   promote,
   promote_deferred: Math.max(0, promoteAll.length - promote.length),
+  pending_rating: pendingRating,
+  rated_below_threshold: ratedBelow,
   pool_size: pool.length,
   recent_excluded: [...recentLineages],
   picks,
@@ -104,6 +116,11 @@ if (asJson) {
     console.log(`     DESIGN.md: ${p.kind === 'seed' ? `awesome-design-md/design-md/${p.id}/DESIGN.md` : `generated/styles/${p.id}/DESIGN.md`}`);
     console.log(`     建议页面类型: ${p.suggest_page_type} · 建议行业: ${p.suggest_industry}`);
   });
+  console.log(`\n[待评分提醒] rating 为 null 的页面：${pendingRating.length} 个（收尾汇报的待评分清单 = 此清单 + 本轮新生成页面）`);
+  if (!pendingRating.length) console.log('  （无——画廊无积压）');
+  for (const p of pendingRating) console.log(`  - ${p.page}  ${p.title}（${p.status}）`);
+  console.log(`[已评分未达沉淀线 <4] ${ratedBelow.length} 个（已评分，不属于待评分）：`);
+  for (const p of ratedBelow) console.log(`  - ${p.page}  ${p.title}  ★${p.rating}（${p.status}）`);
   console.log('\n下一步：沉淀候选逐一走 §10 协议（完成后 npm run promote -- <page-id> <style-id>）；');
-  console.log('再按抽取结果各生成 1 个 study 页面（两页类型/主题不得雷同），最后 npm run snapshot && npm run verify && npm run validate。');
+  console.log('再按抽取结果各生成 1 个 study 页面（两页类型/主题不得雷同），最后 npm run snapshot && npm run verify && npm run validate && npm run sync（sync 会自动跳过未评分的新页面）。');
 }
