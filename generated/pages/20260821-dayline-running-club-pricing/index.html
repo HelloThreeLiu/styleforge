@@ -1,0 +1,322 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>晨昏线 Dayline — 城市跑团联盟 · 赛季费率</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500&family=Space+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Together AI Tokens（来源：design-md/together.ai/DESIGN.md）============ */
+  :root {
+    --black: #000000;          /* 浅区主文本 */
+    --white: #ffffff;
+    --midnight: #010120;       /* 深午夜蓝：深区/页脚，非灰黑 */
+    --magenta: #ef2cc1;        /* 品红：仅渐变装饰，不做 UI */
+    --orange: #fc4c02;         /* 橙：仅渐变装饰 */
+    --lavender: #bdbbff;       /* 薰衣草：软强调 */
+    --black-40: #00000066;
+    --glass-dark: rgba(0, 0, 0, 0.08);
+    --glass-light: rgba(255, 255, 255, 0.12);
+    --glass-btn: rgba(255, 255, 255, 0.12);
+    --bd-light: rgba(0, 0, 0, 0.08);
+    --bd-dark: rgba(255, 255, 255, 0.12);
+    --shadow-blue: rgba(1, 1, 32, 0.1) 0px 4px 10px;
+    --display: 'Archivo', 'The Future', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Space Mono', 'PP Neue Montreal Mono', ui-monospace, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--display); background: var(--white); color: var(--black); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--display); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--lavender); outline-offset: 2px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .mono { font-family: var(--mono); text-transform: uppercase; letter-spacing: 0.08px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bd-light); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 17px; font-weight: 500; letter-spacing: -0.3px; }
+  .logo i { width: 20px; height: 20px; border-radius: 4px; background: linear-gradient(135deg, var(--magenta), var(--orange) 60%, var(--lavender)); font-style: normal; }
+  .logo em { font-style: normal; font-family: var(--mono); font-size: 10px; letter-spacing: 0.055px; color: var(--black-40); text-transform: uppercase; }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 16px; font-weight: 400; letter-spacing: -0.16px; color: var(--black); padding: 8px 12px; }
+  .nav-links a:hover { text-decoration: none; color: var(--black-40); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--bd-light); border-radius: 4px; }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--black); margin: 3.5px auto; }
+
+  /* ============ 按钮（锐利 4px）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 500; letter-spacing: -0.16px; line-height: 1.25; padding: 10px 20px; border-radius: 4px; border: none; min-height: 44px; transition: background .15s; }
+  .btn-dark { background: var(--midnight); color: var(--white); }
+  .btn-dark:hover { background: #1a1a40; }
+  .btn-line { background: transparent; color: var(--black); border: 1px solid var(--bd-light); }
+  .btn-line:hover { background: var(--glass-dark); }
+  .btn-glass { background: var(--glass-btn); color: var(--white); opacity: 0.9; }
+  .btn-glass:hover { background: rgba(255, 255, 255, 0.2); }
+
+  /* ============ Hero：粉彩渐变天空 ============ */
+  .hero { position: relative; text-align: center; padding: 100px 0 88px; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -180px; left: 50%; transform: translateX(-50%); width: 1200px; height: 560px; background: radial-gradient(ellipse 40% 50% at 30% 50%, rgba(239, 44, 193, 0.16), transparent 70%), radial-gradient(ellipse 45% 55% at 70% 45%, rgba(189, 187, 255, 0.45), transparent 72%), radial-gradient(ellipse 35% 40% at 50% 30%, rgba(120, 170, 255, 0.18), transparent 70%); pointer-events: none; }
+  .hero > * { position: relative; }
+  .hero .label { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; color: var(--black-40); margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(30px, 5.6vw, 64px); font-weight: 500; line-height: 1.10; letter-spacing: -1.92px; max-width: 720px; margin: 0 auto; }
+  .hero p.sub { font-size: 18px; font-weight: 400; line-height: 1.30; letter-spacing: -0.18px; color: var(--black-40); max-width: 560px; margin: 20px auto 32px; }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+  /* 计费周期切换 */
+  .cycle { position: relative; display: inline-flex; margin-top: 36px; border: 1px solid var(--bd-light); border-radius: 4px; overflow: hidden; }
+  .cycle button { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; background: var(--white); color: var(--black-40); border: none; padding: 9px 18px; }
+  .cycle button.on { background: var(--midnight); color: var(--white); }
+  .cycle .save { color: var(--magenta); }
+
+  /* ============ 会员三档 ============ */
+  .plans { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; margin-top: -28px; position: relative; }
+  .plan { background: var(--white); border: 1px solid var(--bd-light); border-radius: 8px; padding: 28px; box-shadow: var(--shadow-blue); }
+  .plan.hot { border: 1px solid var(--lavender); }
+  .plan .tag { display: inline-block; font-family: var(--mono); font-size: 10px; font-weight: 400; letter-spacing: 0.05px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; border: 1px solid var(--bd-light); margin-bottom: 18px; }
+  .plan.hot .tag { background: var(--lavender); border-color: var(--lavender); color: var(--midnight); }
+  .plan h3 { font-size: 28px; font-weight: 500; line-height: 1.15; letter-spacing: -0.42px; }
+  .plan .price { margin: 14px 0 4px; font-size: 54px; font-weight: 500; letter-spacing: -1.6px; line-height: 1; }
+  .plan .price em { font-style: normal; font-size: 16px; font-weight: 400; letter-spacing: -0.16px; color: var(--black-40); }
+  .plan .per { font-family: var(--mono); font-size: 11px; letter-spacing: 0.055px; text-transform: uppercase; color: var(--black-40); margin-bottom: 20px; }
+  .plan ul { list-style: none; margin-bottom: 24px; }
+  .plan li { font-size: 15px; font-weight: 400; letter-spacing: -0.16px; line-height: 1.4; padding: 9px 0; border-bottom: 1px solid var(--glass-dark); }
+  .plan li:last-child { border-bottom: none; }
+  .plan .btn { width: 100%; }
+
+  /* ============ 统计条 ============ */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; padding: 96px 0 80px; }
+  .stat b { display: block; font-size: 56px; font-weight: 500; letter-spacing: -1.6px; line-height: 1; }
+  .stat span { display: block; font-size: 14px; letter-spacing: -0.16px; color: var(--black-40); margin-top: 10px; line-height: 1.4; }
+
+  /* ============ 费率拆解 ============ */
+  section.split { padding: 0 0 96px; }
+  .sec-label { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; color: var(--black-40); margin-bottom: 12px; }
+  .sec-title { font-size: clamp(28px, 3.8vw, 40px); font-weight: 500; line-height: 1.20; letter-spacing: -0.8px; margin-bottom: 40px; }
+  .bars { max-width: 720px; }
+  .bar-row { display: grid; grid-template-columns: 190px 1fr 64px; gap: 16px; align-items: center; padding: 12px 0; }
+  .bar-row b { font-size: 16px; font-weight: 500; letter-spacing: -0.16px; }
+  .bar-row .track { height: 8px; border-radius: 4px; background: var(--glass-dark); overflow: hidden; }
+  .bar-row .track i { display: block; height: 100%; border-radius: 4px; background: linear-gradient(90deg, var(--lavender), #9d9bf0); }
+  .bar-row .pct { font-family: var(--mono); font-size: 13px; text-align: right; color: var(--black-40); }
+  .split .note { font-size: 14px; line-height: 1.5; color: var(--black-40); max-width: 560px; margin-top: 24px; }
+
+  /* ============ 深蓝赛季公报区（research 区转译）============ */
+  section.papers { background: var(--midnight); color: var(--white); padding: 96px 0; }
+  section.papers .sec-label { color: rgba(255, 255, 255, 0.55); }
+  section.papers .sec-title { color: var(--white); }
+  .paper-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .paper { border: 1px solid var(--bd-dark); border-radius: 8px; padding: 24px; }
+  .paper .k { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; color: var(--lavender); margin-bottom: 14px; }
+  .paper h3 { font-size: 22px; font-weight: 500; line-height: 1.15; letter-spacing: -0.22px; margin-bottom: 10px; }
+  .paper p { font-size: 14px; font-weight: 400; line-height: 1.4; letter-spacing: -0.16px; color: rgba(255, 255, 255, 0.6); margin-bottom: 16px; }
+  .paper a { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; color: var(--white); border-bottom: 1px solid var(--bd-dark); }
+  .paper a:hover { color: var(--lavender); }
+
+  /* ============ 巨型页脚 ============ */
+  footer { background: var(--midnight); color: var(--white); padding: 0 0 40px; }
+  .mega { font-size: clamp(64px, 14vw, 180px); font-weight: 500; letter-spacing: -4px; line-height: 0.9; text-align: center; padding: 40px 0 56px; opacity: 0.95; background: linear-gradient(180deg, #ffffff 30%, rgba(255, 255, 255, 0.25)); -webkit-background-clip: text; background-clip: text; color: transparent; user-select: none; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; padding: 0 0 32px; }
+  .foot-grid p { font-size: 14px; line-height: 1.4; color: rgba(255, 255, 255, 0.55); max-width: 300px; }
+  .foot-grid h5 { font-family: var(--mono); font-size: 10px; font-weight: 500; letter-spacing: 0.055px; text-transform: uppercase; color: rgba(255, 255, 255, 0.55); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 15px; color: rgba(255, 255, 255, 0.8); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--white); }
+  .foot-note { border-top: 1px solid var(--bd-dark); padding-top: 20px; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 10px; letter-spacing: 0.05px; text-transform: uppercase; color: rgba(255, 255, 255, 0.45); }
+
+  /* ============ 响应式：1280 / 992 / 768 / 479 / 375（together 断点 479/768/992）============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 992px) {
+    .plans { grid-template-columns: 1fr; max-width: 520px; margin-left: auto; margin-right: auto; }
+    .stats { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .paper-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--bd-light); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 24px; }
+    .hero { padding: 64px 0 72px; }
+    .bar-row { grid-template-columns: 1fr; gap: 8px; }
+    .bar-row .pct { text-align: left; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 479px) {
+    .stats { grid-template-columns: 1fr; }
+    .hero h1 { letter-spacing: -0.9px; }
+    .plan .price { font-size: 44px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.6px; }
+    .stat b { font-size: 44px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>晨昏线 <em>Dayline</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#plans">会员档位</a></li>
+      <li><a href="#split">费率拆解</a></li>
+      <li><a href="#papers">赛季公报</a></li>
+      <li><a href="#">城市路线</a></li>
+    </ul>
+    <a href="#plans" class="btn btn-dark">加入新赛季</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <p class="label">Pricing · 2026 秋季赛 · 17 城</p>
+    <h1>跑一个赛季，<br>账单清爽得像清晨。</h1>
+    <p class="sub">晨昏线是非营利的城市跑团联盟：一次缴清，整季无忧——保险、补给、计时、成绩档案全含，没有隐藏费用，也没有第二条付费项。</p>
+    <div class="hero-actions">
+      <a href="#plans" class="btn btn-dark">查看三档会员</a>
+      <a href="#split" class="btn btn-line">¥68 去哪了</a>
+    </div>
+    <div class="cycle" id="cycle">
+      <button class="on" data-c="season">按季</button>
+      <button data-c="year">按年 <span class="save">省 18%</span></button>
+    </div>
+  </div>
+</header>
+
+<div class="container plans" id="plans">
+  <div class="plan">
+    <span class="tag">自组起跑</span>
+    <h3>晨光</h3>
+    <p class="price num" data-season="¥0" data-year="¥0">¥0</p>
+    <p class="per"> forever · 永久免费</p>
+    <ul>
+      <li>周四清晨自组跑 · 路线公开</li>
+      <li>联盟 App 记录与勋章</li>
+      <li>城市路线图集（低精度版）</li>
+      <li>赛季抽签资格（限量赛事）</li>
+    </ul>
+    <a href="#" class="btn btn-line">直接开始</a>
+  </div>
+  <div class="plan hot">
+    <span class="tag">Most joined · 最多人选</span>
+    <h3>晨昏线</h3>
+    <p class="price num" data-season="¥68" data-year="¥222">¥68</p>
+    <p class="per"> / 季 · 或 ¥222 / 年</p>
+    <ul>
+      <li>全部正式赛事报名权（12 场/季）</li>
+      <li>夜跑意外保险（保额 50 万）</li>
+      <li>水站与能量补给全免</li>
+      <li>芯片计时 + 官方成绩档案</li>
+      <li>高清路线图集与训练课表</li>
+    </ul>
+    <a href="#" class="btn btn-dark">加入晨昏线</a>
+  </div>
+  <div class="plan">
+    <span class="tag">家庭同跑</span>
+    <h3>全家</h3>
+    <p class="price num" data-season="¥158" data-year="¥520">¥158</p>
+    <p class="per"> / 季 · 或 ¥520 / 年</p>
+    <ul>
+      <li>至多 4 位家庭成员共享权益</li>
+      <li>亲子赛事与青少年训练营</li>
+      <li>家庭接力赛专属道次</li>
+      <li>老人健走团活动</li>
+    </ul>
+    <a href="#" class="btn btn-line">全家入盟</a>
+  </div>
+</div>
+
+<div class="container stats">
+  <div class="stat"><b>4,200</b><span>名在册跑者，最年长的 79 岁</span></div>
+  <div class="stat"><b>17</b><span>座城市的分盟，共用一套费率</span></div>
+  <div class="stat"><b>92%</b><span>上季续费率——我们唯一的增长指标</span></div>
+  <div class="stat"><b>0</b><span>条广告与赞助商横幅，永远</span></div>
+</div>
+
+<section class="split container" id="split">
+  <p class="sec-label">Where it goes · 费率拆解</p>
+  <h2 class="sec-title">你的 ¥68，每一分都对得上账。</h2>
+  <div class="bars">
+    <div class="bar-row"><b>夜跑意外保险</b><div class="track"><i style="width:42%"></i></div><span class="pct">¥28.6</span></div>
+    <div class="bar-row"><b>水站与补给</b><div class="track"><i style="width:31%"></i></div><span class="pct">¥21.1</span></div>
+    <div class="bar-row"><b>赛事运营与计时</b><div class="track"><i style="width:19%"></i></div><span class="pct">¥12.9</span></div>
+    <div class="bar-row"><b>成绩档案系统</b><div class="track"><i style="width:8%"></i></div><span class="pct">¥5.4</span></div>
+  </div>
+  <p class="note">账目按季度公示，接受全体会员查阅。盈余滚入下季的保险池——联盟章程规定：账上现金不得超过下季预算的 110%。</p>
+</section>
+
+<section class="papers" id="papers">
+  <div class="container">
+    <p class="sec-label">Season papers · 赛季公报</p>
+    <h2 class="sec-title">认真跑步的人，也值得严肃的数据。</h2>
+    <div class="paper-grid">
+      <div class="paper">
+        <p class="k">Paper 01 · 跑量报告</p>
+        <h3>2026 春季跑量公报</h3>
+        <p>4,200 名跑者的 38 万公里：配速分布、出勤热力与雨夜坚持率——全部匿名、全部开源。</p>
+        <a href="#">下载 PDF →</a>
+      </div>
+      <div class="paper">
+        <p class="k">Paper 02 · 安全白皮书</p>
+        <h3>夜跑安全三年回溯</h3>
+        <p>三个赛季的 2,741 起夜间事件复盘：反光装备、结伴规则与路线照明改善建议。</p>
+        <a href="#">下载 PDF →</a>
+      </div>
+      <div class="paper">
+        <p class="k">Paper 03 · 路线图集</p>
+        <h3>17 城晨昏线地图</h3>
+        <p>每座城市 6–14 条实测路线：坡度、照明、公厕与补给点，跑者共创、季度修订。</p>
+        <a href="#">在线查阅 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="mega" aria-hidden="true">dayline</div>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#" style="color:#fff"><i></i>晨昏线 <em>Dayline</em></a>
+        <p>非营利城市跑团联盟。清晨出发的人，和黄昏出发的人，在同一条线上相遇。</p>
+      </div>
+      <div>
+        <h5>联盟</h5>
+        <a href="#plans">会员档位</a><a href="#split">费率拆解</a><a href="#">联盟章程</a>
+      </div>
+      <div>
+        <h5>赛季</h5>
+        <a href="#">赛历</a><a href="#papers">公报</a><a href="#">成绩查询</a>
+      </div>
+      <div>
+        <h5>城市</h5>
+        <a href="#">17 城分盟</a><a href="#">路线图集</a><a href="#">发起分盟</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 Dayline 晨昏线 · StyleForge 平台 AI 生成习作 · study of together.ai</span>
+      <span>season 2026-fall</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 计费周期切换（价格数字重写）
+  document.getElementById('cycle').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#cycle button').forEach(b => b.classList.toggle('on', b === btn));
+    document.querySelectorAll('.plan .price').forEach(p => {
+      p.textContent = btn.dataset.c === 'year' ? p.dataset.year : p.dataset.season;
+    });
+  });
+</script>
+</body>
+</html>

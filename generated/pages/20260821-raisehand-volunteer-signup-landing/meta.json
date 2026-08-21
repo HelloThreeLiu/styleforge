@@ -1,0 +1,24 @@
+{
+  "id": "20260821-raisehand-volunteer-signup-landing",
+  "title": "举手 RaiseHand · 城市志愿活动报名落地页",
+  "created_at": "2026-08-21T23:59:55+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["figma"],
+  "page_type": "landing",
+  "industry": ["social"],
+  "mood": ["playful", "minimal"],
+  "innovation": 0,
+  "tags_ai": [
+    "黑白界面彩色内容",
+    "多彩满宽渐变hero",
+    "精细可变字重",
+    "虚线焦点描边",
+    "药丸tab几何",
+    "白画廊活动卡"
+  ],
+  "tags_user": [],
+  "rating": 4.0,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

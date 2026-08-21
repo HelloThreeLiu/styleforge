@@ -1,0 +1,11 @@
+{
+  "id": "bsides-v1",
+  "name": "B面曲目志",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "source_page": "20260821-bsides-recordstore-blog",
+  "lineage": ["vinyl-noir-v1"],
+  "inherited_rating": 4.5,
+  "rating": 4.5,
+  "child_count": 0,
+  "summary": "近黑播放器语言的编辑化再派生：一切长内容皆专辑、一切章节皆曲目，封面渐变供色，底部永远有一条正在播放。"
+}

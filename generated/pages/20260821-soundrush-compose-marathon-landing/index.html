@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>声浪 SoundRush — 48 小时极限作曲马拉松</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Inconsolata:wght@600&display=swap" rel="stylesheet">
+<style>
+  /* ============ ClickHouse Tokens（来源：design-md/clickhouse/DESIGN.md）============ */
+  :root {
+    --volt: #faff69;          /* 荧光黄绿：唯一彩色，只做点缀/描边/CTA，不做大面积背景 */
+    --volt-pale: #f4f692;     /* 按压态文字 */
+    --forest: #166534;        /* 森林绿：次级转化按钮 */
+    --olive: #4f5100;         /* ghost 按钮的橄榄描边 */
+    --black: #000000;         /* 页面底：纯黑，永不用深灰替代 */
+    --near-black: #141414;    /* 按钮底 / 深表面 */
+    --charcoal: rgba(65, 65, 65, 0.8); /* 卡片描边主力 */
+    --charcoal-deep: #343434; /* 次级分隔线 */
+    --hover-gray: #3a3a3a;    /* 深色按钮 hover 底 */
+    --white: #ffffff;
+    --silver: #a0a0a0;
+    --card-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px, rgba(0, 0, 0, 0.1) 0px 4px 6px -4px;
+    --pressed: rgba(0, 0, 0, 0.06) 0px 4px 4px, rgba(0, 0, 0, 0.14) 0px 4px 25px inset;
+    --font: 'Inter', Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Inconsolata', Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--black); color: var(--white); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--volt); outline-offset: 2px; }
+  .wrap { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+  .num { font-feature-settings: "tnum"; }
+
+  /* ============ 导航：黑底 + 荧光字标 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(0, 0, 0, 0.92); backdrop-filter: blur(8px); border-bottom: 1px solid var(--charcoal-deep); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { font-size: 17px; font-weight: 900; }
+  .logo em { font-style: normal; color: var(--volt); }
+  .logo span { font-size: 11px; font-weight: 500; color: var(--silver); margin-left: 8px; letter-spacing: 1.4px; text-transform: uppercase; }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 14px; font-weight: 400; padding: 10px 12px; color: var(--white); }
+  .nav-links a:hover { color: var(--volt); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--charcoal); border-radius: 4px; }
+  .menu-btn span { display: block; width: 16px; height: 2px; background: var(--white); margin: 3px auto; }
+
+  /* ============ 按钮体系（4px 圆角锐利几何）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; line-height: 1; padding: 14px 16px; min-height: 44px; border-radius: 4px; border: 1px solid transparent; }
+  .btn-volt { background: var(--volt); color: #151515; border-color: var(--volt); padding: 12px 16px; }
+  .btn-volt:hover { background: rgb(29, 29, 29); color: #151515; }
+  .btn-volt:active { color: var(--volt-pale); box-shadow: var(--pressed); }
+  .btn-forest { background: var(--forest); color: var(--white); border-color: var(--near-black); }
+  .btn-forest:hover { background: var(--hover-gray); }
+  .btn-forest:active { color: var(--volt-pale); box-shadow: var(--pressed); }
+  .btn-ghost { background: transparent; color: var(--white); border: 1px solid var(--olive); padding: 12px 32px; }
+  .btn-ghost:hover { background: var(--near-black); }
+  .btn-ghost:active { color: var(--volt-pale); box-shadow: var(--pressed); }
+
+  /* ============ 英雄区：96px/900 + 均衡器 + 倒计时 ============ */
+  .hero { padding: 96px 0 72px; position: relative; }
+  .kicker { font-size: 14px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--silver); margin-bottom: 20px; }
+  .kicker b { color: var(--volt); font-weight: 600; }
+  .hero h1 { font-size: clamp(36px, 8.4vw, 96px); font-weight: 900; line-height: 1.0; letter-spacing: -1px; max-width: 760px; }
+  .hero h1 em { font-style: normal; color: var(--volt); }
+  .hero p.sub { font-size: 18px; font-weight: 400; line-height: 1.56; color: var(--silver); max-width: 560px; margin-top: 24px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; margin-top: 36px; }
+  /* 均衡器：荧光竖条 */
+  .eq { display: flex; align-items: flex-end; gap: 5px; height: 56px; margin-top: 56px; }
+  .eq i { display: block; width: 4px; background: var(--volt); opacity: 0.85; animation: bounce 1.6s ease-in-out infinite; transform-origin: bottom; }
+  .eq i:nth-child(4n) { opacity: 0.35; }
+  @keyframes bounce { 0%, 100% { height: 12%; } 50% { height: 100%; } }
+
+  /* 倒计时 */
+  .countdown { margin-top: 40px; display: flex; align-items: baseline; gap: 18px; flex-wrap: wrap; }
+  .cd-label { font-size: 14px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--silver); }
+  .cd { display: flex; gap: 8px; align-items: baseline; }
+  .cd b { font-family: var(--mono); font-size: 44px; font-weight: 600; color: var(--volt); line-height: 1; }
+  .cd span { font-size: 11px; font-weight: 500; color: var(--silver); letter-spacing: 1.4px; text-transform: uppercase; }
+
+  /* ============ 巨型统计条 ============ */
+  .stats { border-top: 1px solid var(--charcoal-deep); border-bottom: 1px solid var(--charcoal-deep); padding: 56px 0; }
+  .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 24px; }
+  .stat b { display: block; font-size: clamp(40px, 5.6vw, 72px); font-weight: 700; line-height: 1.0; }
+  .stat.hot b { color: var(--volt); font-weight: 900; }
+  .stat span { display: block; font-size: 14px; font-weight: 400; color: var(--silver); margin-top: 10px; line-height: 1.43; }
+
+  /* ============ 赛道卡 ============ */
+  section.tracks { padding: 72px 0; }
+  .sec-label { font-size: 14px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--silver); margin-bottom: 12px; }
+  .sec-title { font-size: clamp(24px, 3.6vw, 36px); font-weight: 700; line-height: 1.3; margin-bottom: 40px; }
+  .track-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .track { background: var(--near-black); border: 1px solid var(--charcoal); border-radius: 8px; padding: 26px; box-shadow: var(--card-shadow); transition: border-color .15s; }
+  .track:hover { border-color: var(--silver); }
+  .track.featured { border-color: var(--volt); }
+  .track .tag { display: inline-block; font-size: 11px; font-weight: 500; line-height: 1.79; color: var(--silver); border: 1px solid var(--charcoal); border-radius: 9999px; padding: 2px 12px; margin-bottom: 16px; }
+  .track.featured .tag { color: #151515; background: var(--volt); border-color: var(--volt); font-weight: 600; }
+  .track h3 { font-size: 24px; font-weight: 700; line-height: 1.17; margin-bottom: 10px; }
+  .track p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--silver); }
+  .track .cap { margin-top: 18px; font-family: var(--mono); font-size: 14px; font-weight: 600; color: var(--volt); }
+
+  /* ============ 时刻表 ============ */
+  section.timeline { padding: 72px 0; border-top: 1px solid var(--charcoal-deep); }
+  .tl-grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 12px; }
+  .tl { border: 1px solid var(--charcoal); border-radius: 8px; padding: 20px; background: transparent; }
+  .tl b { display: block; font-family: var(--mono); font-size: 28px; font-weight: 600; color: var(--volt); line-height: 1; }
+  .tl h4 { font-size: 16px; font-weight: 600; line-height: 1.4; margin: 12px 0 6px; }
+  .tl p { font-size: 12px; font-weight: 400; line-height: 1.5; color: var(--silver); }
+
+  /* ============ 提交清单代码卡 ============ */
+  section.submit { padding: 72px 0; border-top: 1px solid var(--charcoal-deep); }
+  .submit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 32px; align-items: center; }
+  .code-card { background: var(--near-black); border: 1px solid var(--charcoal); border-radius: 4px; box-shadow: var(--card-shadow); overflow: hidden; }
+  .code-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--charcoal-deep); font-family: var(--mono); font-size: 13px; color: var(--silver); }
+  .code-bar .ok { color: var(--volt); }
+  .code-card pre { font-family: var(--mono); font-size: 15px; font-weight: 600; line-height: 1.6; padding: 20px; overflow-x: auto; color: var(--white); }
+  .cm { color: #585858; }
+  .kw { color: var(--volt); }
+  .submit-copy h3 { font-size: 36px; font-weight: 600; line-height: 1.3; margin-bottom: 16px; }
+  .submit-copy p { font-size: 16px; font-weight: 400; line-height: 1.5; color: var(--silver); margin-bottom: 12px; }
+  .submit-copy p b { color: var(--white); font-weight: 600; }
+
+  /* ============ 冠军墙 ============ */
+  section.champs { padding: 72px 0; border-top: 1px solid var(--charcoal-deep); }
+  .champ-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+  .champ { border: 1px solid var(--charcoal); border-radius: 8px; padding: 18px; }
+  .champ b { font-family: var(--mono); font-size: 13px; font-weight: 600; color: var(--volt); }
+  .champ h4 { font-size: 16px; font-weight: 700; line-height: 1.4; margin: 8px 0 4px; }
+  .champ span { font-size: 12px; font-weight: 400; color: var(--silver); }
+
+  /* ============ 终章 CTA ============ */
+  .final { text-align: center; padding: 88px 0; border-top: 1px solid var(--charcoal-deep); }
+  .final h2 { font-size: clamp(28px, 4.8vw, 56px); font-weight: 900; line-height: 1.0; margin-bottom: 16px; }
+  .final h2 em { font-style: normal; color: var(--volt); }
+  .final p { font-size: 16px; font-weight: 400; color: var(--silver); margin-bottom: 32px; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--charcoal); padding: 48px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 13px; color: var(--silver); line-height: 1.5; max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-size: 14px; font-weight: 600; letter-spacing: 1.4px; text-transform: uppercase; color: var(--silver); margin-bottom: 14px; }
+  .foot-grid a { display: block; font-size: 14px; color: var(--white); padding: 5px 0; }
+  .foot-grid a:hover { color: var(--volt); }
+  .foot-note { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--charcoal-deep); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 500; color: var(--silver); }
+
+  /* ============ 响应式：1280 / 1024 / 768 / 640 / 375 ============ */
+  @media (max-width: 1280px) {
+    .tl-grid { grid-template-columns: repeat(3, 1fr); }
+    .champ-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 1024px) {
+    .track-grid { grid-template-columns: 1fr 1fr; }
+    .stats-grid { grid-template-columns: repeat(2, 1fr); gap: 32px; }
+    .submit-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--near-black); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--charcoal); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; font-size: 15px; }
+    .menu-btn { display: block; margin-left: auto; }
+    .nav-inner { gap: 16px; }
+    .wrap { padding: 0 24px; }
+    .hero { padding: 64px 0 56px; }
+    .tl-grid { grid-template-columns: 1fr 1fr; }
+    .champ-grid { grid-template-columns: 1fr 1fr; }
+    .cd b { font-size: 36px; }
+    .nav-cta .btn-forest { display: none; }
+  }
+  @media (max-width: 640px) {
+    .track-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 480px) {
+    .stats-grid { grid-template-columns: 1fr; gap: 24px; }
+    .champ-grid { grid-template-columns: 1fr; }
+    .tl-grid { grid-template-columns: 1fr; }
+    .hero-actions .btn { width: 100%; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 34px; }
+    .cd b { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="wrap nav-inner">
+    <a class="logo" href="#">声浪<em>48H</em><span>SoundRush</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#tracks">赛道</a></li>
+      <li><a href="#timeline">时刻表</a></li>
+      <li><a href="#submit">提交规范</a></li>
+      <li><a href="#champs">往届冠军</a></li>
+    </ul>
+    <a href="#" class="btn btn-forest">往届作品</a>
+    <a href="#" class="btn btn-volt">组队报名</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="kicker">第九届 · <b>全球接力</b> · 9 月 5 日 20:00 开跑</p>
+    <h1>48 小时，<br>写完<em>一首歌</em>。</h1>
+    <p class="sub">周五晚八点，命题同步发往 17 座城市的接力点。三人一队，一台电脑，一个通宵——周日晚八点，母带封存，公开试听。</p>
+    <div class="countdown">
+      <span class="cd-label">距开跑</span>
+      <div class="cd">
+        <b class="num" id="cd-d">--</b><span>天</span>
+        <b class="num" id="cd-h">--</b><span>时</span>
+        <b class="num" id="cd-m">--</b><span>分</span>
+        <b class="num" id="cd-s">--</b><span>秒</span>
+      </div>
+    </div>
+    <div class="hero-actions">
+      <a href="#" class="btn btn-volt">立即组队</a>
+      <a href="#timeline" class="btn btn-ghost">看时刻表</a>
+    </div>
+    <div class="eq" aria-hidden="true">
+      <i style="animation-delay:0s"></i><i style="animation-delay:.15s"></i><i style="animation-delay:.3s"></i><i style="animation-delay:.45s"></i><i style="animation-delay:.6s"></i><i style="animation-delay:.75s"></i><i style="animation-delay:.9s"></i><i style="animation-delay:1.05s"></i><i style="animation-delay:1.2s"></i><i style="animation-delay:1.35s"></i><i style="animation-delay:.5s"></i><i style="animation-delay:.2s"></i><i style="animation-delay:1.0s"></i><i style="animation-delay:.7s"></i><i style="animation-delay:.35s"></i><i style="animation-delay:1.25s"></i><i style="animation-delay:.85s"></i><i style="animation-delay:.1s"></i><i style="animation-delay:.95s"></i><i style="animation-delay:.55s"></i><i style="animation-delay:.25s"></i><i style="animation-delay:1.1s"></i><i style="animation-delay:.65s"></i><i style="animation-delay:.4s"></i>
+    </div>
+  </div>
+</header>
+
+<section class="stats">
+  <div class="wrap stats-grid">
+    <div class="stat hot"><b class="num">48</b><span>小时硬时限——从命题到母带，一分钟不多</span></div>
+    <div class="stat"><b class="num">312</b><span>支已报名队伍，全球 17 城线下接力点同步开跑</span></div>
+    <div class="stat"><b class="num">9,042</b><span>分钟历届成品音频，全部可公开试听</span></div>
+    <div class="stat"><b class="num">6</b><span>位评委往返届冠军中产生，只看 48 小时内的作品</span></div>
+  </div>
+</section>
+
+<section class="tracks" id="tracks">
+  <div class="wrap">
+    <p class="sec-label">Tracks · 三条赛道</p>
+    <h2 class="sec-title">选一条，把自己逼到极限。</h2>
+    <div class="track-grid">
+      <div class="track">
+        <span class="tag">单人不许协作</span>
+        <h3>一人乐队</h3>
+        <p>全程独自完成词曲、编曲与混音。允许使用任何软件乐器，禁止调用现成采样包。</p>
+        <p class="cap">solo_track.wav → -14 LUFS</p>
+      </div>
+      <div class="track">
+        <span class="tag">命题影像</span>
+        <h3>影像配乐</h3>
+        <p>开跑时发下一段 90 秒的无声短片，为它配乐。画面锁定，一帧不改，音乐说了算。</p>
+        <p class="cap">score + 90s_video.lock</p>
+      </div>
+      <div class="track featured">
+        <span class="tag">本届新增</span>
+        <h3>方言采样</h3>
+        <p>必须以一段非普通话的田野录音为唯一旋律素材——菜市场叫卖、船工号子、外婆的摇篮曲都算。</p>
+        <p class="cap">field_rec.wav → melody_only</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="timeline" id="timeline">
+  <div class="wrap">
+    <p class="sec-label">Timeline · 48 小时时刻表</p>
+    <h2 class="sec-title">五个检查点，错过即出局。</h2>
+    <div class="tl-grid">
+      <div class="tl"><b>H+0</b><h4>命题下发</h4><p>三赛道命题同步公开，倒计时开始。</p></div>
+      <div class="tl"><b>H+12</b><h4>中检样带</h4><p>提交 30 秒样带，证明队伍仍然活着。</p></div>
+      <div class="tl"><b>H+36</b><h4>编曲冻结</h4><p>结构锁定，只剩混音与母带时间。</p></div>
+      <div class="tl"><b>H+45</b><h4>上传窗口</h4><p>母带通道开放，两路备份同时收。</p></div>
+      <div class="tl"><b>H+48</b><h4>封存试听</h4><p>通道关闭，全部作品转公开试听。</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="submit" id="submit">
+  <div class="wrap submit-grid">
+    <div class="submit-copy">
+      <p class="sec-label">Submission · 提交规范</p>
+      <h3>交什么，一目了然。</h3>
+      <p>每队一个提交目录，<b>命名即评分</b>：目录里少一样，评委直接跳过。母带响度统一 <b>-14 LUFS</b>，方言赛道须附采样授权说明。</p>
+      <p>提交通道在 H+45 整点开放，早交不加分，晚交不存在。</p>
+    </div>
+    <div class="code-card">
+      <div class="code-bar"><span>submission/team-041/</span><span class="ok">● checked</span></div>
+<pre><span class="kw">master.wav</span>          <span class="cm"># 母带 -14 LUFS</span>
+<span class="kw">stems/</span>              <span class="cm"># 分轨，至少 4 轨</span>
+<span class="kw">credits.txt</span>         <span class="cm"># 队名 / 分工 / 一句话自述</span>
+<span class="kw">license.md</span>          <span class="cm"># CC-BY-NC 4.0</span>
+<span class="kw">field_auth.pdf</span>      <span class="cm"># 仅方言赛道：采样授权</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="champs" id="champs">
+  <div class="wrap">
+    <p class="sec-label">Hall of Fame · 往届冠军</p>
+    <h2 class="sec-title">他们也曾通宵。</h2>
+    <div class="champ-grid">
+      <div class="champ"><b>第八届</b><h4>冰箱贴乐队</h4><span>《凌晨四点的便利店》· 一人乐队赛道</span></div>
+      <div class="champ"><b>第七届</b><h4>南亭码头的风</h4><span>《渡口号子 2.0》· 影像配乐赛道</span></div>
+      <div class="champ"><b>第六届</b><h4>三人成团</h4><span>《周六不停跳》· 一人乐队赛道</span></div>
+      <div class="champ"><b>第五届</b><h4>客家阿婆合唱团</h4><span>《月光光，秀才郎》· 方言采样前身赛道</span></div>
+      <div class="champ"><b>第四届</b><h4>静音吉他社</h4><span>《房间里的海》· 影像配乐赛道</span></div>
+      <div class="champ"><b>第三届</b><h4>台风眼二人组</h4><span>《停电夜》· 一人乐队赛道</span></div>
+      <div class="champ"><b>第二届</b><h4>夜班公交</h4><span>《末班车广播》· 影像配乐赛道</span></div>
+      <div class="champ"><b>首届</b><h4>四十强</h4><span>《四十八》· 纪念首届 48 小时</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="wrap">
+    <h2>席位 <em>368</em> 个，倒计时不会等人。</h2>
+    <p>报名截止 9 月 3 日 20:00 · 三人成队，也开放单人候补池</p>
+    <a href="#" class="btn btn-volt">占一个席位</a>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#">声浪<em>48H</em><span>SoundRush</span></a>
+        <p>一场关于速度、睡眠剥夺与灵感的公开实验。全部作品 CC-BY-NC 4.0，永远免费试听。</p>
+      </div>
+      <div>
+        <h5>赛道</h5>
+        <a href="#tracks">一人乐队</a><a href="#tracks">影像配乐</a><a href="#tracks">方言采样</a>
+      </div>
+      <div>
+        <h5>参赛</h5>
+        <a href="#timeline">时刻表</a><a href="#submit">提交规范</a><a href="#">裁判守则</a>
+      </div>
+      <div>
+        <h5>城市</h5>
+        <a href="#">接力点地图</a><a href="#">场地志愿</a><a href="#">赞助与共办</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 SoundRush 声浪 · StyleForge 平台 AI 生成习作 · study of clickhouse</span>
+      <span>SINCE 2019 · 9TH EDITION</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 菜单
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 倒计时：第九届 2026-09-05 20:00 (+08:00) 开跑
+  const start = new Date('2026-09-05T20:00:00+08:00').getTime();
+  const pad = n => String(n).padStart(2, '0');
+  function tick() {
+    let diff = start - Date.now();
+    if (diff < 0) diff = 0;
+    const d = Math.floor(diff / 86400000);
+    const h = Math.floor(diff / 3600000) % 24;
+    const m = Math.floor(diff / 60000) % 60;
+    const s = Math.floor(diff / 1000) % 60;
+    document.getElementById('cd-d').textContent = pad(d);
+    document.getElementById('cd-h').textContent = pad(h);
+    document.getElementById('cd-m').textContent = pad(m);
+    document.getElementById('cd-s').textContent = pad(s);
+  }
+  tick();
+  setInterval(tick, 1000);
+</script>
+</body>
+</html>

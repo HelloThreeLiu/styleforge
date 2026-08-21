@@ -1,0 +1,380 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>书脉 ShuMai — 古籍数字化工程进度面板</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&family=Source+Code+Pro:wght@500;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ Stripe Tokens（来源：design-md/stripe/DESIGN.md）============ */
+  :root {
+    --purple: #533afd;
+    --purple-hover: #4434d4;
+    --purple-light: #b9b9f9;
+    --navy: #061b31;
+    --label: #273951;
+    --body: #64748d;
+    --brand-dark: #1c1e54;
+    --border: #e5edf5;
+    --success-bg: rgba(21, 190, 83, 0.2);
+    --success-tx: #108c3d;
+    --success-bd: rgba(21, 190, 83, 0.4);
+    --shadow-elev: rgba(50, 50, 93, 0.25) 0px 30px 45px -30px, rgba(0, 0, 0, 0.1) 0px 18px 36px -18px;
+    --shadow-amb: rgba(23, 23, 23, 0.08) 0px 15px 35px 0px;
+    --font: 'Inter', 'SF Pro Display', -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Source Code Pro', 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); font-feature-settings: "ss01"; background: #ffffff; color: var(--navy); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); font-feature-settings: "ss01"; cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--purple); outline-offset: 2px; }
+  .num { font-feature-settings: "tnum"; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ 按钮（4px 圆角 / 8px 16px padding）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 400; line-height: 1; padding: 10px 16px; border-radius: 4px; border: 1px solid transparent; min-height: 44px; transition: background .15s, color .15s; }
+  .btn-primary { background: var(--purple); color: #ffffff; }
+  .btn-primary:hover { background: var(--purple-hover); }
+  .btn-ghost { background: transparent; color: var(--purple); border: 1px solid var(--purple-light); }
+  .btn-ghost:hover { background: rgba(83, 58, 253, 0.05); }
+
+  /* ============ 导航：白底 sticky blur ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.9); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { display: flex; align-items: baseline; gap: 8px; font-size: 20px; font-weight: 400; letter-spacing: -0.2px; }
+  .logo b { font-weight: 600; }
+  .logo span { font-size: 12px; color: var(--body); }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 14px; font-weight: 400; line-height: 1; color: var(--navy); padding: 10px 12px; border-radius: 6px; }
+  .nav-links a:hover { color: var(--purple); }
+  .nav-cta { display: flex; gap: 10px; }
+  .nav-cta .btn { padding: 8px 16px; min-height: 38px; font-size: 14px; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--border); border-radius: 6px; }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--navy); margin: 3.5px auto; }
+
+  /* ============ 页头 ============ */
+  header.page-head { padding: 64px 0 44px; }
+  .badge-row { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+  .badge { display: inline-flex; align-items: center; font-size: 11px; font-weight: 400; padding: 3px 8px; border-radius: 4px; border: 1px solid var(--border); background: #ffffff; color: var(--navy); }
+  .badge.success { background: var(--success-bg); color: var(--success-tx); border: 1px solid var(--success-bd); font-size: 10px; font-weight: 300; }
+  header.page-head h1 { font-size: clamp(32px, 4.6vw, 48px); font-weight: 300; line-height: 1.15; letter-spacing: -0.96px; max-width: 720px; }
+  header.page-head p { font-size: 18px; font-weight: 300; line-height: 1.4; color: var(--body); max-width: 620px; margin-top: 18px; }
+
+  /* ============ 统计卡（蓝调多层阴影）============ */
+  .stats { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .stat { background: #ffffff; border: 1px solid var(--border); border-radius: 6px; padding: 20px; box-shadow: var(--shadow-elev); }
+  .stat b { display: block; font-size: 30px; font-weight: 300; letter-spacing: -0.6px; line-height: 1.1; }
+  .stat b em { font-style: normal; font-size: 16px; color: var(--body); font-weight: 300; margin-left: 2px; }
+  .stat span { display: block; font-size: 13px; font-weight: 400; color: var(--body); margin-top: 8px; line-height: 1.4; }
+
+  /* ============ 主体：流水线 + 侧栏 ============ */
+  main.board { display: grid; grid-template-columns: 2fr 1fr; gap: 32px; margin-top: 48px; align-items: start; }
+
+  /* 表格卡 */
+  .pipeline { background: #ffffff; border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow-elev); overflow: hidden; }
+  .pipe-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 18px 20px; border-bottom: 1px solid var(--border); flex-wrap: wrap; }
+  .pipe-head h2 { font-size: 22px; font-weight: 300; letter-spacing: -0.22px; line-height: 1.1; }
+  .pipe-tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+  .tabs { display: inline-flex; border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
+  .tabs button { font-size: 13px; font-weight: 400; line-height: 1; padding: 8px 12px; background: #ffffff; border: none; border-right: 1px solid var(--border); color: var(--body); }
+  .tabs button:last-child { border-right: none; }
+  .tabs button.on { background: rgba(83, 58, 253, 0.05); color: var(--purple); font-weight: 500; }
+  .search { display: inline-flex; align-items: center; gap: 6px; }
+  .search input { font-family: var(--font); font-size: 13px; color: var(--navy); border: 1px solid var(--border); border-radius: 4px; padding: 8px 10px; width: 150px; }
+  .search input:focus { border-color: var(--purple); outline: none; }
+  .search input::placeholder { color: var(--body); }
+
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 640px; }
+  thead th { font-size: 10px; font-weight: 400; color: var(--body); text-align: left; padding: 10px 20px; border-bottom: 1px solid var(--border); letter-spacing: 0.4px; }
+  tbody td { padding: 13px 20px; border-bottom: 1px solid var(--border); font-size: 14px; font-weight: 300; vertical-align: middle; white-space: nowrap; }
+  tbody tr:last-child td { border-bottom: none; }
+  tbody tr { transition: background .12s; }
+  tbody tr:hover { background: rgba(83, 58, 253, 0.03); }
+  td.callno { font-family: var(--mono); font-size: 12px; font-weight: 500; color: var(--label); }
+  td.title { font-weight: 400; color: var(--navy); }
+  td.title small { display: block; font-size: 10px; color: var(--body); font-weight: 300; margin-top: 2px; }
+  .conf { display: inline-flex; align-items: center; gap: 8px; }
+  .conf .bar { width: 64px; height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; }
+  .conf .bar i { display: block; height: 100%; background: var(--purple); border-radius: 2px; }
+  .st { display: inline-block; font-size: 11px; font-weight: 400; padding: 2px 8px; border-radius: 4px; }
+  .st.done { background: var(--success-bg); color: var(--success-tx); border: 1px solid var(--success-bd); }
+  .st.scan { color: var(--purple); border: 1px solid var(--purple-light); }
+  .st.proof { color: var(--label); border: 1px solid var(--border); }
+  .empty { padding: 32px 20px; text-align: center; font-size: 14px; font-weight: 300; color: var(--body); display: none; }
+
+  /* 侧栏 */
+  aside .side-card { background: #ffffff; border: 1px solid var(--border); border-radius: 6px; box-shadow: var(--shadow-amb); padding: 20px; margin-bottom: 24px; }
+  aside h3 { font-size: 16px; font-weight: 400; line-height: 1.2; margin-bottom: 16px; color: var(--navy); }
+  .mile { list-style: none; }
+  .mile li { position: relative; padding: 0 0 18px 22px; }
+  .mile li::before { content: ''; position: absolute; left: 4px; top: 6px; width: 7px; height: 7px; border-radius: 50%; background: var(--purple-light); }
+  .mile li:not(:last-child)::after { content: ''; position: absolute; left: 7px; top: 16px; bottom: 0; width: 1px; background: var(--border); }
+  .mile b { display: block; font-size: 12px; font-weight: 500; color: var(--label); line-height: 1.4; }
+  .mile span { font-size: 13px; font-weight: 300; color: var(--body); line-height: 1.45; }
+  .fix-item { margin-bottom: 14px; }
+  .fix-item:last-child { margin-bottom: 0; }
+  .fix-item .row { display: flex; justify-content: space-between; font-size: 13px; font-weight: 400; color: var(--label); margin-bottom: 6px; }
+  .fix-item .row em { font-style: normal; color: var(--body); font-weight: 300; }
+  .fix-item .bar { height: 4px; border-radius: 2px; background: var(--border); overflow: hidden; }
+  .fix-item .bar i { display: block; height: 100%; background: var(--purple); border-radius: 2px; }
+  aside .join { text-align: center; padding: 24px 20px; }
+  aside .join p { font-size: 14px; font-weight: 300; color: var(--body); line-height: 1.5; margin-bottom: 16px; }
+
+  /* ============ 深靛蓝开放语料区 ============ */
+  section.corpus { background: var(--brand-dark); margin-top: 72px; padding: 72px 0; }
+  section.corpus .kicker { font-size: 13px; font-weight: 400; color: rgba(255, 255, 255, 0.55); margin-bottom: 12px; }
+  section.corpus h2 { font-size: clamp(26px, 3.4vw, 32px); font-weight: 300; letter-spacing: -0.64px; line-height: 1.1; color: #ffffff; margin-bottom: 40px; }
+  .corpus-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .corpus-card { border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 6px; padding: 22px; }
+  .corpus-card h4 { font-size: 18px; font-weight: 300; line-height: 1.2; color: #ffffff; margin-bottom: 10px; }
+  .corpus-card p { font-size: 14px; font-weight: 300; line-height: 1.5; color: rgba(255, 255, 255, 0.7); margin-bottom: 14px; }
+  .corpus-card a { font-size: 14px; font-weight: 400; color: #ffffff; }
+  .corpus-card a:hover { color: var(--purple-light); }
+
+  /* ============ 页脚 ============ */
+  footer { padding: 48px 0 40px; border-top: 1px solid var(--border); }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 13px; font-weight: 300; line-height: 1.5; color: var(--body); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-size: 12px; font-weight: 500; color: var(--label); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 14px; font-weight: 300; color: var(--body); padding: 4px 0; line-height: 1.4; }
+  .foot-grid a:hover { color: var(--purple); }
+  .foot-note { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 300; color: var(--body); }
+  .foot-note code { font-family: var(--mono); font-size: 11px; color: var(--label); }
+
+  /* ============ 响应式：1280 / 992 / 768 / 480 / 375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+    .stats { gap: 14px; }
+  }
+  @media (max-width: 992px) {
+    main.board { grid-template-columns: 1fr; }
+    .stats { grid-template-columns: repeat(2, 1fr); }
+    .corpus-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; flex-direction: column; padding: 12px 32px 16px; gap: 2px; border-bottom: 1px solid var(--border); box-shadow: var(--shadow-amb); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; font-size: 15px; }
+    .menu-btn { display: block; margin-left: auto; }
+    .nav-inner { gap: 16px; }
+    .container { padding: 0 24px; }
+    header.page-head { padding: 44px 0 36px; }
+    .pipe-head { padding: 16px; }
+    thead th, tbody td { padding-left: 16px; padding-right: 16px; }
+  }
+  @media (max-width: 480px) {
+    .stats { grid-template-columns: 1fr; }
+    .stat b { font-size: 26px; }
+    .nav-cta .btn-ghost { display: none; }
+    .pipe-tools { width: 100%; }
+    .search input { width: 100%; flex: 1; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .btn { width: 100%; }
+    .nav-cta .btn { width: auto; }
+    aside .join .btn { width: 100%; }
+  }
+  @media (max-width: 375px) {
+    header.page-head h1 { font-size: 30px; letter-spacing: -0.6px; }
+    .stat b { font-size: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><b>书脉</b><span>ShuMai · 古籍数字化工程</span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#board">数字化流水线</a></li>
+      <li><a href="#milestones">里程碑</a></li>
+      <li><a href="#corpus">开放语料</a></li>
+    </ul>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost">登录</a>
+      <a href="#" class="btn btn-primary">申请志愿者</a>
+    </div>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <div class="badge-row">
+      <span class="badge success">第八期 · 进行中</span>
+      <span class="badge">合作书库 17 座</span>
+      <span class="badge">语料 CC-BY-NC 4.0</span>
+    </div>
+    <h1>四万三千卷古籍，正在变成可检索的数据。</h1>
+    <p>书脉把散落在书库里的刻本、抄本与残卷逐页扫描、识别、校对，再以开放语料的形式交还给所有人。这里是你能实时查看的工程台账。</p>
+  </div>
+</header>
+
+<div class="container" id="board">
+  <div class="stats">
+    <div class="stat"><b class="num">2,847,116</b><span>累计扫描页 · 每工作日新增约 4,200 页</span></div>
+    <div class="stat"><b class="num">96.4<em>%</em></b><span>OCR 平均置信度 · 低置信行进入人工队列</span></div>
+    <div class="stat"><b class="num">1,203</b><span>在校对卷宗 · 由 472 位志愿者认领</span></div>
+    <div class="stat"><b class="num">8,614</b><span>已完成卷宗 · 全文可检索</span></div>
+  </div>
+
+  <main class="board">
+    <div class="pipeline">
+      <div class="pipe-head">
+        <h2>数字化流水线</h2>
+        <div class="pipe-tools">
+          <div class="tabs" id="tabs">
+            <button class="on" data-f="all">全部</button>
+            <button data-f="scan">扫描中</button>
+            <button data-f="proof">校对中</button>
+            <button data-f="done">已完成</button>
+          </div>
+          <label class="search"><input type="search" id="q" placeholder="检索书名 / 索书号" aria-label="检索"></label>
+        </div>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>索书号</th><th>书名</th><th>朝代</th><th>页数</th><th>OCR 置信度</th><th>状态</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <div class="empty" id="empty">没有匹配的卷宗——换个关键词试试。</div>
+    </div>
+
+    <aside>
+      <div class="side-card" id="milestones">
+        <h3>本月里程碑</h3>
+        <ul class="mile">
+          <li><b>08-14</b><span>第 8,000 卷《农政全书》完成全文校对</span></li>
+          <li><b>08-18</b><span>「金石部」语料包发布，含 412 卷释文</span></li>
+          <li><b>08-24</b><span>志愿者校对沙龙 · 线上直播答疑</span></li>
+          <li><b>09-01</b><span>第九期志愿者招募截止 · 缺古典目录学方向</span></li>
+        </ul>
+      </div>
+      <div class="side-card">
+        <h3>破损修复队列</h3>
+        <div class="fix-item"><div class="row"><span>虫蛀 · 《本草纲目》金陵本</span><em class="num">64%</em></div><div class="bar"><i style="width:64%"></i></div></div>
+        <div class="fix-item"><div class="row"><span>絮化 · 《营造法式》卷三</span><em class="num">41%</em></div><div class="bar"><i style="width:41%"></i></div></div>
+        <div class="fix-item"><div class="row"><span>水渍霉变 · 《茶经》宋刻残页</span><em class="num">78%</em></div><div class="bar"><i style="width:78%"></i></div></div>
+      </div>
+      <div class="side-card join">
+        <p>校对一卷平均需要 6 小时。我们提供释文规范、字表与一对一带教。</p>
+        <a href="#" class="btn btn-primary">申请志愿者</a>
+      </div>
+    </aside>
+  </main>
+</div>
+
+<section class="corpus" id="corpus">
+  <div class="container">
+    <p class="kicker">Open Corpus · 开放语料</p>
+    <h2>扫描完成的每一页，都向所有人开放。</h2>
+    <div class="corpus-grid">
+      <div class="corpus-card">
+        <h4>全文检索 API</h4>
+        <p>2,847,116 页影像与释文的逐行检索，支持异体字归一与繁简互查。</p>
+        <a href="#">查看接口文档 →</a>
+      </div>
+      <div class="corpus-card">
+        <h4>引用数据集</h4>
+        <p>按部、类、卷导出的结构化数据，附版本号与校对履历，可直接引用。</p>
+        <a href="#">下载数据集 →</a>
+      </div>
+      <div class="corpus-card">
+        <h4>教学素材包</h4>
+        <p>面向课堂的选编包：原页影像 + 释文 + 版本源流考，免费用于教学。</p>
+        <a href="#">浏览素材包 →</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><b>书脉</b><span>ShuMai</span></a>
+        <p>一座没有围墙的古籍阅览室。扫描在书库进行，校对在千万人手里完成。</p>
+      </div>
+      <div>
+        <h5>工程</h5>
+        <a href="#board">数字化流水线</a><a href="#milestones">里程碑</a><a href="#">年度报告</a>
+      </div>
+      <div>
+        <h5>参与</h5>
+        <a href="#">志愿者指南</a><a href="#">释文规范</a><a href="#">认领队列</a>
+      </div>
+      <div>
+        <h5>语料</h5>
+        <a href="#corpus">检索 API</a><a href="#">数据集</a><a href="#">素材包</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 书脉 ShuMai · StyleForge 平台 AI 生成习作 · study of stripe</span>
+      <span><code>corpus/shumai — v8.2.1</code></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  const books = [
+    { c: 'SB/631.41', t: '齐民要术', d: '残卷 · 蝴蝶装', a: '北朝', p: 92, o: 98.2, s: 'done' },
+    { c: 'SB/722.8',  t: '营造法式', d: '卷三 · 彩绘补抄', a: '宋', p: 148, o: 96.7, s: 'proof' },
+    { c: 'SB/941.2',  t: '本草纲目', d: '金陵本 · 虫蛀修复后', a: '明', p: 1,162, o: 95.9, s: 'proof' },
+    { c: 'SB/104.6',  t: '梦溪笔谈', d: '明刻本', a: '明', p: 324, o: 97.8, s: 'done' },
+    { c: 'SB/650.1',  t: '农政全书', d: '平露堂刻本', a: '明', p: 968, o: 97.1, s: 'done' },
+    { c: 'SB/834.5',  t: '天工开物', d: '初刻本 · 卷前佚', a: '明', p: 402, o: 94.2, s: 'proof' },
+    { c: 'SB/287.3',  t: '徐霞客游记', d: '季会明抄本', a: '清', p: 1,240, o: 89.6, s: 'scan' },
+    { c: 'SB/157.9',  t: '茶经', d: '宋刻 · 残页缀合', a: '宋', p: 46, o: 92.4, s: 'scan' },
+    { c: 'SB/412.0',  t: '洛阳伽蓝记', d: '如隐堂刻本', a: '明', p: 210, o: 96.1, s: 'done' },
+    { c: 'SB/503.7',  t: '水经注', d: '武英殿聚珍本', a: '清', p: 836, o: 91.8, s: 'scan' },
+    { c: 'SB/368.2',  t: '授时历经', d: '明补刊本', a: '明', p: 156, o: 0, s: 'scan' },
+    { c: 'SB/771.4',  t: '园冶', d: '日本明和刻本', a: '明', p: 138, o: 95.3, s: 'done' }
+  ];
+  const stMap = { done: ['done', '已完成'], proof: ['proof', '校对中'], scan: ['scan', '扫描中'] };
+  const tbody = document.getElementById('rows');
+  const emptyBox = document.getElementById('empty');
+  let filter = 'all', query = '';
+
+  function render() {
+    const list = books.filter(b =>
+      (filter === 'all' || b.s === filter) &&
+      (query === '' || b.t.includes(query) || b.c.toLowerCase().includes(query.toLowerCase()))
+    );
+    tbody.innerHTML = list.map(b => {
+      const [cls, name] = stMap[b.s];
+      const conf = b.o > 0
+        ? `<span class="conf"><span class="bar"><i style="width:${b.o}%"></i></span><span class="num">${b.o.toFixed(1)}%</span></span>`
+        : '<span style="color:var(--body)">—</span>';
+      return `<tr>
+        <td class="callno">${b.c}</td>
+        <td class="title">${b.t}<small>${b.d}</small></td>
+        <td>${b.a}</td>
+        <td class="num">${b.p.toLocaleString('en-US')}</td>
+        <td>${conf}</td>
+        <td><span class="st ${cls}">${name}</span></td>
+      </tr>`;
+    }).join('');
+    emptyBox.style.display = list.length ? 'none' : 'block';
+  }
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    filter = btn.dataset.f;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === btn));
+    render();
+  });
+  document.getElementById('q').addEventListener('input', e => { query = e.target.value.trim(); render(); });
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  render();
+</script>
+</body>
+</html>

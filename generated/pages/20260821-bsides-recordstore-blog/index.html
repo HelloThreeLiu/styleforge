@@ -1,0 +1,359 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>B面纪事 BSides — 独立唱片店口述史</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ vinyl-noir-v1 Tokens（来源：generated/styles/vinyl-noir-v1/DESIGN.md，派生自 spotify）============ */
+  :root {
+    --bg: #121212;        /* 画布：最底层 */
+    --panel: #181818;     /* 容器：卡、列表、播放条 */
+    --face: #1f1f1f;      /* 交互面：按钮、导航活动态 */
+    --hover: #282828;     /* 唯一的亮化手段 */
+    --green: #1ed760;     /* 功能绿：播放/激活/CTA/进度/序号 hover */
+    --green-deep: #1db954;
+    --white: #ffffff;
+    --gray: #b3b3b3;
+    --divider: #4d4d4d;
+    --outline: #7c7c7c;
+    --footer-line: #232323;
+    --shadow-mid: rgba(0, 0, 0, 0.3) 0 8px 8px;
+    --shadow-big: rgba(0, 0, 0, 0.5) 0 8px 24px;
+    --font: 'SpotifyMixUI', 'Inter', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--white); -webkit-font-smoothing: antialiased; overflow-x: clip; padding-bottom: 76px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--green); }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  .num { font-variant-numeric: tabular-nums; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(18, 18, 18, 0.92); backdrop-filter: blur(14px); border-bottom: 1px solid var(--footer-line); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 68px; }
+  .logo { font-size: 17px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; display: flex; align-items: center; gap: 10px; }
+  .logo i { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(from 0deg, #1a1a1a, #2e2e2e, #1a1a1a, #333, #1a1a1a); border: 1px solid #3a3a3a; font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; inset: 8px; border-radius: 50%; background: var(--green); }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 400; letter-spacing: 0.5px; color: var(--gray); text-transform: none; }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 14px; font-weight: 700; color: var(--gray); padding: 10px 12px; }
+  .nav-links a:hover { color: var(--white); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: #fff; margin: 4px auto; }
+
+  /* ============ 按钮（全部药丸 + 大写字标）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; line-height: 1; padding: 14px 26px; border-radius: 9999px; border: none; min-height: 44px; }
+  .btn-green { background: var(--green); color: #000000; }
+  .btn-green:hover { background: #3be477; transform: scale(1.04); }
+  .btn-face { background: var(--face); color: var(--white); }
+  .btn-face:hover { background: var(--hover); }
+  .btn-line { background: transparent; color: var(--white); border: 1px solid var(--outline); }
+  .btn-line:hover { border-color: #ffffff; }
+
+  /* ============ Hero：左文右盘 ============ */
+  .hero { display: grid; grid-template-columns: 1.2fr 1fr; gap: 48px; align-items: center; padding: 72px 0 56px; }
+  .badge { display: inline-block; font-size: 11px; font-weight: 700; letter-spacing: 0.6px; color: var(--green); background: rgba(30, 215, 96, 0.12); border: 1px solid rgba(30, 215, 96, 0.35); border-radius: 2px; padding: 4px 10px; margin-bottom: 20px; }
+  .hero h1 { font-size: clamp(40px, 5vw, 64px); font-weight: 700; line-height: 1.08; letter-spacing: -0.02em; }
+  .hero h1 em { font-style: normal; color: var(--green); }
+  .hero p.sub { font-size: 16px; line-height: 1.55; color: var(--gray); max-width: 480px; margin: 20px 0 30px; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; }
+  /* 旋转唱片装置 */
+  .disc { position: relative; width: min(100%, 380px); aspect-ratio: 1; margin: 0 auto; border-radius: 50%; background: conic-gradient(from 0deg, #161616, #242424 8%, #1a1a1a 16%, #282828 24%, #1a1a1a 32%, #222 40%, #191919 48%, #262626 56%, #1a1a1a 64%, #232323 72%, #1a1a1a 80%, #252525 88%, #161616 100%); box-shadow: var(--shadow-big), inset 0 0 60px rgba(0, 0, 0, 0.8); animation: spin 24s linear infinite; }
+  .disc::before { content: ''; position: absolute; inset: 31%; border-radius: 50%; background: linear-gradient(135deg, #f2a33c, #d4564e 45%, #7a3dff); box-shadow: 0 0 0 2px rgba(0,0,0,.4); }
+  .disc::after { content: ''; position: absolute; inset: 46.5%; border-radius: 50%; background: var(--bg); }
+  @keyframes spin { to { transform: rotate(360deg); } }
+
+  /* ============ 专辑网格（封面渐变卡）============ */
+  section { margin-bottom: 48px; }
+  .block-head { display: flex; align-items: baseline; justify-content: space-between; margin-bottom: 18px; gap: 12px; }
+  .block-head h2 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; }
+  .block-head a { font-size: 13px; font-weight: 700; letter-spacing: 0.1em; color: var(--gray); }
+  .block-head a:hover { color: var(--white); }
+  .album-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .album { background: var(--panel); border-radius: 8px; padding: 14px; transition: background .15s; }
+  .album:hover { background: var(--hover); }
+  .cover { position: relative; aspect-ratio: 1; border-radius: 6px; overflow: hidden; }
+  .cover::after { content: ''; position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.45), transparent 45%); }
+  .c1 { background: linear-gradient(145deg, #f2a33c, #d4564e 50%, #5b2a86); }
+  .c2 { background: linear-gradient(150deg, #1e6fd9, #37c9c3 50%, #ffd166); }
+  .c3 { background: linear-gradient(140deg, #ff5e78, #a12568 50%, #3a0ca3); }
+  .c4 { background: linear-gradient(155deg, #2ec4b6, #2b9348 50%, #f4a259); }
+  .cover .ep { position: absolute; left: 10px; bottom: 8px; z-index: 1; font-size: 10px; font-weight: 700; letter-spacing: 1px; color: #fff; text-transform: uppercase; text-shadow: 0 1px 4px rgba(0,0,0,.6); }
+  .album .play { position: absolute; right: 10px; bottom: 10px; width: 44px; height: 44px; border-radius: 50%; background: var(--green); color: #000; border: none; font-size: 15px; box-shadow: var(--shadow-mid); opacity: 0; transform: translateY(8px); transition: opacity .18s, transform .18s; z-index: 1; }
+  .album:hover .play { opacity: 1; transform: translateY(0); }
+  .album .play:hover { background: #3be477; transform: scale(1.06); }
+  .album h3 { font-size: 16px; font-weight: 700; margin: 12px 2px 2px; }
+  .album p { font-size: 12px; color: var(--gray); margin: 0 2px; }
+
+  /* ============ tracklist ============ */
+  .tracklist { background: var(--panel); border-radius: 8px; padding: 8px 16px 16px; }
+  .tl-head, .trk { display: grid; grid-template-columns: 32px 1fr 160px 64px; gap: 14px; align-items: center; padding: 10px 4px; }
+  .tl-head { font-size: 12px; font-weight: 400; color: var(--gray); border-bottom: 1px solid var(--divider); }
+  .trk { border-bottom: 1px solid rgba(255, 255, 255, 0.06); }
+  .trk:last-child { border-bottom: none; }
+  .trk:hover { background: rgba(255, 255, 255, 0.03); }
+  .trk .no { font-size: 14px; color: var(--gray); }
+  .trk:hover .no { color: var(--green); }
+  .trk .tt b { display: block; font-size: 14px; font-weight: 700; }
+  .trk .tt span { display: block; font-size: 12px; color: var(--gray); margin-top: 1px; }
+  .trk .meta { font-size: 13px; color: var(--gray); }
+  .trk .dur { font-size: 13px; color: var(--gray); text-align: right; }
+
+  /* ============ CTA 渐变盒 ============ */
+  .sub-box { background: linear-gradient(135deg, #1f4e3e, #233b2b); border-radius: 8px; padding: 40px; display: flex; align-items: center; justify-content: space-between; gap: 32px; flex-wrap: wrap; }
+  .sub-box h2 { font-size: 24px; font-weight: 700; line-height: 1.2; }
+  .sub-box p { font-size: 14px; color: #a8d5c0; margin-top: 8px; }
+  .sub-box form { display: flex; gap: 10px; flex-wrap: wrap; }
+  .sub-box input { background: rgba(0, 0, 0, 0.35); border: 1px solid rgba(255, 255, 255, 0.2); border-radius: 9999px; color: #fff; font-family: var(--font); font-size: 14px; padding: 12px 20px; min-width: 240px; min-height: 44px; }
+  .sub-box input:focus { outline: none; border-color: var(--green); }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--footer-line); padding: 44px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 13px; line-height: 1.5; color: var(--gray); max-width: 300px; margin-top: 12px; }
+  .foot-grid h4 { font-size: 12px; font-weight: 700; letter-spacing: 1.4px; text-transform: uppercase; color: var(--gray); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 14px; color: var(--gray); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--white); }
+  .foot-note { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--footer-line); font-size: 12px; color: #7c7c7c; }
+
+  /* ============ 正在播放条（签名组件）============ */
+  .nowbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; height: 76px; background: var(--panel); border-top: 1px solid #000; box-shadow: var(--shadow-big); display: grid; grid-template-columns: 1fr 1.4fr 1fr; align-items: center; gap: 16px; padding: 0 20px; }
+  .nb-left { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .nb-cover { width: 46px; height: 46px; border-radius: 4px; flex-shrink: 0; background: linear-gradient(145deg, #f2a33c, #d4564e 50%, #5b2a86); }
+  .nb-left b { display: block; font-size: 13px; font-weight: 700; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nb-left span { display: block; font-size: 11px; color: var(--gray); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .nb-mid { display: flex; flex-direction: column; align-items: center; gap: 7px; min-width: 0; width: 100%; }
+  .nb-ctrl { display: flex; align-items: center; gap: 16px; }
+  .nb-play { width: 36px; height: 36px; border-radius: 50%; background: #ffffff; color: #000; border: none; font-size: 13px; }
+  .nb-play:hover { background: var(--green); transform: scale(1.05); }
+  .nb-time { font-size: 11px; color: var(--gray); min-width: 34px; }
+  .nb-bar { display: flex; align-items: center; gap: 8px; width: 100%; max-width: 420px; }
+  .nb-track { flex: 1; height: 4px; border-radius: 2px; background: #4d4d4d; overflow: hidden; cursor: pointer; }
+  .nb-track i { display: block; height: 100%; width: 0%; background: #ffffff; }
+  .nb-track:hover i { background: var(--green); }
+  .nb-right { display: flex; justify-content: flex-end; gap: 14px; font-size: 11px; font-weight: 700; letter-spacing: 1px; color: var(--gray); }
+  .nb-right .hq { color: var(--green); }
+
+  /* ============ 响应式：1280 / 768 / 480（含 375）============ */
+  @media (max-width: 1280px) {
+    .album-grid { gap: 16px; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--face); flex-direction: column; padding: 12px 24px 18px; gap: 2px; border-bottom: 1px solid var(--footer-line); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .hero { grid-template-columns: 1fr; padding: 48px 0 40px; }
+    .disc { width: 230px; }
+    .album-grid { grid-template-columns: repeat(2, 1fr); }
+    .tl-head, .trk { grid-template-columns: 28px 1fr 64px; }
+    .tl-head .col-meta, .trk .meta { display: none; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+    .nowbar { grid-template-columns: 1fr auto; }
+    .nb-mid { display: none; }
+  }
+  @media (max-width: 480px) {
+    .album-grid { grid-template-columns: repeat(2, 1fr); gap: 12px; }
+    .hero h1 { font-size: 36px; }
+    .btn-line { display: none; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .sub-box { padding: 28px 20px; }
+    .sub-box input { min-width: 0; width: 100%; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 34px; }
+    .album h3 { font-size: 14px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>BSIDES <em>B面纪事</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#episodes">口述档案</a></li>
+      <li><a href="#chapters">第 042 期</a></li>
+      <li><a href="#">城市声音地图</a></li>
+      <li><a href="#">关于我们</a></li>
+    </ul>
+    <a href="#subscribe" class="btn btn-green" style="padding:10px 20px">订阅</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <div>
+    <span class="badge">EP.042 · 最新上线</span>
+    <h1>每家唱片店，<br>都有一张你没听过的<em>B 面</em>。</h1>
+    <p class="sub">B面纪事是一座声音档案馆：我们带着麦克风走进中国 60 家独立唱片店，听店主、打口带贩子、淘碟客和修唱机师傅，讲那些从没上过 A 面的故事。</p>
+    <div class="hero-actions">
+      <a href="#chapters" class="btn btn-green">▶ 收听最新一期</a>
+      <a href="#episodes" class="btn btn-line">浏览全部口述</a>
+    </div>
+  </div>
+  <div class="disc" aria-hidden="true"></div>
+</header>
+
+<section class="container" id="episodes">
+  <div class="block-head">
+    <h2>最新口述</h2>
+    <a href="#">查看全部 60 期 →</a>
+  </div>
+  <div class="album-grid">
+    <div class="album">
+      <div class="cover c1"><span class="ep">EP.042 · 广州</span><button class="play" aria-label="播放">▶</button></div>
+      <h3>不变唱片 · 25 年</h3>
+      <p>淘金路 · 从打口带到黑胶复兴</p>
+    </div>
+    <div class="album">
+      <div class="cover c2"><span class="ep">EP.041 · 北京</span><button class="play" aria-label="播放">▶</button></div>
+      <h3>独音唱片 · 鼓楼</h3>
+      <p>独立厂牌的寄卖柜台</p>
+    </div>
+    <div class="album">
+      <div class="cover c3"><span class="ep">EP.040 · 上海</span><button class="play" aria-label="播放">▶</button></div>
+      <h3>UFO 唱片 · 绍兴路</h3>
+      <p>一排七寸_single 的十年</p>
+    </div>
+    <div class="album">
+      <div class="cover c4"><span class="ep">EP.039 · 成都</span><button class="play" aria-label="播放">▶</button></div>
+      <h3>小酒馆唱片 · 玉林</h3>
+      <p>民谣现场的柜台经济学</p>
+    </div>
+  </div>
+</section>
+
+<section class="container" id="chapters">
+  <div class="block-head">
+    <h2>第 042 期 · 不变唱片 25 年</h2>
+    <a href="#">字稿全文 →</a>
+  </div>
+  <div class="tracklist">
+    <div class="tl-head"><span class="num">#</span><span>章节 · 讲述人</span><span class="col-meta">关键词</span><span style="text-align:right">时长</span></div>
+    <div class="trk"><span class="no num">1</span><div class="tt"><b>开在邮局旁边的店</b><span>老陈 · 店主</span></div><span class="meta">1998 · 淘金路</span><span class="dur num">08:24</span></div>
+    <div class="trk"><span class="no num">2</span><div class="tt"><b>打口带的黄金年代</b><span>老陈 · 店主</span></div><span class="meta">打口 CD · 5 元一张</span><span class="dur num">14:10</span></div>
+    <div class="trk"><span class="no num">3</span><div class="tt"><b>一个下午卖掉三百张</b><span>阿珍 · 前店员</span></div><span class="meta">高考完的那个夏天</span><span class="dur num">09:47</span></div>
+    <div class="trk"><span class="no num">4</span><div class="tt"><b>MP3 来了，客人走了</b><span>老陈 · 店主</span></div><span class="meta">2008 · 低谷</span><span class="dur num">11:32</span></div>
+    <div class="trk"><span class="no num">5</span><div class="tt"><b>第一台唱机修好了</b><span>梁师傅 · 修机匠</span></div><span class="meta">唱针 · 马达 · 松香</span><span class="dur num">12:05</span></div>
+    <div class="trk"><span class="no num">6</span><div class="tt"><b>黑胶回来了，年轻人也回来了</b><span>小柯 · 淘碟客</span></div><span class="meta">2016 · 复兴</span><span class="dur num">10:18</span></div>
+    <div class="trk"><span class="no num">7</span><div class="tt"><b>B 面收尾：店还开着</b><span>老陈 · 店主</span></div><span class="meta">2026 · 尾声</span><span class="dur num">06:53</span></div>
+  </div>
+</section>
+
+<section class="container" id="subscribe">
+  <div class="sub-box">
+    <div>
+      <h2>每双周五，一条新的 B 面。</h2>
+      <p>订阅口述档案通讯：新期上线、完整字稿与未剪片段，直达你的邮箱。</p>
+    </div>
+    <form id="subForm">
+      <input type="email" id="subEmail" placeholder="you@b-side.fm" required aria-label="邮箱">
+      <button type="submit" class="btn btn-green">订阅</button>
+    </form>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>BSIDES <em>B面纪事</em></a>
+        <p>独立唱片店口述史计划。60 家店、217 位讲述者、400 小时原始录音，全部 CC-BY-NC 开放。</p>
+      </div>
+      <div>
+        <h4>档案</h4>
+        <a href="#episodes">全部口述</a><a href="#">城市声音地图</a><a href="#">原始录音库</a>
+      </div>
+      <div>
+        <h4>参与</h4>
+        <a href="#">推荐一家店</a><a href="#">成为讲述者</a><a href="#">校对字稿</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">计划缘起</a><a href="#">录音设备清单</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <p class="foot-note">© 2026 B面纪事 BSides · StyleForge 平台 AI 生成习作 · study of vinyl-noir-v1 · 全部录音经讲述者授权</p>
+  </div>
+</footer>
+
+<!-- 正在播放条（签名组件） -->
+<div class="nowbar" role="region" aria-label="正在播放">
+  <div class="nb-left">
+    <div class="nb-cover"></div>
+    <div>
+      <b>第 042 期 · 不变唱片 25 年：从打口带到黑胶复兴</b>
+      <span>B面纪事 · 73:09</span>
+    </div>
+  </div>
+  <div class="nb-mid">
+    <div class="nb-ctrl">
+      <span class="nb-time num" id="nbCur">00:00</span>
+      <button class="nb-play" id="nbPlay" aria-label="播放">▶</button>
+      <span class="nb-time num" id="nbTotal">73:09</span>
+    </div>
+    <div class="nb-bar">
+      <div class="nb-track" id="nbTrack" title="进度条"><i id="nbProg"></i></div>
+    </div>
+  </div>
+  <div class="nb-right">
+    <span class="hq">HQ 口述档案</span>
+    <span>CC-BY-NC</span>
+  </div>
+</div>
+
+<script>
+  // 菜单
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 专辑卡播放键 → 拉起底部播放条
+  document.querySelectorAll('.album .play').forEach(b => {
+    b.addEventListener('click', () => {
+      window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+      if (!playing) toggle();
+    });
+  });
+  // 播放条：播放/暂停 + 模拟进度
+  const total = 73 * 60 + 9;
+  let cur = 0, playing = false, timer = null;
+  const play = document.getElementById('nbPlay');
+  const prog = document.getElementById('nbProg');
+  const curEl = document.getElementById('nbCur');
+  const fmt = s => String(Math.floor(s / 60)).padStart(2, '0') + ':' + String(Math.floor(s % 60)).padStart(2, '0');
+  function tick() {
+    cur = (cur + 1) % total;
+    curEl.textContent = fmt(cur);
+    prog.style.width = (cur / total * 100) + '%';
+  }
+  function toggle() {
+    playing = !playing;
+    play.textContent = playing ? '⏸' : '▶';
+    if (playing) timer = setInterval(tick, 1000);
+    else clearInterval(timer);
+  }
+  play.addEventListener('click', toggle);
+  document.getElementById('nbTrack').addEventListener('click', e => {
+    const r = e.currentTarget.getBoundingClientRect();
+    cur = Math.round((e.clientX - r.left) / r.width * total);
+    curEl.textContent = fmt(cur);
+    prog.style.width = (cur / total * 100) + '%';
+  });
+  // 订阅反馈
+  const subBtn = document.getElementById('subForm');
+  subBtn.addEventListener('submit', e => {
+    e.preventDefault();
+    const b = subBtn.querySelector('.btn');
+    b.textContent = '✓ 已订阅';
+    document.getElementById('subEmail').value = '';
+    setTimeout(() => b.textContent = '订阅', 2000);
+  });
+</script>
+</body>
+</html>

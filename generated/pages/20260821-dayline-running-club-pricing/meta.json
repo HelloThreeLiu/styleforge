@@ -1,0 +1,24 @@
+{
+  "id": "20260821-dayline-running-club-pricing",
+  "title": "晨昏线 Dayline · 城市跑团联盟费率页",
+  "created_at": "2026-08-21T23:59:30+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["together.ai"],
+  "page_type": "pricing",
+  "industry": ["sports"],
+  "mood": ["minimal", "soft"],
+  "innovation": 0,
+  "tags_ai": [
+    "粉彩渐变天空hero",
+    "深午夜蓝双世界",
+    "全负字距标题",
+    "锐利4px几何",
+    "费率透明条形拆解",
+    "巨型页脚词标"
+  ],
+  "tags_user": [],
+  "rating": 4.0,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

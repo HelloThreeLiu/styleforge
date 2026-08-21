@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>百家工具棚 ShedShare — 社区工具共享网络</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Geist+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Mintlify Tokens（来源：design-md/mintlify/DESIGN.md）============ */
+  :root {
+    --ink: #0d0d0d;           /* 近黑文本 */
+    --white: #ffffff;
+    --brand: #18E299;         /* 品牌绿：CTA / hover / focus，从不当装饰填充 */
+    --brand-light: #d4fae8;   /* 浅绿面：徽章底 */
+    --brand-deep: #0fa76e;    /* 深绿：浅绿底上的文字 */
+    --amber: #c37d0d; --blue: #3772cf; --red: #d45656;
+    --g-700: #333333; --g-500: #666666; --g-400: #888888;
+    --g-200: #e5e5e5; --g-100: #f5f5f5; --g-50: #fafafa;
+    --bd-subtle: rgba(0, 0, 0, 0.05);
+    --bd-medium: rgba(0, 0, 0, 0.08);
+    --card-shadow: rgba(0, 0, 0, 0.03) 0px 2px 4px;
+    --btn-shadow: rgba(0, 0, 0, 0.06) 0px 1px 2px;
+    --font: 'Inter', 'Inter Fallback', system-ui, -apple-system, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Geist Mono', 'Geist Mono Fallback', ui-monospace, SFMono-Regular, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--white); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  input { font-family: var(--font); }
+  :focus-visible { outline: 1px solid var(--brand); outline-offset: 2px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .mono-tag { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--g-500); }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.88); backdrop-filter: blur(12px); border-bottom: 1px solid var(--bd-subtle); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 600; letter-spacing: -0.2px; }
+  .logo i { width: 22px; height: 22px; border-radius: 7px; background: var(--ink); font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; inset: 6px; border-radius: 3px; background: var(--brand); }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--g-400); margin-left: 2px; }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 15px; font-weight: 500; color: var(--ink); padding: 8px 12px; border-radius: 8px; transition: color .12s; }
+  .nav-links a:hover { color: var(--brand); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--bd-medium); border-radius: 8px; }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--ink); margin: 3.5px auto; }
+
+  /* ============ 按钮（全药丸签名形状）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; line-height: 1.5; border-radius: 9999px; border: none; min-height: 44px; transition: opacity .12s, background .12s; }
+  .btn-dark { background: var(--ink); color: var(--white); padding: 8px 24px; box-shadow: var(--btn-shadow); }
+  .btn-dark:hover { opacity: 0.9; }
+  .btn-ghost { background: var(--white); color: var(--ink); padding: 8px 24px; border: 1px solid var(--bd-medium); }
+  .btn-ghost:hover { opacity: 0.9; }
+  .btn-brand { background: var(--brand); color: var(--ink); padding: 8px 24px; }
+  .btn-brand:hover { opacity: 0.9; }
+
+  /* ============ Hero：绿白云大气渐变 ============ */
+  .hero { position: relative; text-align: center; padding: 96px 0 88px; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -260px; left: 50%; transform: translateX(-50%); width: 1100px; height: 640px; background: radial-gradient(ellipse at center, rgba(212, 250, 232, 0.9) 0%, rgba(212, 250, 232, 0.4) 45%, rgba(255, 255, 255, 0) 72%); pointer-events: none; }
+  .hero > * { position: relative; }
+  .hero .badge { display: inline-flex; align-items: center; gap: 6px; background: var(--brand-light); color: var(--brand-deep); border-radius: 9999px; padding: 4px 12px; font-size: 13px; font-weight: 500; margin-bottom: 24px; }
+  .hero h1 { font-size: clamp(32px, 5.6vw, 64px); font-weight: 600; line-height: 1.15; letter-spacing: -1.28px; max-width: 780px; margin: 0 auto; }
+  .hero p.sub { font-size: 18px; font-weight: 400; line-height: 1.5; color: var(--g-500); max-width: 600px; margin: 20px auto 32px; }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ============ Trust bar ============ */
+  .trust { padding: 40px 0 56px; }
+  .trust .label { text-align: center; font-size: 13px; font-weight: 500; letter-spacing: 0.65px; text-transform: uppercase; color: var(--g-500); margin-bottom: 20px; }
+  .trust-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: 12px; }
+  .trust-cell { background: var(--g-50); border: 1px solid var(--bd-subtle); border-radius: 16px; padding: 16px 8px; text-align: center; font-size: 14px; font-weight: 500; color: var(--g-400); }
+
+  /* ============ 数字条 ============ */
+  .stats { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; padding-bottom: 88px; }
+  .stat { text-align: center; padding: 24px; }
+  .stat b { display: block; font-size: 48px; font-weight: 600; letter-spacing: -1px; line-height: 1.1; }
+  .stat span { display: block; font-size: 14px; color: var(--g-500); margin-top: 8px; line-height: 1.5; }
+
+  /* ============ Feature 卡 ============ */
+  section.features { padding: 0 0 88px; }
+  .sec-label { text-align: center; font-size: 13px; font-weight: 500; letter-spacing: 0.65px; text-transform: uppercase; color: var(--g-500); margin-bottom: 12px; }
+  .sec-title { text-align: center; font-size: clamp(28px, 4vw, 40px); font-weight: 600; line-height: 1.10; letter-spacing: -0.8px; margin-bottom: 48px; }
+  .feat-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .card { background: var(--white); border: 1px solid var(--bd-subtle); border-radius: 16px; padding: 24px; box-shadow: var(--card-shadow); transition: border-color .15s; }
+  .card:hover { border-color: var(--bd-medium); }
+  .card .icon { width: 40px; height: 40px; border-radius: 12px; background: var(--brand-light); display: flex; align-items: center; justify-content: center; font-size: 17px; font-weight: 600; color: var(--brand-deep); margin-bottom: 16px; }
+  .card h3 { font-size: 20px; font-weight: 600; line-height: 1.3; letter-spacing: -0.2px; margin-bottom: 8px; }
+  .card p { font-size: 14px; font-weight: 400; line-height: 1.5; color: var(--g-500); }
+  .card .tag { margin-top: 14px; }
+
+  /* ============ 运转流程 ============ */
+  section.how { padding: 0 0 88px; }
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .step { background: var(--white); border: 1px solid var(--bd-subtle); border-radius: 24px; padding: 32px; }
+  .step .no { font-family: var(--mono); font-size: 12px; font-weight: 600; letter-spacing: 0.6px; text-transform: uppercase; color: var(--brand-deep); background: var(--brand-light); border-radius: 9999px; display: inline-block; padding: 4px 12px; margin-bottom: 18px; }
+  .step h3 { font-size: 20px; font-weight: 600; letter-spacing: -0.2px; line-height: 1.3; margin-bottom: 8px; }
+  .step p { font-size: 14px; line-height: 1.5; color: var(--g-500); }
+  .step .code { margin-top: 18px; font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--g-400); border: 1px solid var(--bd-subtle); border-radius: 4px; padding: 8px 10px; display: inline-block; }
+
+  /* ============ CTA 深色区 ============ */
+  .cta { background: var(--ink); border-radius: 24px; padding: 72px 32px; text-align: center; margin: 0 32px 96px; max-width: 1200px; margin-left: auto; margin-right: auto; }
+  .cta .label { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--brand); margin-bottom: 16px; }
+  .cta h2 { font-size: clamp(26px, 3.6vw, 40px); font-weight: 600; line-height: 1.10; letter-spacing: -0.8px; color: var(--white); max-width: 640px; margin: 0 auto 16px; }
+  .cta p { font-size: 16px; color: #a0a0a0; line-height: 1.5; max-width: 520px; margin: 0 auto 32px; }
+  .cta form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .cta input { background: #141414; color: #ededed; border: 1px solid rgba(255, 255, 255, 0.08); border-radius: 9999px; padding: 10px 20px; font-size: 15px; min-width: 260px; min-height: 44px; }
+  .cta input:focus { outline: none; border-color: var(--brand); }
+  .cta input::placeholder { color: var(--g-400); }
+  .cta .ok { color: var(--brand); font-size: 14px; margin-top: 14px; opacity: 0; transition: opacity .2s; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--bd-subtle); padding: 48px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 14px; line-height: 1.5; color: var(--g-500); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-size: 13px; font-weight: 500; letter-spacing: 0.65px; text-transform: uppercase; color: var(--g-500); margin-bottom: 14px; }
+  .foot-grid a { display: block; font-size: 14px; font-weight: 400; color: var(--g-700); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--brand); }
+  .foot-note { margin-top: 40px; padding-top: 20px; border-top: 1px solid var(--bd-subtle); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--g-400); }
+  .foot-note code { font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; }
+
+  /* ============ 响应式：1280 / 1024 / 768 / 480 / 375（mintlify 断点 768/1024）============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+    .cta { margin-left: 40px; margin-right: 40px; }
+  }
+  @media (max-width: 1024px) {
+    .feat-grid, .steps { grid-template-columns: repeat(2, 1fr); }
+    .trust-grid { grid-template-columns: repeat(3, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--bd-subtle); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; font-size: 16px; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 24px; }
+    .hero { padding: 64px 0 56px; }
+    .stats { grid-template-columns: 1fr; gap: 0; }
+    .feat-grid, .steps { grid-template-columns: 1fr; }
+    .trust-grid { grid-template-columns: repeat(2, 1fr); }
+    .cta { margin-left: 24px; margin-right: 24px; padding: 48px 24px; }
+    section.features, section.how { padding-bottom: 64px; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { letter-spacing: -0.8px; }
+    .cta input { min-width: 0; width: 100%; }
+    .cta .btn { width: 100%; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .trust-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.5px; }
+    .stat b { font-size: 38px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>百家工具棚 <em>ShedShare</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#features">怎么运转</a></li>
+      <li><a href="#how">三步加入</a></li>
+      <li><a href="#">社区地图</a></li>
+      <li><a href="#">志愿维修组</a></li>
+    </ul>
+    <a href="#cta" class="btn btn-dark">找到我的棚</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <span class="badge">· 27 个社区 · 4,200 件工具 · 完全非营利 ·</span>
+    <h1>全社区的电钻，<br>不该一共只有三台。</h1>
+    <p class="sub">百家工具棚把小区里沉睡的梯子、电钻、割草机集中进一座公共棚屋——扫码即借、按期归还、坏了有人修。买不起的第二台，不如借得到的第一件。</p>
+    <div class="hero-actions">
+      <a href="#cta" class="btn btn-dark">加入我的社区棚</a>
+      <a href="#how" class="btn btn-ghost">看三步运转</a>
+    </div>
+  </div>
+</header>
+
+<section class="trust container">
+  <p class="label">Loved by these neighborhoods · 已覆盖社区</p>
+  <div class="trust-grid">
+    <div class="trust-cell">梧桐里</div>
+    <div class="trust-cell">南湖新村</div>
+    <div class="trust-cell">锦绣花园</div>
+    <div class="trust-cell">运河人家</div>
+    <div class="trust-cell">白塔巷</div>
+    <div class="trust-cell">棠棣公馆</div>
+  </div>
+</section>
+
+<div class="container stats">
+  <div class="stat"><b>4,200+</b><span>件在架共享工具，从手电钻到果枝剪</span></div>
+  <div class="stat"><b>38,000</b><span>次累计借出——平均每件工具每年被唤醒 11 次</span></div>
+  <div class="stat"><b>¥0</b><span>会员费。棚屋由物业让利与居民认捐共同维护</span></div>
+</div>
+
+<section class="features container" id="features">
+  <p class="sec-label">How it works · 怎么运转</p>
+  <h2 class="sec-title">一座棚屋，一套规矩，<br>一群顺手帮忙的邻居。</h2>
+  <div class="feat-grid">
+    <div class="card">
+      <div class="icon">借</div>
+      <h3>扫码即借，48 小时归还</h3>
+      <p>棚屋 24 小时门禁码开放。工具柜每格一码，扫开即借、扫码即还——没有管理员，只有一块共享白板。</p>
+      <p class="mono-tag tag">avg pickup: 4 min</p>
+    </div>
+    <div class="card">
+      <div class="icon">信</div>
+      <h3>邻里信用，互相作保</h3>
+      <p>新成员由两位老成员担保加入。准时归还积累信用分，分高者可借贵重工具；损坏如实申报不扣分。</p>
+      <p class="mono-tag tag">trust score: mutual</p>
+    </div>
+    <div class="card">
+      <div class="icon">修</div>
+      <h3>坏了？周日维修茶座</h3>
+      <p>每周日下午，志愿维修组在棚边支一张工作台：磨链齿、换碳刷、教孩子给自行车上油——修不好也能学会拆。</p>
+      <p class="mono-tag tag">fixed rate: 87%</p>
+    </div>
+  </div>
+</section>
+
+<section class="how container" id="how">
+  <p class="sec-label">Get started · 三步加入</p>
+  <h2 class="sec-title">从围观到借出第一件工具，<br>只要一个周末。</h2>
+  <div class="steps">
+    <div class="step">
+      <span class="no">Step 01</span>
+      <h3>找棚 & 担保</h3>
+      <p>在地图上找到最近的棚屋，参加一次周六开放日——现场认识两位为你担保的邻居。</p>
+      <span class="code">join: open-day · sat 10:00</span>
+    </div>
+    <div class="step">
+      <span class="no">Step 02</span>
+      <h3>领码 & 首借</h3>
+      <p>领取门禁码与个人借阅码，首借限基础工具（螺丝刀组/手推车）。系统会让你先读三分钟安全须知。</p>
+      <span class="code">first-loan: basic-tier</span>
+    </div>
+    <div class="step">
+      <span class="no">Step 03</span>
+      <h3>捐一件 & 传下去</h3>
+      <p>家里的闲置工具随时捐入棚屋，贴上你的名字标签——它会替你在社区里继续被使用。</p>
+      <span class="code">donate: any-time · labeled</span>
+    </div>
+  </div>
+</section>
+
+<section class="cta" id="cta">
+  <p class="label">New sheds opening · 秋季新棚</p>
+  <h2>下一座工具棚，<br>也许就立在你的楼下。</h2>
+  <p>留下邮箱，你所在社区的开棚投票与开放日邀请会第一时间送达。没有广告，只有邻居。</p>
+  <form id="ctaForm">
+    <input type="email" id="ctaEmail" placeholder="you@neighborhood.cn" required aria-label="邮箱">
+    <button type="submit" class="btn btn-brand">接收开棚通知</button>
+  </form>
+  <p class="ok" id="ctaOk">✓ 已登记——开放日见！</p>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>百家工具棚 <em>ShedShare</em></a>
+        <p>非营利社区工具共享网络。少买一件，多借一次，让工具在邻居手里活着。</p>
+      </div>
+      <div>
+        <h5>社区</h5>
+        <a href="#">棚屋地图</a><a href="#">开放日日历</a><a href="#">信用分规则</a>
+      </div>
+      <div>
+        <h5>参与</h5>
+        <a href="#">志愿维修组</a><a href="#">捐工具指南</a><a href="#">发起一座新棚</a>
+      </div>
+      <div>
+        <h5>关于</h5>
+        <a href="#">章程与账目</a><a href="#">安全须知</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 百家工具棚 ShedShare · StyleForge 平台 AI 生成习作 · study of mintlify</span>
+      <span><code>shed: 27 · tools: 4200 · since 2021</code></span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  const ok = document.getElementById('ctaOk');
+  document.getElementById('ctaForm').addEventListener('submit', e => {
+    e.preventDefault();
+    ok.style.opacity = 1;
+    document.getElementById('ctaEmail').value = '';
+    setTimeout(() => ok.style.opacity = 0, 2600);
+  });
+</script>
+</body>
+</html>

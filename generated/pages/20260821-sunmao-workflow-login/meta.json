@@ -1,0 +1,24 @@
+{
+  "id": "20260821-sunmao-workflow-login",
+  "title": "榫卯 SunMao · 开源自动化工作流引擎登录页",
+  "created_at": "2026-08-21T22:20:00+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["zapier"],
+  "page_type": "login",
+  "industry": ["dev-tool"],
+  "mood": ["soft", "playful"],
+  "innovation": 0,
+  "tags_ai": [
+    "奶油白暖画布",
+    "橙色唯一强调",
+    "inset下划线tab",
+    "三字体分轨制",
+    "沙边框零阴影",
+    "深色页脚反转"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

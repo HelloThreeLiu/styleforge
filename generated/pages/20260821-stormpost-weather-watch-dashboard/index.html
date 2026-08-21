@@ -1,0 +1,394 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>风暴前哨 StormPost — 城市极端天气联防监控台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Sanity Tokens（来源：design-md/sanity/DESIGN.md）============ */
+  :root {
+    --bg: #0b0b0b;        /* 近黑画布：原生身份而非暗色模式 */
+    --surface: #212121;   /* 浮面卡/输入底/细边 */
+    --border: #353535;    /* 明显边框 */
+    --silver: #b9b9b9;    /* 次级文本 */
+    --gray: #797979;      /* 三级文本/元数据 */
+    --white: #ffffff;
+    --light: #ededed;
+    --red: #f36458;       /* 珊瑚红：唯一 CTA */
+    --blue: #0052ef;      /* 电蓝：全局 hover/激活 */
+    --green: #19d600;     /* 霓虹绿：成功态 */
+    --error: #dd0000;     /* 纯红：错误/严重警报 */
+    --focus-bg: #072227;  /* 输入聚焦深青底 */
+    --font: 'Space Grotesk', 'waldenburgNormal', ui-sans-serif, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--bg); color: var(--white); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+  .container { max-width: 1280px; margin: 0 auto; padding: 0 32px; }
+  .mono { font-family: var(--mono); }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(11, 11, 11, 0.86); backdrop-filter: blur(14px); border-bottom: 1px solid var(--surface); }
+  .nav-inner { display: flex; align-items: center; gap: 26px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 16px; font-weight: 500; letter-spacing: -0.16px; }
+  .logo i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid var(--red); font-style: normal; position: relative; flex-shrink: 0; }
+  .logo i::after { content: ''; position: absolute; inset: 4px; border-radius: 50%; background: var(--blue); }
+  .logo em { font-style: normal; font-family: var(--mono); font-size: 11px; color: var(--gray); }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 16px; font-weight: 400; color: var(--silver); padding: 8px 12px; transition: color .12s; }
+  .nav-links a:hover { color: var(--blue); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: var(--white); margin: 4px auto; }
+
+  /* ============ 按钮（药丸 99999px / ghost 5px）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 400; line-height: 1; border-radius: 99999px; border: none; padding: 12px 16px; min-height: 44px; transition: background .15s, color .15s; }
+  .btn-red { background: var(--red); color: var(--white); }
+  .btn-red:hover { background: var(--blue); }
+  .btn-dark { background: var(--bg); color: var(--silver); }
+  .btn-dark:hover { background: var(--blue); color: var(--white); }
+  .btn-ghost { background: var(--surface); color: var(--silver); border: 1px solid var(--surface); border-radius: 5px; font-size: 13px; padding: 8px 12px; min-height: 36px; }
+  .btn-ghost:hover { background: var(--blue); color: var(--white); border-color: var(--blue); }
+  .lbl-btn { font-family: var(--font); font-size: 11px; font-weight: 600; text-transform: uppercase; background: transparent; color: var(--silver); border: none; padding: 6px 10px; min-height: 32px; }
+  .lbl-btn:hover { color: var(--white); }
+  .lbl-btn.on { color: var(--white); background: var(--surface); border-radius: 5px; }
+
+  /* ============ 页头 ============ */
+  header.page-head { padding: 64px 0 40px; }
+  .status-row { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 18px; }
+  .pill { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; border-radius: 99999px; padding: 6px 12px; background: var(--surface); color: var(--silver); }
+  .pill i { width: 8px; height: 8px; border-radius: 50%; background: var(--green); font-style: normal; }
+  .pill.mono { font-family: var(--mono); font-size: 12px; color: var(--gray); }
+  header.page-head h1 { font-size: clamp(34px, 5.4vw, 48px); font-weight: 400; line-height: 1.08; letter-spacing: -1.68px; }
+  header.page-head p { font-size: 18px; font-weight: 400; line-height: 1.5; letter-spacing: -0.18px; color: var(--silver); max-width: 620px; margin-top: 12px; }
+
+  /* ============ 预警横幅 ============ */
+  .alert-banner { display: flex; align-items: center; gap: 16px; background: var(--surface); border: 1px solid var(--error); border-left: 4px solid var(--error); border-radius: 6px; padding: 16px 20px; margin-bottom: 32px; flex-wrap: wrap; }
+  .alert-banner .lv { font-family: var(--mono); font-size: 11px; font-weight: 500; text-transform: uppercase; color: var(--white); background: var(--error); border-radius: 5px; padding: 4px 10px; }
+  .alert-banner b { font-size: 16px; font-weight: 500; letter-spacing: -0.16px; }
+  .alert-banner span { font-size: 13px; color: var(--gray); }
+  .alert-banner .btn { margin-left: auto; }
+
+  /* ============ 主体 grid ============ */
+  .board { display: grid; grid-template-columns: 2fr 1fr; gap: 20px; align-items: start; }
+
+  /* 站点表卡 */
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 6px; padding: 24px; }
+  .card-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; margin-bottom: 16px; flex-wrap: wrap; }
+  .card-head h2 { font-size: 24px; font-weight: 425; letter-spacing: -0.24px; line-height: 1.24; }
+  .card-head .mono-tag { font-family: var(--mono); font-size: 12px; color: var(--gray); }
+  .tools { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 14px; }
+  .search { position: relative; }
+  .search input { background: var(--bg); color: var(--silver); border: 1px solid var(--surface); border-radius: 3px; padding: 8px 12px; font-family: var(--mono); font-size: 13px; width: 170px; min-height: 38px; }
+  .search input:focus { outline: 2px solid var(--blue); background: var(--focus-bg); }
+  .search input::placeholder { color: var(--gray); }
+  .table-wrap { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; min-width: 560px; }
+  thead th { font-family: var(--mono); font-size: 11px; font-weight: 500; text-transform: uppercase; color: var(--gray); text-align: left; padding: 8px 10px; border-bottom: 1px solid var(--border); }
+  tbody td { padding: 12px 10px; border-bottom: 1px solid var(--surface); font-size: 14px; color: var(--silver); white-space: nowrap; }
+  tbody tr:hover td { color: var(--white); }
+  tbody tr:hover td:first-child { color: var(--blue); }
+  td.st-id { font-family: var(--mono); font-size: 13px; }
+  td b { color: var(--white); font-weight: 500; }
+  .st-pill { display: inline-block; font-family: var(--mono); font-size: 11px; text-transform: uppercase; border-radius: 5px; padding: 3px 10px; }
+  .st-ok { color: var(--green); background: rgba(25, 214, 0, 0.1); }
+  .st-watch { color: #ffb224; background: rgba(255, 178, 36, 0.1); }
+  .st-alert { color: var(--white); background: var(--error); }
+  .empty { padding: 28px 10px; text-align: center; font-size: 14px; color: var(--gray); display: none; }
+
+  /* 右栏 */
+  aside .card { margin-bottom: 20px; }
+  .alert-item { display: grid; grid-template-columns: 56px 1fr; gap: 12px; padding: 10px 0; border-bottom: 1px solid var(--surface); }
+  .alert-item:last-child { border-bottom: none; }
+  .alert-item time { font-family: var(--mono); font-size: 12px; color: var(--gray); padding-top: 2px; }
+  .alert-item b { display: block; font-size: 14px; font-weight: 500; color: var(--white); }
+  .alert-item span { display: block; font-size: 12px; color: var(--gray); margin-top: 2px; }
+  .alert-item.crit b { color: var(--red); }
+  /* 24h 雨量柱 */
+  .chart { display: flex; align-items: flex-end; gap: 3px; height: 90px; margin-top: 14px; }
+  .chart i { flex: 1; border-radius: 2px 2px 0 0; background: var(--gray); min-height: 3px; }
+  .chart i.wet { background: var(--blue); }
+  .chart i.heavy { background: var(--red); }
+  .chart-x { display: flex; justify-content: space-between; font-family: var(--mono); font-size: 10px; color: var(--gray); margin-top: 6px; }
+  /* 实时数据流 */
+  .feed { font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--silver); max-height: 180px; overflow-y: auto; }
+  .feed .row { display: flex; gap: 10px; white-space: nowrap; }
+  .feed time { color: var(--gray); }
+  .feed .v { color: var(--white); }
+  .feed .v.warn { color: #ffb224; }
+
+  /* ============ 联防网络 ============ */
+  section.network { padding: 88px 0 72px; }
+  .sec-mono { font-family: var(--mono); font-size: 13px; color: var(--gray); margin-bottom: 10px; }
+  section.network h2 { font-size: clamp(28px, 3.8vw, 38px); font-weight: 400; line-height: 1.10; letter-spacing: -1.14px; margin-bottom: 32px; }
+  .net-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .net { background: var(--bg); border: 1px solid var(--surface); border-radius: 12px; padding: 32px; }
+  .net .k { font-family: var(--mono); font-size: 12px; text-transform: uppercase; color: var(--gray); margin-bottom: 14px; }
+  .net h3 { font-size: 24px; font-weight: 425; letter-spacing: -0.24px; line-height: 1.24; margin-bottom: 8px; }
+  .net p { font-size: 15px; line-height: 1.5; color: var(--silver); margin-bottom: 16px; }
+  .net a { font-size: 13px; color: var(--silver); border-bottom: 1px solid var(--border); }
+  .net a:hover { color: var(--blue); border-color: var(--blue); }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--surface); padding: 48px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 14px; line-height: 1.5; color: var(--gray); max-width: 320px; margin-top: 12px; }
+  .foot-grid h5 { font-family: var(--mono); font-size: 13px; text-transform: uppercase; color: var(--white); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 15px; color: var(--silver); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--blue); }
+  .foot-note { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--surface); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--gray); }
+
+  /* ============ 响应式：1640/1440/1200/960/768/480/375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 960px) {
+    .board { grid-template-columns: 1fr; }
+    .net-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--bg); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--surface); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 24px; }
+    header.page-head { padding: 48px 0 32px; }
+    .alert-banner .btn { margin-left: 0; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .foot-grid { grid-template-columns: 1fr; }
+    .search input { width: 100%; }
+    .tools { width: 100%; }
+    .net { padding: 24px; }
+  }
+  @media (max-width: 375px) {
+    header.page-head h1 { font-size: 34px; letter-spacing: -0.8px; }
+    .card { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>风暴前哨 <em>StormPost</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#board">监测网</a></li>
+      <li><a href="#network">联防计划</a></li>
+      <li><a href="#">历史档案</a></li>
+      <li><a href="#">上报指南</a></li>
+    </ul>
+    <a href="#" class="btn btn-red">上报观测</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="page-head container">
+  <div class="status-row">
+    <span class="pill"><i></i>网络在线 · 217 个站点</span>
+    <span class="pill mono">last-sync 20:41:07 +08:00</span>
+  </div>
+  <h1>风暴前哨</h1>
+  <p>社区自建的城市极端天气联防监控台：217 个屋顶气象站每 60 秒回传一次读数，红色阈值一触即响——比预警短信早一步，比新闻快一夜。</p>
+</header>
+
+<div class="container">
+  <div class="alert-banner">
+    <span class="lv">Yellow Alert</span>
+    <div>
+      <b>雷电黄色预警生效中 · 城东片区</b><br>
+      <span>ST-0417 / ST-0502 触发瞬时风速阈值 · 预计 23:00 解除</span>
+    </div>
+    <a href="#board" class="btn btn-ghost">查看受影响站点</a>
+  </div>
+
+  <div class="board" id="board">
+    <div class="card">
+      <div class="card-head">
+        <h2>站点监测网</h2>
+        <span class="mono-tag">217 stations · 60s interval</span>
+      </div>
+      <div class="tools">
+        <button class="lbl-btn on" data-f="all">全部</button>
+        <button class="lbl-btn" data-f="alert">警报</button>
+        <button class="lbl-btn" data-f="watch">注意</button>
+        <button class="lbl-btn" data-f="ok">正常</button>
+        <label class="search"><input type="search" id="q" placeholder="站号 / 位置…" aria-label="搜索站点"></label>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr><th>站号</th><th>位置</th><th>温度</th><th>风速</th><th>小时雨量</th><th>状态</th></tr>
+          </thead>
+          <tbody id="rows"></tbody>
+        </table>
+      </div>
+      <p class="empty" id="empty">没有匹配的站点。</p>
+    </div>
+
+    <aside>
+      <div class="card">
+        <div class="card-head"><h2>预警时间线</h2><span class="mono-tag">today</span></div>
+        <div class="alert-item crit">
+          <time>20:36</time>
+          <div><b>瞬时风速 17.2 m/s · ST-0417</b><span>超过黄色阈值（15 m/s），自动广播至城东联防群</span></div>
+        </div>
+        <div class="alert-item crit">
+          <time>20:12</time>
+          <div><b>小时雨量 21.4 mm · ST-0502</b><span>短时强降雨，低洼路段提示已推送</span></div>
+        </div>
+        <div class="alert-item">
+          <time>18:47</time>
+          <div><b>气压骤降 3.1 hPa/h · ST-0388</b><span>雷暴前锋特征，值班员已确认</span></div>
+        </div>
+        <div class="alert-item">
+          <time>15:02</time>
+          <div><b>高温 38.6℃ · ST-0117</b><span>午后峰值，供电负荷联动提示</span></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>24 小时雨量</h2><span class="mono-tag">city-avg mm</span></div>
+        <div class="chart" aria-hidden="true">
+          <i style="height:12%"></i><i style="height:18%"></i><i style="height:10%"></i><i style="height:22%"></i><i class="wet" style="height:34%"></i><i class="wet" style="height:48%"></i><i class="wet" style="height:40%"></i><i style="height:20%"></i><i style="height:14%"></i><i style="height:26%"></i><i class="wet" style="height:44%"></i><i class="wet" style="height:58%"></i><i class="heavy" style="height:78%"></i><i class="heavy" style="height:88%"></i><i class="heavy" style="height:72%"></i><i class="wet" style="height:52%"></i><i class="wet" style="height:38%"></i><i style="height:24%"></i><i style="height:16%"></i><i style="height:10%"></i><i style="height:18%"></i><i style="height:12%"></i><i style="height:8%"></i><i style="height:6%"></i>
+        </div>
+        <div class="chart-x"><span>-24h</span><span>-12h</span><span>now</span></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head"><h2>实时数据流</h2><span class="mono-tag">live</span></div>
+        <div class="feed" id="feed"></div>
+      </div>
+    </aside>
+  </div>
+</div>
+
+<section class="network container" id="network">
+  <p class="sec-mono">Network · 联防计划</p>
+  <h2>每一个屋顶，都是一座哨所。</h2>
+  <div class="net-grid">
+    <div class="net">
+      <p class="k">Adopt · 认领</p>
+      <h3>认领一个气象站</h3>
+      <p>一套 340 元的屋顶套件，加入联防网即共享全市数据。安装视频 12 分钟，小学科学组也能完成。</p>
+      <a href="#">认领指南 →</a>
+    </div>
+    <div class="net">
+      <p class="k">School · 校园</p>
+      <h3>校园哨兵计划</h3>
+      <p>38 所学校已把气象站接进科学课：学生轮流值机，红色阈值的那通广播，可能来自某个六年级教室。</p>
+      <a href="#">学校接入 →</a>
+    </div>
+    <div class="net">
+      <p class="k">Broadcast · 广播</p>
+      <h3>预警广播接入</h3>
+      <p>联防数据免费开放给社区广播、物业群与户外大屏——比商业预警快，比官方渠道细到街道。</p>
+      <a href="#">接入文档 →</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>风暴前哨 <em>StormPost</em></a>
+        <p>社区自建的极端天气联防网络。数据不是商品，是邻居之间的口信。读数仅供参考，避险请以官方预警为准。</p>
+      </div>
+      <div>
+        <h5>Network</h5>
+        <a href="#board">监测网</a><a href="#">站点地图</a><a href="#">数据下载</a>
+      </div>
+      <div>
+        <h5>Alerts</h5>
+        <a href="#">预警规则</a><a href="#">阈值设定</a><a href="#">广播接入</a>
+      </div>
+      <div>
+        <h5>About</h5>
+        <a href="#network">联防计划</a><a href="#">历史档案</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 StormPost 风暴前哨 · StyleForge 平台 AI 生成习作 · study of sanity</span>
+      <span>v3.1 · 217 stations · uptime 99.4%</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 菜单
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 站点数据与渲染
+  const stations = [
+    { id: 'ST-0417', loc: '城东 · 纺织厂宿舍屋顶', t: '27.1℃', w: '17.2 m/s', r: '14.2 mm', s: 'alert', sn: '警报' },
+    { id: 'ST-0502', loc: '城东 · 第十四中学', t: '26.8℃', w: '13.4 m/s', r: '21.4 mm', s: 'alert', sn: '警报' },
+    { id: 'ST-0388', loc: '城南 · 湿地公园站', t: '26.2℃', w: '9.8 m/s', r: '6.8 mm', s: 'watch', sn: '注意' },
+    { id: 'ST-0117', loc: '市中心 · 供销大厦', t: '28.9℃', w: '6.2 m/s', r: '0.0 mm', s: 'watch', sn: '注意' },
+    { id: 'ST-0244', loc: '城西 · 白鹭洲小学', t: '25.7℃', w: '4.1 m/s', r: '0.2 mm', s: 'ok', sn: '正常' },
+    { id: 'ST-0329', loc: '城北 · 电台老楼', t: '25.9℃', w: '5.5 m/s', r: '0.0 mm', s: 'ok', sn: '正常' },
+    { id: 'ST-0093', loc: '滨江 · 龙舟码头', t: '26.4℃', w: '8.9 m/s', r: '2.6 mm', s: 'watch', sn: '注意' },
+    { id: 'ST-0451', loc: '高新区 · 软件园 B 座', t: '27.6℃', w: '3.8 m/s', r: '0.0 mm', s: 'ok', sn: '正常' }
+  ];
+  const tb = document.getElementById('rows');
+  const emptyBox = document.getElementById('empty');
+  let filter = 'all', query = '';
+  function render() {
+    const list = stations.filter(st =>
+      (filter === 'all' || st.s === filter) &&
+      (query === '' || st.id.toLowerCase().includes(query.toLowerCase()) || st.loc.includes(query))
+    );
+    tb.innerHTML = list.map(st => `<tr>
+      <td class="st-id">${st.id}</td>
+      <td><b>${st.loc}</b></td>
+      <td>${st.t}</td><td>${st.w}</td><td>${st.r}</td>
+      <td><span class="st-pill st-${st.s}">${st.sn}</span></td>
+    </tr>`).join('');
+    emptyBox.style.display = list.length ? 'none' : 'block';
+  }
+  document.querySelectorAll('.lbl-btn').forEach(b => {
+    b.addEventListener('click', () => {
+      filter = b.dataset.f;
+      document.querySelectorAll('.lbl-btn').forEach(x => x.classList.toggle('on', x === b));
+      render();
+    });
+  });
+  document.getElementById('q').addEventListener('input', e => { query = e.target.value.trim(); render(); });
+  render();
+  // 实时数据流：每 3 秒一行
+  const feed = document.getElementById('feed');
+  const samples = [
+    ['ST-0244', 'temp 25.6℃'],
+    ['ST-0417', 'wind 17.4 m/s'],
+    ['ST-0502', 'rain 22.1 mm/h'],
+    ['ST-0329', 'pressure 1002 hPa'],
+    ['ST-0093', 'humidity 88%'],
+    ['ST-0451', 'temp 27.5℃'],
+    ['ST-0388', 'wind 10.2 m/s'],
+    ['ST-0117', 'uv 0.4']
+  ];
+  let si = 0;
+  function push() {
+    const now = new Date();
+    const t = String(now.getHours()).padStart(2, '0') + ':' + String(now.getMinutes()).padStart(2, '0') + ':' + String(now.getSeconds()).padStart(2, '0');
+    const [id, v] = samples[si++ % samples.length];
+    const warn = v.includes('17.') || v.includes('22.');
+    const row = document.createElement('div');
+    row.className = 'row';
+    row.innerHTML = `<time>${t}</time><span>${id}</span><span class="v${warn ? ' warn' : ''}">${v}</span>`;
+    feed.prepend(row);
+    while (feed.children.length > 12) feed.lastChild.remove();
+  }
+  for (let i = 0; i < 6; i++) push();
+  setInterval(push, 3000);
+</script>
+</body>
+</html>

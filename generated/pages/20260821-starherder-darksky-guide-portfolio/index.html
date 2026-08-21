@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>牧星人 StarHerder — 暗夜保护区星空向导 · 作品集</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@700&family=Rubik:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ nightward-v1 Tokens（来源：generated/styles/nightward-v1/DESIGN.md，派生自 sentry）============ */
+  :root {
+    --bg: #1f1633;
+    --bg-deep: #150f23;
+    --bd-purple: #362d59;
+    --purple: #6a5fc1;
+    --purple-muted: #79628c;
+    --purple-btn-bd: #584674;
+    --lime: #c2ef4e;        /* 生物光绿：夜色中的光，每区至多一次 */
+    --coral: #ffb287;
+    --pink: #fa7faa;
+    --text-2: #e5e7eb;
+    --code-yellow: #dcdcaa;
+    --glass: rgba(255, 255, 255, 0.18);
+    --glass-hover: rgba(54, 22, 107, 0.14);
+    --card-face: rgba(54, 45, 89, 0.35);
+    --inset-btn: rgba(0, 0, 0, 0.1) 0px 1px 3px 0px inset;
+    --hover-elev: rgba(0, 0, 0, 0.18) 0px 0.5rem 1.5rem;
+    --card-shadow: rgba(0, 0, 0, 0.1) 0px 10px 15px -3px;
+    --display: 'Space Grotesk', system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --ui: 'Rubik', -apple-system, system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: Monaco, Menlo, Consolas, 'IBM Plex Mono', 'Courier New', monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--bg); color: #ffffff; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); }
+  :focus-visible { outline: 0.125rem solid var(--purple); }
+  .container { max-width: 1152px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ 导航（紫黑玻璃 + 绿菱形 logo）============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(31, 22, 51, 0.82); backdrop-filter: blur(18px) saturate(180%); border-bottom: 1px solid var(--bd-purple); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; gap: 16px; }
+  .logo { font-family: var(--display); font-size: 18px; font-weight: 700; display: flex; align-items: center; gap: 10px; }
+  .logo i { width: 12px; height: 12px; background: var(--lime); border-radius: 3px; transform: rotate(45deg); font-style: normal; box-shadow: 0 0 14px rgba(194, 239, 78, 0.5); }
+  .logo em { font-style: normal; font-family: var(--ui); font-size: 13px; font-weight: 500; color: var(--text-2); }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 15px; font-weight: 500; color: #ffffff; padding: 8px 12px; border-radius: 8px; }
+  .nav-links a:hover { color: var(--purple); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+
+  /* ============ 按钮（内凹紫 + 白实心）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700; letter-spacing: 0.2px; text-transform: uppercase; line-height: 1.14; padding: 12px 16px; border-radius: 13px; cursor: pointer; border: 1px solid var(--purple-btn-bd); background: var(--purple-muted); color: #ffffff; box-shadow: var(--inset-btn); transition: box-shadow .15s, background .15s; min-height: 44px; }
+  .btn:hover { box-shadow: var(--hover-elev); }
+  .btn-white { background: #ffffff; color: var(--bg); border: none; border-radius: 8px; }
+  .btn-white:hover { background: var(--purple); color: #fff; }
+  .btn-white:focus-visible { background: var(--coral); color: var(--bg); }
+
+  /* ============ Hero：环境辉光 + 星点 ============ */
+  .hero { position: relative; padding: 104px 0 84px; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -150px; left: 50%; transform: translateX(-50%); width: 760px; height: 540px; background: radial-gradient(ellipse at center, rgba(106, 95, 193, 0.32), rgba(22, 15, 36, 0.9) 70%); filter: blur(18px); pointer-events: none; }
+  .stars { position: absolute; inset: 0; pointer-events: none; }
+  .star { position: absolute; width: 3px; height: 3px; border-radius: 50%; background: var(--lime); box-shadow: 0 0 8px 1px rgba(194, 239, 78, 0.5); animation: twinkle 4s ease-in-out infinite; }
+  @keyframes twinkle { 0%, 100% { opacity: 0.15; transform: scale(0.8); } 50% { opacity: 1; transform: scale(1.2); } }
+  .hero .kicker { font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--purple); margin-bottom: 22px; position: relative; }
+  .hero h1 { font-family: var(--display); font-size: clamp(42px, 7.4vw, 88px); font-weight: 700; line-height: 1.2; position: relative; }
+  .hero p.sub { font-size: 16px; line-height: 1.5; color: var(--text-2); max-width: 540px; margin: 24px 0 34px; position: relative; }
+  .hero-actions { display: flex; gap: 14px; flex-wrap: wrap; position: relative; }
+  .menu-btn span { display: block; width: 18px; height: 2px; background: #fff; margin: 4px auto; }
+
+  /* 玻璃计数卡（签名组件） */
+  .glass-strip { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 64px; position: relative; }
+  .glass { background: var(--glass); backdrop-filter: blur(18px) saturate(180%); border-radius: 12px; padding: 22px 24px; box-shadow: rgba(0, 0, 0, 0.08) 0px 2px 8px; }
+  .glass b { font-family: var(--display); font-size: 30px; font-weight: 700; display: block; }
+  .glass span { font-size: 14px; font-weight: 500; line-height: 1.43; color: var(--text-2); }
+
+  /* ============ 作品区：CSS 星野卡 ============ */
+  section.works { padding: 80px 0; }
+  .sec-label { font-size: 14px; font-weight: 500; letter-spacing: 0.2px; text-transform: uppercase; margin-bottom: 10px; }
+  .sec-label.lime { color: var(--lime); }
+  .sec-label.violet { color: var(--purple); }
+  .sec-title { font-size: 30px; font-weight: 400; line-height: 1.2; margin-bottom: 40px; }
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; }
+  .work { background: var(--card-face); border: 1px solid var(--bd-purple); border-radius: 12px; overflow: hidden; transition: background .15s, box-shadow .15s; }
+  .work:hover { background: var(--glass-hover); box-shadow: var(--card-shadow); }
+  .scene { position: relative; aspect-ratio: 4 / 3; overflow: hidden; }
+  .scene.sky { background: #0d0918; }
+  .work .info { padding: 16px 18px 18px; }
+  .work h3 { font-size: 19px; font-weight: 500; line-height: 1.25; margin-bottom: 6px; display: flex; align-items: center; gap: 10px; }
+  .work h3 i { width: 9px; height: 9px; border-radius: 50%; background: var(--purple); font-style: normal; flex-shrink: 0; }
+  .work h3 i.pink { background: var(--pink); }
+  .work h3 i.coral { background: var(--coral); }
+  .work .param { font-family: var(--mono); font-size: 12px; color: var(--text-2); }
+  .work p.desc { font-size: 14px; line-height: 1.5; color: var(--text-2); margin-top: 6px; }
+
+  /* 场景 1：银河拱桥 */
+  .s-milky { background: linear-gradient(115deg, transparent 28%, rgba(190, 180, 255, 0.22) 42%, rgba(255, 255, 255, 0.10) 50%, rgba(190, 180, 255, 0.22) 58%, transparent 72%), radial-gradient(1px 1px at 15% 20%, #fff, transparent), radial-gradient(1px 1px at 30% 55%, #fff, transparent), radial-gradient(1.5px 1.5px at 48% 25%, #fff, transparent), radial-gradient(1px 1px at 62% 60%, #fff, transparent), radial-gradient(1px 1px at 78% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 88% 70%, #fff, transparent), radial-gradient(1px 1px at 22% 80%, #fff, transparent), #0d0918; }
+  .s-milky::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 26%; background: linear-gradient(to top, #0a0614 60%, transparent); clip-path: polygon(0 100%, 0 55%, 18% 20%, 34% 62%, 52% 8%, 68% 55%, 84% 25%, 100% 60%, 100% 100%); }
+  /* 场景 2：流星 */
+  .s-meteor { background: radial-gradient(1px 1px at 12% 30%, #fff, transparent), radial-gradient(1.5px 1.5px at 25% 70%, #fff, transparent), radial-gradient(1px 1px at 40% 15%, #fff, transparent), radial-gradient(1px 1px at 55% 45%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 80%, #fff, transparent), radial-gradient(1px 1px at 82% 25%, #fff, transparent), radial-gradient(1px 1px at 92% 60%, #fff, transparent), #0d0918; }
+  .s-meteor::before { content: ''; position: absolute; top: 18%; left: 8%; width: 55%; height: 2px; border-radius: 2px; background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.9)); transform: rotate(18deg); transform-origin: left center; box-shadow: 0 0 10px 2px rgba(255, 255, 255, 0.35); }
+  .s-meteor::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 20%; background: #0a0614; clip-path: polygon(0 100%, 0 30%, 25% 0, 55% 50%, 80% 10%, 100% 45%, 100% 100%); }
+  /* 场景 3：星轨 */
+  .s-trails { background: repeating-conic-gradient(from 0deg at 50% 118%, rgba(255,255,255,0.16) 0deg 0.35deg, transparent 0.35deg 2.6deg), radial-gradient(1px 1px at 20% 18%, #fff, transparent), radial-gradient(1.5px 1.5px at 84% 12%, #fff, transparent), #0d0918; }
+  .s-trails::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 16%; background: #0a0614; }
+  /* 场景 4：月升 */
+  .s-moon { background: radial-gradient(circle at 62% 34%, rgba(255, 250, 235, 0.16) 0 14%, transparent 15%), radial-gradient(circle at 62% 34%, #fff8e8 0 6.5%, rgba(255, 244, 214, 0.75) 7%, transparent 9%), radial-gradient(1px 1px at 15% 25%, #fff, transparent), radial-gradient(1px 1px at 30% 60%, #fff, transparent), radial-gradient(1px 1px at 45% 20%, #fff, transparent), radial-gradient(1px 1px at 80% 65%, #fff, transparent), #0d0918; }
+  .s-moon::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 30%; background: linear-gradient(to top, #0a0614 70%, transparent); clip-path: polygon(0 100%, 0 35%, 20% 60%, 42% 5%, 60% 50%, 82% 15%, 100% 55%, 100% 100%); }
+  /* 场景 5：黄道光 */
+  .s-zodiac { background: conic-gradient(from 200deg at 55% 108%, rgba(255, 223, 160, 0.20) 0deg, transparent 36deg), radial-gradient(1px 1px at 20% 35%, #fff, transparent), radial-gradient(1px 1px at 38% 15%, #fff, transparent), radial-gradient(1.5px 1.5px at 70% 22%, #fff, transparent), radial-gradient(1px 1px at 85% 45%, #fff, transparent), radial-gradient(1px 1px at 60% 55%, #fff, transparent), #0d0918; }
+  .s-zodiac::after { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 18%; background: #0a0614; clip-path: polygon(0 100%, 0 40%, 30% 0, 60% 45%, 100% 10%, 100% 100%); }
+  /* 场景 6：M31 */
+  .s-galaxy { background: radial-gradient(ellipse 26% 10% at 46% 44%, rgba(255,255,255,0.10), transparent 70%), radial-gradient(ellipse 12% 4.5% at 46% 44%, rgba(230, 225, 255, 0.85), transparent 75%), radial-gradient(1px 1px at 18% 22%, #fff, transparent), radial-gradient(1px 1px at 28% 62%, #fff, transparent), radial-gradient(1px 1px at 58% 28%, #fff, transparent), radial-gradient(1.5px 1.5px at 74% 55%, #fff, transparent), radial-gradient(1px 1px at 86% 18%, #fff, transparent), radial-gradient(1px 1px at 65% 75%, #fff, transparent), #0d0918; }
+
+  /* ============ 观测记录卡（签名组件）============ */
+  section.records { background: var(--bg-deep); border-top: 1px solid var(--bd-purple); border-bottom: 1px solid var(--bd-purple); padding: 80px 0; }
+  .rule-card { background: var(--bg); border: 1px solid var(--bd-purple); border-radius: 12px; box-shadow: var(--card-shadow); overflow: hidden; margin-top: 44px; }
+  .rule-bar { display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; border-bottom: 1px solid var(--bd-purple); }
+  .rule-bar span { font-family: var(--mono); font-size: 12px; color: var(--text-2); }
+  .rule-bar .ok { color: var(--lime); }
+  .rule-card pre { font-family: var(--mono); font-size: 14px; line-height: 1.7; padding: 20px 22px; overflow-x: auto; color: var(--text-2); }
+  .c { color: rgba(229, 231, 235, 0.45); }
+  .k { color: var(--lime); }
+  .s { color: var(--code-yellow); }
+  .n { color: #ffffff; }
+
+  /* ============ 团期（行式清单，签名组件）============ */
+  section.tours { padding: 80px 0; }
+  .night-row { display: grid; grid-template-columns: 130px 1fr auto; gap: 18px; align-items: center; padding: 16px 0; border-bottom: 1px solid var(--bd-purple); }
+  .night-row:first-of-type { border-top: 1px solid var(--bd-purple); }
+  .night-row .d { font-family: var(--display); font-size: 22px; font-weight: 700; }
+  .night-row .t b { font-size: 16px; font-weight: 500; display: block; }
+  .night-row .t span { font-size: 13px; color: var(--text-2); }
+  .st { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.2px; padding: 4px 12px; border-radius: 18px; white-space: nowrap; }
+  .st-open { color: var(--lime); border: 1px solid var(--lime); }
+  .st-ok { color: var(--text-2); border: 1px solid var(--purple); }
+  .st-full { color: var(--text-2); border: 1px solid var(--bd-purple); }
+
+  /* ============ 终章 ============ */
+  .final { text-align: center; padding: 72px 0 96px; }
+  .final h2 { font-family: var(--display); font-size: clamp(34px, 4.6vw, 60px); font-weight: 700; line-height: 1.2; margin-bottom: 16px; }
+  .final p { font-size: 16px; line-height: 1.5; color: var(--text-2); margin-bottom: 30px; }
+
+  /* ============ 页脚 ============ */
+  footer { background: var(--bg-deep); border-top: 1px solid var(--bd-purple); padding: 56px 0 36px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 36px; }
+  .footer-grid p { font-size: 14px; line-height: 1.5; color: var(--text-2); max-width: 300px; margin-top: 14px; }
+  .footer-grid h4 { font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--purple); margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 15px; font-weight: 500; line-height: 1.4; color: var(--text-2); padding: 5px 0; }
+  .footer-grid a:hover { color: var(--purple); }
+  .footer-bottom { margin-top: 44px; padding-top: 22px; border-top: 1px solid var(--bd-purple); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: 0.25px; text-transform: uppercase; color: var(--text-2); }
+
+  /* ============ 响应式：1280 / 992 / 768 / 480 / 375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 992px) {
+    .work-grid { grid-template-columns: repeat(2, 1fr); }
+    .glass-strip { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: var(--bg-deep); flex-direction: column; padding: 12px 32px 20px; gap: 2px; border-bottom: 1px solid var(--bd-purple); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; }
+    .menu-btn { display: block; }
+    .container { padding: 0 24px; }
+    .hero { padding: 72px 0 64px; }
+    section.works, section.tours { padding: 56px 0; }
+    section.records { padding: 56px 0; }
+    .night-row { grid-template-columns: 90px 1fr; }
+    .night-row .st { grid-column: 2; justify-self: start; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .work-grid { grid-template-columns: 1fr; }
+    .hero h1 { font-size: 42px; }
+    .hero-actions .btn { width: 100%; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 38px; }
+    .glass b { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>StarHerder <em>牧星人</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#works">星野手记</a></li>
+      <li><a href="#records">观测记录</a></li>
+      <li><a href="#tours">本季团期</a></li>
+    </ul>
+    <a href="#tours" class="btn" style="padding:10px 16px">预约观星</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="stars" aria-hidden="true">
+    <span class="star" style="top:18%;left:12%;animation-delay:0s"></span>
+    <span class="star" style="top:34%;left:76%;animation-delay:1.2s"></span>
+    <span class="star" style="top:58%;left:22%;animation-delay:2.1s"></span>
+    <span class="star" style="top:26%;left:52%;animation-delay:0.6s"></span>
+    <span class="star" style="top:66%;left:64%;animation-delay:2.9s"></span>
+  </div>
+  <div class="container">
+    <p class="kicker">Dark-Sky Guide · 国际暗夜协会认证向导 · 第九季</p>
+    <h1>带你看一次<br>真正的黑。</h1>
+    <p class="sub">我是牧星人，一名暗夜保护区星空向导。九年来，我带 3,100 多位城市来客走进无光污染的高原与荒漠——见过银河从地平线升起的人，都会重新想一想"夜晚"这两个字。</p>
+    <div class="hero-actions">
+      <a href="#tours" class="btn btn-white">查看本季团期</a>
+      <a href="#records" class="btn">读我的观测记录</a>
+    </div>
+    <div class="glass-strip">
+      <div class="glass"><b>9 年</b><span>暗夜向导生涯，从青海冷湖到内蒙明安</span></div>
+      <div class="glass"><b>214 个</b><span>观星夜——清点过的晴夜比阴夜多三倍</span></div>
+      <div class="glass"><b>3,100+</b><span>位同行者，最小的 6 岁，最年长的 78 岁</span></div>
+    </div>
+  </div>
+</header>
+
+<section class="works" id="works">
+  <div class="container">
+    <p class="sec-label lime">Works · 星野手记</p>
+    <h2 class="sec-title">用眼睛拍的片子。</h2>
+    <div class="work-grid">
+      <div class="work">
+        <div class="scene sky s-milky"></div>
+        <div class="info">
+          <h3><i></i>银河拱桥 · 冷湖</h3>
+          <p class="param">14mm f/1.8 · 15s · ISO3200 · 6 张拼接</p>
+          <p class="desc">凌晨两点，银河从柴达木盆地的地平线整条立起来。那一晚没有人说话。</p>
+        </div>
+      </div>
+      <div class="work">
+        <div class="scene sky s-meteor"></div>
+        <div class="info">
+          <h3><i class="pink"></i>英仙座流星雨 · 明安</h3>
+          <p class="param">20mm f/1.4 · 13s · ISO6400 · 连拍 2 小时</p>
+          <p class="desc">极大值之夜数到 47 颗火流星，最亮的一颗把草原照出了影子。</p>
+        </div>
+      </div>
+      <div class="work">
+        <div class="scene sky s-trails"></div>
+        <div class="info">
+          <h3><i class="coral"></i>北天星轨 · 阿里</h3>
+          <p class="param">16mm f/2.0 · 200×30s · 星跡合成</p>
+          <p class="desc">对准北极星的两个小时，天地像一台缓慢的留声机。</p>
+        </div>
+      </div>
+      <div class="work">
+        <div class="scene sky s-moon"></div>
+        <div class="info">
+          <h3><i></i>满月升 · 独山子</h3>
+          <p class="param">400mm f/5.6 · 1/60s · ISO200</p>
+          <p class="desc">月光落在戈壁上的那一刻，亮得能看清自己的表盘。</p>
+        </div>
+      </div>
+      <div class="work">
+        <div class="scene sky s-zodiac"></div>
+        <div class="info">
+          <h3><i class="pink"></i>黄道光 · 敦煌以西</h3>
+          <p class="param">24mm f/2.0 · 20s · ISO1600</p>
+          <p class="desc">春分前的黎明，太阳系的尘埃在东方天际立起一座假黎明。</p>
+        </div>
+      </div>
+      <div class="work">
+        <div class="scene sky s-galaxy"></div>
+        <div class="info">
+          <h3><i class="coral"></i>M31 · 仙女座星系</h3>
+          <p class="param">300mm f/4 · 90s × 24 · 累积曝光</p>
+          <p class="desc">肉眼只是一小团雾，镜头里却是 250 万年前出发的光。</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="records" id="records">
+  <div class="container">
+    <p class="sec-label violet" style="color:var(--purple)">Field Notes · 观测记录</p>
+    <h2 class="sec-title" style="margin-bottom:0">每一个观星夜，都记账。</h2>
+    <div class="rule-card">
+      <div class="rule-bar"><span>observation/2026-08-09.yml</span><span class="ok">● log #212</span></div>
+<pre><span class="c"># 观星夜记录 · 青海冷湖 · 赛什腾山垭口</span>
+<span class="k">site</span>: <span class="s">saiteng-pass-4200m</span>
+<span class="k">sqm_limiting_mag</span>: <span class="n">21.8</span>        <span class="c"># 天光限星等，全季最佳</span>
+<span class="k">seeing</span>: <span class="n">1.1</span> <span class="s">arcsec</span>          <span class="c"># 视宁度</span>
+<span class="k">moon</span>: <span class="s">new</span>                    <span class="c"># 无月光干扰</span>
+<span class="k">targets</span>:
+  - <span class="s">milky-way-core</span>       <span class="c"># 银河中心拱桥</span>
+  - <span class="s">m31-andromeda</span>
+  - <span class="s">perseid-early</span>        <span class="c"># 英仙座前哨流星 ×12</span>
+<span class="k">group</span>: <span class="n">14</span> <span class="s">位同行者 · 4 台望远镜</span>
+<span class="k">guide</span>: <span class="s">starherder-01</span></pre>
+    </div>
+  </div>
+</section>
+
+<section class="tours" id="tours">
+  <div class="container">
+    <p class="sec-label violet" style="color:var(--purple)">Season · 本季观星团</p>
+    <h2 class="sec-title" style="font-weight:400;font-size:30px;line-height:1.2;margin-bottom:36px">跟一晚，就够记一辈子。</h2>
+    <div class="night-row">
+      <span class="d">09/12</span>
+      <div class="t"><b>银河季收官团 · 冷湖赛什腾山</b><span>海拔 4,200m · 含天文台参观 · 适龄 10 岁以上</span></div>
+      <span class="st st-open">余 4 席</span>
+    </div>
+    <div class="night-row">
+      <span class="d">09/26</span>
+      <div class="t"><b>中秋望月专场 · 独山子戈壁</b><span>望远镜赏月 + 月面摄影教学 · 适合家庭</span></div>
+      <span class="st st-ok">已成团</span>
+    </div>
+    <div class="night-row">
+      <span class="d">10/18</span>
+      <div class="t"><b>猎户座双子座流星预热 · 明安草原</b><span>供暖蒙古包 · 深空目标引导</span></div>
+      <span class="st st-open">报名开放</span>
+    </div>
+    <div class="night-row">
+      <span class="d">12/14</span>
+      <div class="t"><b>双子座流星雨极大 · 待定高原点</b><span>一年中最稳的流星雨 · 摄影团配赤道仪</span></div>
+      <span class="st st-full">候补中</span>
+    </div>
+  </div>
+</section>
+
+<section class="final">
+  <div class="container">
+    <h2>黑，是要留给孩子的<br>一种自然资源。</h2>
+    <p>每一条团费的 5% 注入当地暗夜保护基金。预约前，请先看完「黑暗的意义」三分钟短片。</p>
+    <a href="#" class="btn btn-white">预约私人导览</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>StarHerder <em>牧星人</em></a>
+        <p>暗夜保护区认证星空向导。带人看黑，也替黑说几句话。</p>
+      </div>
+      <div>
+        <h4>Works</h4>
+        <a href="#works">星野手记</a><a href="#records">观测记录</a><a href="#">器材清单</a>
+      </div>
+      <div>
+        <h4>Tours</h4>
+        <a href="#tours">本季团期</a><a href="#">私导预约</a><a href="#">往季相册</a>
+      </div>
+      <div>
+        <h4>About</h4>
+        <a href="#">向导资质</a><a href="#">暗夜保护基金</a><a href="#">联系我</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 StarHerder 牧星人 · StyleForge 平台 AI 生成习作 · study of nightward-v1</span>
+      <span>Season 09</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

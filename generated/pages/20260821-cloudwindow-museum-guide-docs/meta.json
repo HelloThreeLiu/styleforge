@@ -1,0 +1,37 @@
+{
+  "id": "20260821-cloudwindow-museum-guide-docs",
+  "title": "云窗 CloudWindow · 博物馆数字导览内容手册",
+  "created_at": "2026-08-21T18:50:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "webflow"
+  ],
+  "page_type": "docs",
+  "industry": [
+    "entertainment"
+  ],
+  "mood": [
+    "minimal",
+    "editorial"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "80px紧字距大标题",
+    "五层级联阴影卡",
+    "蓝徽章次级色板",
+    "三栏文档布局",
+    "JSON导览点代码卡",
+    "translate6px箭头按钮"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "promoted",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

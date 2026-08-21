@@ -1,0 +1,370 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>榫卯 SunMao — 开源自动化工作流引擎 · 登录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;600&family=Inter:wght@400;500;600&family=Cormorant:wght@300;400&display=swap" rel="stylesheet">
+<style>
+  /* ============ Zapier Tokens（来源：design-md/zapier/DESIGN.md）============ */
+  :root {
+    --cream: #fffefb;        /* 奶油白画布：非纯白 */
+    --off-white: #fffdf9;    /* 次级面 */
+    --ink: #201515;          /* 暖近黑（红调）文本 */
+    --charcoal: #36342e;     /* 正文深灰棕 */
+    --muted: #939084;        /* 弱文本 */
+    --sand: #c5c0b1;         /* 沙色边框：结构骨架 */
+    --sand-light: #eceae3;   /* 浅沙面 */
+    --sand-mid: #b5b2aa;
+    --orange: #ff4f00;       /* Zapier Orange：唯一强调 */
+    --tab-on: rgb(255, 79, 0) 0px -4px 0px 0px inset;
+    --tab-hover: rgb(197, 192, 177) 0px -4px 0px 0px inset;
+    --display: 'Bricolage Grotesque', 'Degular Display', Inter, sans-serif;
+    --ui: 'Inter', Helvetica, Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --edit: 'Cormorant', 'GT Alpina', Georgia, serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--cream); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); cursor: pointer; }
+  :focus-visible { outline: 1px solid var(--orange); outline-offset: 2px; }
+  .container { max-width: 1200px; margin: 0 auto; padding: 0 32px; }
+  .sec-label { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 14px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 254, 251, 0.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--sand); }
+  .nav-inner { display: flex; align-items: center; gap: 28px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-family: var(--display); font-size: 21px; font-weight: 600; }
+  .logo i { width: 20px; height: 20px; background: var(--orange); border-radius: 5px; font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; left: 4px; top: 8.5px; width: 12px; height: 3px; background: var(--cream); border-radius: 2px; }
+  .logo em { font-style: normal; font-family: var(--ui); font-size: 12px; font-weight: 500; color: var(--muted); margin-left: 2px; }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 16px; font-weight: 500; color: var(--ink); padding: 8px 12px; border-radius: 4px; }
+  .nav-links a:hover { text-decoration: underline; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--sand); border-radius: 4px; }
+  .menu-btn span { display: block; width: 16px; height: 2px; background: var(--ink); margin: 3px auto; }
+
+  /* ============ 按钮体系 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; line-height: 1; border-radius: 4px; border: 1px solid transparent; min-height: 44px; transition: background .15s, color .15s, border-color .15s; }
+  .btn-orange { background: var(--orange); color: var(--cream); padding: 8px 16px; }
+  .btn-orange:hover { background: #e64700; border-color: #e64700; }
+  .btn-dark { background: var(--ink); color: var(--cream); padding: 20px 24px; border-radius: 8px; border-color: var(--ink); }
+  .btn-dark:hover { background: var(--sand); color: var(--ink); }
+  .btn-light { background: var(--sand-light); color: var(--charcoal); padding: 20px 24px; border-radius: 8px; border-color: var(--sand); }
+  .btn-light:hover { background: var(--sand); color: var(--ink); }
+
+  /* ============ 登录区：左叙事 + 右表单卡 ============ */
+  .login-band { display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; padding: 80px 0 72px; align-items: center; }
+  .login-copy .kicker { font-size: 14px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); margin-bottom: 18px; }
+  .login-copy h1 { font-family: var(--display); font-size: clamp(40px, 5.6vw, 56px); font-weight: 500; line-height: 0.90; margin-bottom: 8px; }
+  .login-copy h1 em { font-style: normal; color: var(--orange); }
+  .login-copy .editorial { font-family: var(--edit); font-size: clamp(26px, 3.2vw, 40px); font-weight: 300; line-height: 1.08; letter-spacing: -1.6px; color: var(--charcoal); margin: 14px 0 18px; }
+  .login-copy p.sub { font-size: 20px; font-weight: 400; line-height: 1.2; letter-spacing: -0.2px; color: var(--charcoal); max-width: 480px; }
+  .login-stats { display: flex; gap: 40px; margin-top: 36px; flex-wrap: wrap; }
+  .login-stats b { display: block; font-size: 48px; font-weight: 500; line-height: 1; }
+  .login-stats span { display: block; font-size: 14px; font-weight: 500; color: var(--charcoal); margin-top: 6px; }
+
+  /* 登录卡 */
+  .login-card { background: var(--off-white); border: 1px solid var(--sand); border-radius: 5px; padding: 32px; max-width: 430px; justify-self: end; width: 100%; }
+  .login-card h2 { font-size: 24px; font-weight: 600; line-height: 1.2; margin-bottom: 4px; }
+  .login-card .hint { font-size: 14px; font-weight: 500; color: var(--charcoal); margin-bottom: 22px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 14px; font-weight: 600; margin-bottom: 6px; }
+  .field input { width: 100%; font-family: var(--ui); font-size: 16px; font-weight: 400; color: var(--ink); background: var(--cream); border: 1px solid var(--sand); border-radius: 5px; padding: 11px 14px; min-height: 46px; transition: border-color .15s; }
+  .field input:focus { outline: none; border-color: var(--orange); }
+  .field input::placeholder { color: var(--muted); }
+  .field .pw { position: relative; }
+  .field .pw button { position: absolute; right: 6px; top: 50%; transform: translateY(-50%); background: transparent; border: none; font-size: 13px; font-weight: 600; color: var(--muted); padding: 8px; }
+  .field .pw button:hover { color: var(--ink); }
+  .form-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; font-size: 14px; }
+  .form-row label { display: flex; align-items: center; gap: 8px; font-weight: 500; color: var(--charcoal); cursor: pointer; }
+  .form-row input[type="checkbox"] { accent-color: var(--orange); width: 16px; height: 16px; }
+  .form-row a { font-weight: 500; color: var(--ink); text-decoration: underline; }
+  .form-row a:hover { text-decoration: none; }
+  .login-card .btn-orange { width: 100%; padding: 12px 16px; font-size: 16px; }
+  .divider { display: flex; align-items: center; gap: 12px; margin: 20px 0; color: var(--muted); font-size: 13px; font-weight: 500; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--sand); }
+  .login-card .btn-dark { width: 100%; padding: 14px 24px; }
+  .login-foot { text-align: center; font-size: 14px; font-weight: 500; color: var(--charcoal); margin-top: 20px; }
+  .login-foot a { text-decoration: underline; }
+  .login-foot a:hover { text-decoration: none; }
+
+  /* ============ Tab + 集成卡 ============ */
+  section.flow { border-top: 1px solid var(--sand); padding: 64px 0 72px; }
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--sand); margin-bottom: 32px; overflow-x: auto; }
+  .tabs button { background: transparent; border: none; font-size: 16px; font-weight: 500; color: var(--ink); padding: 12px 16px; box-shadow: var(--tab-hover); white-space: nowrap; }
+  .tabs button.on { box-shadow: var(--tab-on); }
+  .panel { display: none; }
+  .panel.on { display: block; }
+  .zaps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .zap { background: var(--cream); border: 1px solid var(--sand); border-radius: 5px; padding: 20px; transition: border-color .15s; }
+  .zap:hover { border-color: var(--sand-mid); }
+  .zap .pair { display: flex; align-items: center; gap: 10px; margin-bottom: 14px; }
+  .app { width: 34px; height: 34px; border-radius: 8px; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; color: var(--cream); flex-shrink: 0; }
+  .arrow { flex-shrink: 0; color: var(--muted); font-size: 14px; }
+  .zap h3 { font-size: 16px; font-weight: 500; letter-spacing: -0.16px; margin-bottom: 4px; }
+  .zap p { font-size: 14px; font-weight: 400; line-height: 1.4; color: var(--charcoal); }
+  .zap .runs { margin-top: 12px; font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--muted); }
+
+  /* ============ 编辑体块 ============ */
+  section.editorial { border-top: 1px solid var(--sand); padding: 72px 0; }
+  .ed-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start; }
+  .ed-grid .big { font-family: var(--edit); font-size: clamp(30px, 3.8vw, 48px); font-weight: 300; line-height: 1.1; letter-spacing: -1.92px; color: var(--ink); }
+  .ed-grid .big em { font-style: italic; color: var(--orange); }
+  .ed-grid p { font-size: 16px; font-weight: 400; line-height: 1.5; letter-spacing: -0.16px; color: var(--charcoal); margin-bottom: 14px; }
+  .ed-grid p b { font-weight: 600; color: var(--ink); }
+
+  /* ============ 页脚 ============ */
+  footer { background: var(--ink); color: var(--cream); padding: 56px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid .logo { color: var(--cream); }
+  .foot-grid p { font-size: 14px; line-height: 1.5; color: var(--sand); max-width: 300px; margin-top: 14px; }
+  .foot-grid h5 { font-size: 12px; font-weight: 600; letter-spacing: 0.5px; text-transform: uppercase; color: var(--sand); margin-bottom: 14px; }
+  .foot-grid a { display: block; font-size: 14px; font-weight: 400; color: var(--sand); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--cream); }
+  .socials { display: flex; gap: 10px; margin-top: 18px; }
+  .socials a { width: 34px; height: 34px; border-radius: 14px; border: 1px solid var(--sand); display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 600; padding: 0; }
+  .socials a:hover { background: var(--sand); color: var(--ink); }
+  .foot-note { margin-top: 44px; padding-top: 22px; border-top: 1px solid rgba(197, 192, 177, 0.3); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 13px; color: var(--sand); }
+
+  /* ============ 响应式：1280 / 991 / 768 / 600 / 450 / 375（zapier 断点 450/600/991）============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 991px) {
+    .login-band { grid-template-columns: 1fr; gap: 48px; padding: 56px 0; }
+    .login-card { justify-self: start; max-width: 480px; }
+    .ed-grid { grid-template-columns: 1fr; gap: 32px; }
+    .zaps { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--sand); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; margin-left: auto; }
+    .nav-cta { display: none; }
+    .container { padding: 0 24px; }
+    section.flow, section.editorial { padding: 48px 0; }
+  }
+  @media (max-width: 600px) {
+    .login-stats { gap: 24px; }
+    .login-stats b { font-size: 36px; }
+  }
+  @media (max-width: 450px) {
+    .zaps { grid-template-columns: 1fr; }
+    .login-card { padding: 24px 20px; }
+    .btn { width: 100%; }
+    .nav-cta { display: none; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .login-copy h1 { font-size: 40px; }
+  }
+  @media (max-width: 375px) {
+    .login-copy h1 { font-size: 34px; }
+    .login-copy .editorial { letter-spacing: -0.8px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>榫卯 <em>SunMao</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#flow">连接</a></li>
+      <li><a href="#">模板库</a></li>
+      <li><a href="#">文档</a></li>
+      <li><a href="#">社区</a></li>
+    </ul>
+    <a href="#" class="btn btn-orange nav-cta" style="padding:8px 16px">创建账户</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<section class="login-band container">
+  <div class="login-copy">
+    <p class="kicker">Open-source workflow automation · 开源自动化工作流引擎</p>
+    <h1>把重复的事，<br>交给<em>榫卯</em>。</h1>
+    <p class="editorial">两块木头咬合，不用一根钉子。<br>两个应用相遇，不用写一行代码。</p>
+    <p class="sub">榫卯是社区驱动的自动化引擎：表单进、消息出，仓库动了、看板自动记。680+ 应用由社区共同维护连接器。</p>
+    <div class="login-stats">
+      <div><b>680+</b><span>社区维护的连接器</span></div>
+      <div><b>1.2M</b><span>每周运行的工作流</span></div>
+      <div><b>3,400</b><span>可复用模板</span></div>
+    </div>
+  </div>
+
+  <div class="login-card">
+    <h2>登录控制台</h2>
+    <p class="hint">欢迎回来，你的工作流在过去 24 小时运行了 47 次。</p>
+    <form id="loginForm">
+      <div class="field">
+        <label for="email">邮箱</label>
+        <input type="email" id="email" placeholder="you@workspace.dev" required>
+      </div>
+      <div class="field">
+        <label for="pw">密码</label>
+        <div class="pw">
+          <input type="password" id="pw" placeholder="••••••••••" required>
+          <button type="button" id="pwToggle" aria-label="显示密码">显示</button>
+        </div>
+      </div>
+      <div class="form-row">
+        <label><input type="checkbox" checked>记住这台设备</label>
+        <a href="#">忘记密码？</a>
+      </div>
+      <button type="submit" class="btn btn-orange" id="loginBtn">登录控制台</button>
+      <div class="divider">或</div>
+      <a href="#" class="btn btn-dark">使用 SSO 继续</a>
+    </form>
+    <p class="login-foot">还没有账户？<a href="#">免费创建</a> · 永远自托管友好</p>
+  </div>
+</section>
+
+<section class="flow" id="flow">
+  <div class="container">
+    <p class="sec-label">01 / Connect · 社区最常用的咬合</p>
+    <div class="tabs" id="tabs">
+      <button class="on" data-p="hot">热门连接</button>
+      <button data-p="fresh">本周新上架</button>
+    </div>
+    <div class="panel on" id="p-hot">
+      <div class="zaps">
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#24292e">G</span><span class="arrow">→</span><span class="app" style="background:#3370ff">飞</span></div>
+          <h3>GitHub → 飞书群</h3>
+          <p>主分支有新合并请求时，把标题、作者与 diff 摘要发进评审群。</p>
+          <p class="runs">本周运行 12,408 次</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#c72510">R</span><span class="arrow">→</span><span class="app" style="background:#2aabee">T</span></div>
+          <h3>RSS → Telegram</h3>
+          <p>订阅源出现新文章，立即推送到你的频道，附三句 AI 摘要。</p>
+          <p class="runs">本周运行 9,150 次</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#4a154b">表</span><span class="arrow">→</span><span class="app" style="background:#0f9d58">S</span></div>
+          <h3>多维表格 → 日历</h3>
+          <p>表里新增"活动"记录，自动在团队日历建事项并提前三天提醒。</p>
+          <p class="runs">本周运行 7,862 次</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#1a73e8">邮</span><span class="arrow">→</span><span class="app" style="background:#2d2d2e">N</span></div>
+          <h3>邮箱 → 笔记库</h3>
+          <p>收到带「存档」标签的邮件，正文自动归档为一条可检索笔记。</p>
+          <p class="runs">本周运行 6,204 次</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#e01e5a">滑</span><span class="arrow">→</span><span class="app" style="background:#36342e">板</span></div>
+          <h3>消息 → 看板</h3>
+          <p>在频道里说「/todo 修复登录超时」，自动在看板建一张指派卡片。</p>
+          <p class="runs">本周运行 5,977 次</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#ff6b00">温</span><span class="arrow">→</span><span class="app" style="background:#24292e">G</span></div>
+          <h3>温湿度计 → 仓库</h3>
+          <p>树莓派传感器数据每小时提交一次 CSV，绘制成年度趋势图。</p>
+          <p class="runs">本周运行 5,310 次</p>
+        </div>
+      </div>
+    </div>
+    <div class="panel" id="p-fresh">
+      <div class="zaps">
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#7a3dff">谱</span><span class="arrow">→</span><span class="app" style="background:#0f9d58">S</span></div>
+          <h3>乐谱库 → 表格</h3>
+          <p>社区乐团新增曲目，自动登记编制需求与排练时长。</p>
+          <p class="runs">新上架 · 8 月 20 日</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#00d722">苗</span><span class="arrow">→</span><span class="app" style="background:#2aabee">T</span></div>
+          <h3>苗圃传感器 → 频道</h3>
+          <p>土壤湿度低于阈值，温室的灌溉记录自动广播到园艺群。</p>
+          <p class="runs">新上架 · 8 月 19 日</p>
+        </div>
+        <div class="zap">
+          <div class="pair"><span class="app" style="background:#ed52cb">报</span><span class="arrow">→</span><span class="app" style="background:#36342e">板</span></div>
+          <h3>社区报纸 → 看板</h3>
+          <p>街道报每期出刊，版面任务自动拆解为排版待办卡。</p>
+          <p class="runs">新上架 · 8 月 18 日</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="editorial">
+  <div class="container ed-grid">
+    <p class="big">自动化不该是工程师的专利——<em>它该像榫卯一样，人人拼得上手。</em></p>
+    <div>
+      <p>榫卯没有「付费墙里的连接器」：每一个集成都是社区提交、社区评审、社区维护的。你今天用的某个触发器，可能来自一位退休语文教师的深夜贡献。</p>
+      <p><b>自托管是一等公民。</b>一条 docker 命令，整套引擎跑在你自己的树莓派上；数据不出门，工作流照样转。</p>
+      <p>登录之后，你会看到一张只属于你的「咬合图」——哪些应用为你而连，一目了然。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>榫卯 <em>SunMao</em></a>
+        <p>社区驱动的开源自动化工作流引擎。像榫卯一样连接，不用一根钉子。</p>
+        <div class="socials">
+          <a href="#" aria-label="GitHub">G</a><a href="#" aria-label="Telegram">T</a><a href="#" aria-label="Discord">D</a>
+        </div>
+      </div>
+      <div>
+        <h5>产品</h5>
+        <a href="#flow">连接器</a><a href="#">模板库</a><a href="#">自托管指南</a>
+      </div>
+      <div>
+        <h5>社区</h5>
+        <a href="#">贡献连接器</a><a href="#">季度发布路线</a><a href="#">行为准则</a>
+      </div>
+      <div>
+        <h5>支持</h5>
+        <a href="#">文档</a><a href="#">状态页</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 榫卯 SunMao · AGPL-3.0 · StyleForge 平台 AI 生成习作 · study of zapier</span>
+      <span>v2.8 · 680+ connectors</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  // 菜单
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // Tab（inset 下划线切换）
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === btn));
+    document.querySelectorAll('.panel').forEach(p => p.classList.toggle('on', p.id === 'p-' + btn.dataset.p));
+  });
+  // 密码显隐
+  const pw = document.getElementById('pw');
+  document.getElementById('pwToggle').addEventListener('click', () => {
+    const show = pw.type === 'password';
+    pw.type = show ? 'text' : 'password';
+    document.getElementById('pwToggle').textContent = show ? '隐藏' : '显示';
+  });
+  // 登录模拟反馈
+  const loginBtn = document.getElementById('loginBtn');
+  document.getElementById('loginForm').addEventListener('submit', e => {
+    e.preventDefault();
+    loginBtn.textContent = '正在连接…';
+    loginBtn.disabled = true;
+    setTimeout(() => {
+      loginBtn.textContent = '✓ 欢迎回来';
+      setTimeout(() => { loginBtn.textContent = '登录控制台'; loginBtn.disabled = false; }, 1800);
+    }, 900);
+  });
+</script>
+</body>
+</html>

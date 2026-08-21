@@ -1,0 +1,417 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>缝补坊 MendWell — 二手衣修补与循环商店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Instrument+Sans:wght@400;500&family=Source+Serif+4:opsz,wght@8..60,300&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Intercom Tokens（来源：design-md/intercom/DESIGN.md）============ */
+  :root {
+    --ink: #111111;          /* 近黑：文本/按钮底 */
+    --white: #ffffff;
+    --cream: #faf9f6;        /* 暖米白画布与卡面 */
+    --fin: #ff5600;          /* Fin Orange：唯一品牌强调 */
+    --r-blue: #65b5ff; --r-green: #0bdf50; --r-red: #c41c1c; --r-pink: #ff2067; --r-lime: #b3e01c; --r-orange: #fe4c02;
+    --green-active: #2c6415; /* 按钮 active 绿 */
+    --n-80: #313130; --n-60: #626260; --n-50: #7b7b78; --n-30: #9c9fa5;
+    --oat: #dedbd6;          /* 燕麦边框 */
+    --sand: #d3cec6;
+    --sans: 'Instrument Sans', 'Saans', ui-sans-serif, system-ui, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --serif: 'Source Serif 4', 'Serrif', ui-serif, Georgia, serif;
+    --mono: 'IBM Plex Mono', 'SaansMono', ui-monospace, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--sans); background: var(--cream); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--sans); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--fin); outline-offset: 2px; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+  .mono { font-family: var(--mono); font-transform: uppercase; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(250, 249, 246, 0.92); backdrop-filter: blur(10px); border-bottom: 1px solid var(--oat); }
+  .nav-inner { display: flex; align-items: center; gap: 24px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 18px; font-weight: 500; letter-spacing: -0.3px; }
+  .logo i { width: 20px; height: 20px; border-radius: 4px; background: var(--ink); position: relative; font-style: normal; }
+  .logo i::after { content: ''; position: absolute; left: 7px; top: -3px; width: 2px; height: 10px; background: var(--fin); transform: rotate(35deg); }
+  .logo em { font-style: normal; font-size: 12px; color: var(--n-50); }
+  .nav-links { display: flex; gap: 2px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 16px; font-weight: 400; color: var(--ink); padding: 9px 12px; border-radius: 6px; }
+  .nav-links a:hover { background: var(--white); }
+  .nav-ai { font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--fin); border: 1px solid var(--fin); border-radius: 4px; padding: 5px 10px; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--oat); border-radius: 4px; }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--ink); margin: 3.5px auto; }
+
+  /* ============ 按钮（4px 锐利 + scale 物理交互）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 400; line-height: 1.5; padding: 12px 14px; border-radius: 4px; border: none; min-height: 48px; transition: transform .15s, background .15s, color .15s; }
+  .btn-dark { background: var(--ink); color: var(--white); }
+  .btn-dark:hover { background: var(--white); color: var(--ink); transform: scale(1.1); }
+  .btn-dark:active { background: var(--green-active); color: var(--white); transform: scale(0.85); }
+  .btn-line { background: transparent; color: var(--ink); border: 1px solid var(--ink); }
+  .btn-line:hover { background: var(--white); transform: scale(1.1); }
+  .btn-line:active { background: var(--green-active); color: var(--white); transform: scale(0.85); }
+  .btn-sm { font-size: 14px; padding: 8px 10px; min-height: 40px; }
+
+  /* ============ Hero ============ */
+  .hero { padding: 88px 0 72px; max-width: 880px; }
+  .hero .kicker { font-family: var(--mono); font-size: 12px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-50); margin-bottom: 20px; }
+  .hero .kicker b { color: var(--fin); font-weight: 500; }
+  .hero h1 { font-size: clamp(34px, 7.2vw, 80px); font-weight: 400; line-height: 1.00; letter-spacing: -2.4px; }
+  .hero p.sub { font-size: 18px; line-height: 1.5; color: var(--n-60); max-width: 560px; margin: 22px 0 32px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+
+  /* ============ 服务卡 ============ */
+  section.services { padding: 24px 0 80px; }
+  .svc-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+  .svc { background: var(--white); border: 1px solid var(--oat); border-radius: 8px; padding: 24px; }
+  .svc .tag { font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; padding: 3px 8px; border-radius: 4px; color: var(--ink); display: inline-block; margin-bottom: 16px; }
+  .svc:nth-child(1) .tag { background: var(--r-blue); }
+  .svc:nth-child(2) .tag { background: var(--r-pink); color: var(--white); }
+  .svc:nth-child(3) .tag { background: var(--r-lime); }
+  .svc h3 { font-size: 32px; font-weight: 400; line-height: 1.00; letter-spacing: -0.96px; margin-bottom: 10px; }
+  .svc p { font-size: 15px; line-height: 1.5; color: var(--n-60); margin-bottom: 14px; }
+  .svc .from { font-family: var(--mono); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-50); }
+
+  /* ============ 循环商店 ============ */
+  section.shop { padding: 0 0 88px; }
+  .shop-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; margin-bottom: 8px; flex-wrap: wrap; }
+  .shop-head h2 { font-size: clamp(28px, 4.4vw, 54px); font-weight: 400; line-height: 1.00; letter-spacing: -1.6px; }
+  .tabs { display: inline-flex; gap: 8px; margin: 16px 0 24px; flex-wrap: wrap; }
+  .tabs button { font-family: var(--mono); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; background: transparent; border: 1px solid var(--oat); border-radius: 4px; padding: 8px 14px; color: var(--n-60); min-height: 40px; }
+  .tabs button.on { background: var(--ink); border-color: var(--ink); color: var(--white); }
+  .goods { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; }
+  .good { background: var(--white); border: 1px solid var(--oat); border-radius: 8px; padding: 16px; display: flex; flex-direction: column; gap: 8px; }
+  .thumb { aspect-ratio: 1/1.1; border-radius: 6px; background: linear-gradient(160deg, var(--sand), var(--cream) 60%, var(--oat)); position: relative; overflow: hidden; }
+  .thumb::after { content: ''; position: absolute; left: 18%; right: 18%; top: 26%; height: 42%; border: 2px dashed rgba(17, 17, 17, 0.25); border-radius: 30px 30px 40px 40px; }
+  .thumb.jacket::after { border-radius: 20px; }
+  .thumb.pants::after { height: 62%; top: 18%; border-radius: 24px; }
+  .thumb.knit::after { height: 48%; border-radius: 60px 60px 30px 30px; }
+  .thumb.kid::after { height: 34%; top: 30%; border-radius: 26px; }
+  .thumb i { position: absolute; width: 18px; height: 18px; border-radius: 3px; left: 50%; transform: translateX(-50%) rotate(45deg); opacity: 0.9; }
+  .thumb.jacket i { top: 36%; background: var(--r-blue); }
+  .thumb.pants i { top: 48%; background: var(--r-pink); }
+  .thumb.knit i { top: 38%; background: var(--r-lime); }
+  .thumb.kid i { top: 40%; width: 12px; height: 12px; background: var(--r-green); }
+  .good .grade { font-family: var(--mono); font-size: 10px; letter-spacing: 0.6px; text-transform: uppercase; padding: 2px 8px; border-radius: 4px; align-self: flex-start; }
+  .grade.a { background: var(--r-blue); }
+  .grade.b { background: var(--r-pink); color: var(--white); }
+  .grade.c { background: var(--r-lime); }
+  .good h3 { font-size: 16px; font-weight: 500; line-height: 1.4; letter-spacing: -0.2px; }
+  .good .desc { font-family: var(--serif); font-size: 14px; font-weight: 300; letter-spacing: -0.16px; color: var(--n-60); line-height: 1.4; }
+  .good .row { display: flex; justify-content: space-between; align-items: center; margin-top: auto; }
+  .good .price { font-size: 18px; font-weight: 500; }
+  .good .price s { font-size: 13px; color: var(--n-30); margin-left: 6px; }
+  .empty { display: none; padding: 40px 0; text-align: center; font-family: var(--serif); color: var(--n-60); }
+
+  /* ============ 编辑体块（Serrif 位）============ */
+  section.story { background: var(--white); border-top: 1px solid var(--oat); border-bottom: 1px solid var(--oat); padding: 80px 0; }
+  .story-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 48px; align-items: start; }
+  .story-grid .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-50); }
+  .story-grid .k b { color: var(--fin); }
+  .story h2 { font-size: clamp(28px, 4vw, 40px); font-weight: 400; line-height: 1.00; letter-spacing: -1.2px; margin-top: 12px; }
+  .story .body p { font-family: var(--serif); font-size: 17px; font-weight: 300; line-height: 1.7; letter-spacing: -0.16px; color: var(--n-80); margin-bottom: 16px; }
+  .story .body p:first-of-type::first-letter { font-size: 52px; float: left; line-height: 0.9; padding: 4px 10px 0 0; font-weight: 400; }
+
+  /* ============ 数据条（report 色板）============ */
+  .impact { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; padding: 80px 0; }
+  .imp b { display: block; font-size: 56px; font-weight: 400; letter-spacing: -1.6px; line-height: 1; }
+  .imp:nth-child(1) b { color: var(--r-blue); }
+  .imp:nth-child(2) b { color: var(--r-green); }
+  .imp:nth-child(3) b { color: var(--r-lime); }
+  .imp span { display: block; font-size: 15px; line-height: 1.5; color: var(--n-60); margin-top: 8px; }
+
+  /* ============ 流程 ============ */
+  section.flow { padding: 0 0 88px; }
+  .flow-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 20px; counter-reset: step; }
+  .step { border: 1px solid var(--oat); background: var(--cream); border-radius: 8px; padding: 20px; }
+  .step .n { font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-50); display: block; margin-bottom: 10px; }
+  .step:nth-child(2) .n { color: var(--fin); }
+  .step h3 { font-size: 24px; font-weight: 400; line-height: 1.00; letter-spacing: -0.48px; margin-bottom: 8px; }
+  .step p { font-size: 14px; line-height: 1.5; color: var(--n-60); }
+
+  /* ============ CTA + 页脚 ============ */
+  .cta { background: var(--ink); border-radius: 8px; padding: 64px 32px; text-align: center; margin: 0 32px 88px; max-width: 1160px; margin-left: auto; margin-right: auto; }
+  .cta .k { font-family: var(--mono); font-size: 12px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--r-orange); margin-bottom: 16px; }
+  .cta h2 { font-size: clamp(26px, 3.8vw, 54px); font-weight: 400; line-height: 1.00; letter-spacing: -1.6px; color: var(--white); max-width: 620px; margin: 0 auto 28px; }
+  .cta .btn-dark { background: var(--white); color: var(--ink); }
+  .cta .btn-dark:hover { background: var(--fin); color: var(--white); }
+  footer { border-top: 1px solid var(--oat); padding: 48px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-family: var(--serif); font-size: 14px; font-weight: 300; line-height: 1.6; color: var(--n-60); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-family: var(--mono); font-size: 11px; font-weight: 500; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-50); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 15px; color: var(--n-80); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--fin); }
+  .foot-note { margin-top: 36px; padding-top: 20px; border-top: 1px solid var(--oat); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 11px; letter-spacing: 0.6px; text-transform: uppercase; color: var(--n-30); }
+
+  /* ============ 响应式：1280 / 896 / 768 / 640 / 425 / 375（intercom 断点 425/530/600/640/768/896）============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+    .cta { margin-left: 40px; margin-right: 40px; }
+  }
+  @media (max-width: 896px) {
+    .svc-grid { grid-template-columns: 1fr; }
+    .goods { grid-template-columns: repeat(2, 1fr); }
+    .story-grid { grid-template-columns: 1fr; gap: 24px; }
+    .flow-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--oat); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; }
+    .menu-btn { display: block; margin-left: auto; }
+    .nav-ai { display: none; }
+    .container { padding: 0 24px; }
+    .cta { margin-left: 24px; margin-right: 24px; padding: 48px 24px; }
+    .impact { grid-template-columns: 1fr; gap: 28px; }
+  }
+  @media (max-width: 640px) {
+    .flow-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 425px) {
+    .goods { grid-template-columns: 1fr; }
+    .hero h1 { letter-spacing: -1.2px; }
+    .foot-grid { grid-template-columns: 1fr; }
+    .btn:hover { transform: none; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.9px; }
+    .svc h3 { font-size: 26px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>缝补坊 <em>MendWell</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#services">修补服务</a></li>
+      <li><a href="#shop">循环商店</a></li>
+      <li><a href="#story">补丁故事</a></li>
+      <li><a href="#flow">如何寄衣</a></li>
+    </ul>
+    <span class="nav-ai">AI 估价 · 30 秒</span>
+    <a href="#flow" class="btn btn-dark btn-sm">寄来修补</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <p class="kicker">Upcycle · 循环修补工坊 · <b>AI 估价已上线</b></p>
+  <h1>补丁不是伤疤，<br>是简历。</h1>
+  <p class="sub">缝补坊用二十年手艺接住每一件舍不得扔的衣服：织补、重造、接长、换拉链。修不好的，进循环商店替它找下一个主人——快时尚的反义词，是一针一线。</p>
+  <div class="hero-actions">
+    <a href="#flow" class="btn btn-dark">寄来修补</a>
+    <a href="#shop" class="btn btn-line">浏览循环商店</a>
+  </div>
+</header>
+
+<section class="services container" id="services">
+  <div class="svc-grid">
+    <div class="svc">
+      <span class="tag">Darning · 织补</span>
+      <h3>精工织补</h3>
+      <p>按原纱走针，虫洞、破洞、磨薄处原色复原——好的织补，要凑近才看得见。</p>
+      <p class="from">from ¥45 / 处</p>
+    </div>
+    <div class="svc">
+      <span class="tag">Remake · 重造</span>
+      <h3>牛仔重造</h3>
+      <p>破旧牛仔裤拆片重缝：改脚口、换腰头、拼成托特包——一条裤子的第三次生命。</p>
+      <p class="from">from ¥120 / 件</p>
+    </div>
+    <div class="svc">
+      <span class="tag">Extend · 接长</span>
+      <h3>童装接长</h3>
+      <p>孩子在长，衣服不必走：袖口、裤脚、肩线三段式放长，同色或撞色由你选。</p>
+      <p class="from">from ¥38 / 处</p>
+    </div>
+  </div>
+</section>
+
+<section class="shop container" id="shop">
+  <div class="shop-head">
+    <h2>循环商店</h2>
+    <span class="mono" style="font-family:var(--mono);font-size:12px;letter-spacing:0.6px;text-transform:uppercase;color:var(--n-50)">修补人寄卖 · 每件唯一</span>
+  </div>
+  <div class="tabs" id="tabs">
+    <button class="on" data-f="all">全部</button>
+    <button data-f="jacket">外套</button>
+    <button data-f="pants">牛仔</button>
+    <button data-f="knit">针织</button>
+    <button data-f="kid">童装</button>
+  </div>
+  <div class="goods" id="goods">
+    <div class="good" data-c="jacket">
+      <div class="thumb jacket"><i></i></div>
+      <span class="grade a">A · 织补如新</span>
+      <h3>卡其工装风衣</h3>
+      <p class="desc">肘部双面织补，走线与原纱同批。</p>
+      <div class="row"><span class="price">¥268<s>¥899</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="jacket">
+      <div class="thumb jacket"><i></i></div>
+      <span class="grade b">B · 痕迹明显</span>
+      <h3>拼布牛仔夹克</h3>
+      <p class="desc">三件旧衣拼成，领口整圈重建。</p>
+      <div class="row"><span class="price">¥188<s>—</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="pants">
+      <div class="thumb pants"><i></i></div>
+      <span class="grade a">A · 织补如新</span>
+      <h3>高腰直筒牛仔裤</h3>
+      <p class="desc">膝盖菱形织补，几乎不可见。</p>
+      <div class="row"><span class="price">¥156<s>¥560</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="pants">
+      <div class="thumb pants"><i></i></div>
+      <span class="grade c">C · 痕迹即故事</span>
+      <h3>锥形牛仔裤 · 改脚口</h3>
+      <p class="desc">原裤改小脚口，侧缝留疤——故事的一部分。</p>
+      <div class="row"><span class="price">¥128<s>—</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="knit">
+      <div class="thumb knit"><i></i></div>
+      <span class="grade b">B · 痕迹明显</span>
+      <h3>费尔岛毛衣</h3>
+      <p class="desc">袖口加固一圈，提花重补两处。</p>
+      <div class="row"><span class="price">¥220<s>¥780</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="knit">
+      <div class="thumb knit"><i></i></div>
+      <span class="grade a">A · 织补如新</span>
+      <h3>羊绒围巾</h3>
+      <p class="desc">蛀洞补绣三朵小梅花，比新的更好看。</p>
+      <div class="row"><span class="price">¥198<s>¥1,200</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="kid">
+      <div class="thumb kid"><i></i></div>
+      <span class="grade a">A · 织补如新</span>
+      <h3>童装背带裤 · 三段接长</h3>
+      <p class="desc">已经陪过两个孩子，还能再陪一个。</p>
+      <div class="row"><span class="price">¥88<s>¥320</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+    <div class="good" data-c="kid">
+      <div class="thumb kid"><i></i></div>
+      <span class="grade c">C · 痕迹即故事</span>
+      <h3>儿童风雪服 · 换拉链</h3>
+      <p class="desc">原厂拉链退役，新拉链再战一冬。</p>
+      <div class="row"><span class="price">¥96<s>—</s></span><button class="btn btn-line btn-sm">加入循环篮</button></div>
+    </div>
+  </div>
+  <p class="empty" id="empty">这一类暂时没有在架——每周五上新，回头来看看。</p>
+</section>
+
+<section class="story" id="story">
+  <div class="container story-grid">
+    <div>
+      <p class="k">Patch stories · <b>补丁故事</b> · 第 14 期</p>
+      <h2>一件风衣的<br>三次补丁。</h2>
+    </div>
+    <div class="body">
+      <p>1998 年，陈阿姨把这件风衣寄到缝补坊的时候，右肘已经磨出了巴掌大的薄区。她说这是她先生留下的，袖口的烟味还在。师傅用了三天，从内袋剪下同批布，织了一个看不见的补丁。</p>
+      <p>2014 年，他们的女儿把风衣再次寄来——肩线开线了。这一次加了垫肩，顺势改成了女装版型。收据背面多了一行小字：第三次来的时候，希望能改童装。</p>
+      <p>今年春天，风衣第三次进坊：裁短、接长、收腰，现在穿在陈阿姨外孙女身上。三次补丁，三代人——衣服的简历，比我们任何人都长。</p>
+    </div>
+  </div>
+</section>
+
+<div class="container impact">
+  <div class="imp"><b>12,400</b><span>件衣物经手修补，平均延长寿命 4.2 年</span></div>
+  <div class="imp"><b>3,800</b><span>件进入循环商店，找到第二位主人</span></div>
+  <div class="imp"><b>4.6 吨</b><span>纺织垃圾免于填埋——这只是一个工坊的数</span></div>
+</div>
+
+<section class="flow container" id="flow">
+  <p class="mono" style="font-family:var(--mono);font-size:12px;letter-spacing:0.6px;text-transform:uppercase;color:var(--n-50);margin-bottom:12px">How it works · 寄衣四步</p>
+  <h2 style="font-size:clamp(28px,4vw,40px);font-weight:400;line-height:1;letter-spacing:-1.2px;margin-bottom:36px">从你家衣橱，回到你家衣橱。</h2>
+  <div class="flow-grid">
+    <div class="step">
+      <span class="n">Step 01</span>
+      <h3>预约寄出</h3>
+      <p>线上预约，顺丰到付——防水袋由我们提供。</p>
+    </div>
+    <div class="step">
+      <span class="n">Step 02 · AI 估价</span>
+      <h3>三十秒报价</h3>
+      <p>拍照上传，AI 按破损类型与工艺难度即时估价，师傅复核后开工。</p>
+    </div>
+    <div class="step">
+      <span class="n">Step 03</span>
+      <h3>修补施工</h3>
+      <p>每件衣服一位责任师傅，进度短信通知，全程可视频查看。</p>
+    </div>
+    <div class="step">
+      <span class="n">Step 04</span>
+      <h3>回寄或寄卖</h3>
+      <p>修好寄回免运费；不想要的，挂上循环商店，售出后与工坊三七分。</p>
+    </div>
+  </div>
+</section>
+
+<section class="cta">
+  <p class="k">Mend, don't end</p>
+  <h2>那件舍不得的衣服，还差一次寄出的决心。</h2>
+  <a href="#" class="btn btn-dark">预约取件</a>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>缝补坊 <em>MendWell</em></a>
+        <p>一家反快时尚的修补工坊。让衣服活得比潮流久一点，再久一点。</p>
+      </div>
+      <div>
+        <h5>服务</h5>
+        <a href="#services">精工织补</a><a href="#services">牛仔重造</a><a href="#services">童装接长</a>
+      </div>
+      <div>
+        <h5>商店</h5>
+        <a href="#shop">循环商店</a><a href="#">寄卖规则</a><a href="#">每周上新</a>
+      </div>
+      <div>
+        <h5>工坊</h5>
+        <a href="#story">补丁故事</a><a href="#flow">寄衣指南</a><a href="#">缝纫课</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 缝补坊 MendWell · StyleForge 平台 AI 生成习作 · study of intercom</span>
+      <span>atelier no.03 · since 2006</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 商店分类筛选
+  const empty = document.getElementById('empty');
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === btn));
+    let hit = 0;
+    document.querySelectorAll('#goods .good').forEach(g => {
+      const show = btn.dataset.f === 'all' || g.dataset.c === btn.dataset.f;
+      g.style.display = show ? 'flex' : 'none';
+      if (show) hit++;
+    });
+    empty.style.display = hit ? 'none' : 'block';
+  });
+  // 加入循环篮反馈
+  document.querySelectorAll('#goods .btn').forEach(b => {
+    b.addEventListener('click', () => {
+      const old = b.textContent;
+      b.textContent = '✓ 已加入';
+      setTimeout(() => b.textContent = old, 1400);
+    });
+  });
+</script>
+</body>
+</html>

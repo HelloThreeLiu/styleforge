@@ -1,0 +1,24 @@
+{
+  "id": "20260821-mendwell-upcycle-fashion-ecommerce",
+  "title": "缝补坊 MendWell · 二手衣修补循环商店",
+  "created_at": "2026-08-21T23:59:50+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["intercom"],
+  "page_type": "e-commerce",
+  "industry": ["fashion"],
+  "mood": ["soft", "editorial"],
+  "innovation": 0,
+  "tags_ai": [
+    "暖米白燕麦边框",
+    "极端负字距标题",
+    "scale物理按钮",
+    "report色板成色标签",
+    "衬线编辑体首字下沉",
+    "CSS衣物剪影卡"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

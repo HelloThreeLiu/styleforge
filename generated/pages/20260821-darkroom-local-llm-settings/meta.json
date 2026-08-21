@@ -1,0 +1,38 @@
+{
+  "id": "20260821-darkroom-local-llm-settings",
+  "title": "暗房 Darkroom · 本地大模型运行器设置页",
+  "created_at": "2026-08-21T18:20:00+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "linear.app"
+  ],
+  "page_type": "settings",
+  "industry": [
+    "ai"
+  ],
+  "mood": [
+    "dark-first",
+    "minimal",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "510签名微字重",
+    "半透明白描边分层",
+    "Cmd+K命令面板",
+    "近黑三级表面",
+    "靛蓝唯一彩色",
+    "两步确认危险区"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "promoted",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

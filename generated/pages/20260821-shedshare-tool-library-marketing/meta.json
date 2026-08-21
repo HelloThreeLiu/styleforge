@@ -1,0 +1,24 @@
+{
+  "id": "20260821-shedshare-tool-library-marketing",
+  "title": "百家工具棚 ShedShare · 社区工具共享网络营销页",
+  "created_at": "2026-08-21T23:40:00+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["mintlify"],
+  "page_type": "marketing",
+  "industry": ["consumer"],
+  "mood": ["minimal", "soft"],
+  "innovation": 0,
+  "tags_ai": [
+    "绿白云雾hero",
+    "全药丸按钮签名",
+    "5%透明边框",
+    "Geist Mono技术标签",
+    "白上白留白",
+    "深色CTA圆角盒"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

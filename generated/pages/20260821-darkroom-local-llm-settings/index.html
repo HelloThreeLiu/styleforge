@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>暗房 Darkroom — 本地大模型运行器 · 设置</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300..900&display=swap" rel="stylesheet">
+<style>
+  /* ============ Linear Tokens（来源：design-md/linear.app/DESIGN.md）============ */
+  :root {
+    --bg: #08090a;            /* 营销黑：页面画布 */
+    --panel: #0f1011;         /* 面板黑：侧栏 */
+    --surface: #191a1b;       /* 三级表面：浮层卡 */
+    --surface-hover: #28282c; /* 最亮暗表面：hover */
+    --text: #f7f8f8;          /* 主文本：非纯白 */
+    --text-2: #d0d6e0;        /* 次级：正文 */
+    --text-3: #8a8f98;        /* 三级：占位/元数据 */
+    --text-4: #62666d;        /* 四级：时间戳/禁用 */
+    --brand: #5e6ad2;         /* 品牌靛蓝：CTA 底 */
+    --accent: #7170ff;        /* 亮靛蓝：交互/激活 */
+    --accent-hover: #828fff;  /* hover 靛蓝 */
+    --green: #27a644;         /* 成功状态 */
+    --emerald: #10b981;       /* 完成 pill */
+    --bd-subtle: rgba(255, 255, 255, 0.05);
+    --bd: rgba(255, 255, 255, 0.08);
+    --line-tint: #141516;
+    --btn-bg: rgba(255, 255, 255, 0.02);
+    --btn-bg-2: rgba(255, 255, 255, 0.04);
+    --btn-bg-3: rgba(255, 255, 255, 0.05);
+    --focus-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    --dialog-shadow: rgba(0, 0, 0, 0) 0px 8px 2px, rgba(0, 0, 0, 0.01) 0px 5px 2px, rgba(0, 0, 0, 0.04) 0px 3px 2px, rgba(0, 0, 0, 0.07) 0px 1px 1px, rgba(0, 0, 0, 0.08) 0px 0px 1px;
+    --font: 'Inter', 'SF Pro Display', -apple-system, system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Berkeley Mono', ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); font-feature-settings: "cv01", "ss03"; background: var(--bg); color: var(--text); font-weight: 400; -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); font-feature-settings: "cv01", "ss03"; cursor: pointer; }
+  :focus-visible { outline: none; box-shadow: var(--focus-shadow), 0 0 0 2px var(--accent); }
+  .container { max-width: 1100px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ 顶部导航 ============ */
+  nav { position: sticky; top: 0; z-index: 50; background: rgba(8, 9, 10, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--bd-subtle); }
+  .nav-inner { display: flex; align-items: center; gap: 24px; height: 56px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 14px; font-weight: 590; letter-spacing: -0.1px; }
+  .logo i { width: 18px; height: 18px; border-radius: 5px; background: linear-gradient(135deg, var(--brand), var(--accent)); font-style: normal; }
+  .logo em { font-style: normal; color: var(--text-4); font-weight: 400; font-size: 12px; }
+  .nav-links { display: flex; gap: 2px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 13px; font-weight: 510; color: var(--text-2); padding: 7px 10px; border-radius: 6px; }
+  .nav-links a:hover { color: var(--text); }
+  /* 命令面板触发器：按钮式输入 */
+  .cmdk { display: flex; align-items: center; gap: 8px; background: var(--btn-bg); border: 1px solid var(--bd); border-radius: 6px; padding: 5px 8px 5px 10px; color: var(--text-3); font-size: 13px; font-weight: 400; min-height: 34px; }
+  .cmdk:hover { background: var(--btn-bg-2); color: var(--text-2); }
+  .cmdk kbd { font-family: var(--mono); font-size: 11px; color: var(--text-4); background: var(--btn-bg-3); border: 1px solid var(--bd-subtle); border-radius: 4px; padding: 1px 5px; }
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 510; line-height: 1; padding: 0 14px; min-height: 34px; border-radius: 6px; border: 1px solid var(--bd); background: var(--btn-bg); color: #e2e4e7; transition: background .12s, border-color .12s; }
+  .btn:hover { background: var(--btn-bg-2); }
+  .btn-brand { background: var(--brand); border-color: var(--brand); color: #ffffff; }
+  .btn-brand:hover { background: var(--accent-hover); border-color: var(--accent-hover); }
+
+  /* ============ 页头 ============ */
+  .page-head { padding: 56px 0 36px; border-bottom: 1px solid var(--line-tint); }
+  .crumb { font-size: 13px; font-weight: 400; color: var(--text-3); margin-bottom: 14px; }
+  .crumb b { color: var(--text-2); font-weight: 510; }
+  .page-head h1 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 510; line-height: 1.00; letter-spacing: -1.056px; }
+  .page-head p { font-size: 18px; font-weight: 400; line-height: 1.60; color: var(--text-3); max-width: 560px; margin-top: 12px; }
+  .run-state { display: inline-flex; align-items: center; gap: 8px; margin-top: 18px; font-size: 13px; font-weight: 510; color: var(--text-2); background: var(--btn-bg); border: 1px solid var(--bd-subtle); border-radius: 9999px; padding: 4px 12px 4px 10px; }
+  .run-state i { width: 8px; height: 8px; border-radius: 50%; background: var(--emerald); font-style: normal; }
+
+  /* ============ 主体：设置导航 + 分区 ============ */
+  .layout { display: grid; grid-template-columns: 210px 1fr; gap: 48px; padding: 40px 0 96px; }
+  .side { position: sticky; top: 88px; align-self: start; }
+  .side a { display: flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 510; color: var(--text-3); padding: 6px 10px; border-radius: 6px; margin-bottom: 2px; }
+  .side a:hover { color: var(--text-2); background: var(--btn-bg); }
+  .side a.on { color: var(--text); background: var(--btn-bg-2); }
+  .side a.on::before { content: ''; width: 3px; height: 14px; border-radius: 2px; background: var(--accent); margin-left: -8px; margin-right: 5px; }
+
+  section.set { margin-bottom: 56px; scroll-margin-top: 88px; }
+  section.set h2 { font-size: 20px; font-weight: 590; line-height: 1.33; letter-spacing: -0.24px; margin-bottom: 4px; }
+  section.set > p.desc { font-size: 15px; font-weight: 400; line-height: 1.60; color: var(--text-3); margin-bottom: 20px; }
+
+  .row { display: flex; justify-content: space-between; align-items: center; gap: 24px; padding: 16px 0; border-bottom: 1px solid var(--bd-subtle); }
+  section.set .rows > .row:last-child { border-bottom: none; }
+  .row .lab b { display: block; font-size: 15px; font-weight: 510; color: var(--text); line-height: 1.5; }
+  .row .lab span { display: block; font-size: 13px; font-weight: 400; color: var(--text-3); line-height: 1.5; margin-top: 2px; max-width: 440px; }
+  .row code { font-family: var(--mono); font-size: 12px; color: var(--text-3); }
+
+  /* 开关 */
+  .toggle { position: relative; width: 36px; height: 20px; border-radius: 9999px; background: var(--btn-bg-3); border: 1px solid var(--bd); cursor: pointer; transition: background .15s, border-color .15s; flex-shrink: 0; }
+  .toggle::after { content: ''; position: absolute; top: 2px; left: 2px; width: 14px; height: 14px; border-radius: 50%; background: var(--text-2); transition: transform .15s, background .15s; }
+  .toggle[aria-checked="true"] { background: var(--brand); border-color: var(--brand); }
+  .toggle[aria-checked="true"]::after { transform: translateX(16px); background: #ffffff; }
+
+  /* 分段选择器 */
+  .seg { display: inline-flex; background: var(--btn-bg); border: 1px solid var(--bd); border-radius: 6px; padding: 2px; gap: 2px; }
+  .seg button { font-size: 12px; font-weight: 510; color: var(--text-3); background: transparent; border: none; border-radius: 4px; padding: 5px 12px; min-height: 28px; }
+  .seg button.on { background: var(--btn-bg-3); color: var(--text); box-shadow: rgba(0, 0, 0, 0.3) 0px 0px 0px 1px; }
+
+  /* 滑块行 */
+  .slider-row { display: block; padding: 16px 0; border-bottom: 1px solid var(--bd-subtle); }
+  .slider-row .top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 12px; }
+  .slider-row .val { font-family: var(--mono); font-size: 13px; color: var(--text-2); }
+  input[type="range"] { width: 100%; accent-color: var(--brand); height: 20px; cursor: pointer; }
+
+  /* 下拉 */
+  select { font-family: var(--font); font-size: 13px; font-weight: 510; color: var(--text-2); background: var(--btn-bg); border: 1px solid var(--bd); border-radius: 6px; padding: 7px 30px 7px 10px; min-height: 34px; appearance: none; background-image: linear-gradient(45deg, transparent 50%, var(--text-3) 50%), linear-gradient(135deg, var(--text-3) 50%, transparent 50%); background-position: calc(100% - 15px) 15px, calc(100% - 10px) 15px; background-size: 5px 5px; background-repeat: no-repeat; }
+
+  /* 模型选择卡 */
+  .models { display: flex; flex-direction: column; gap: 8px; }
+  .model { display: flex; align-items: center; gap: 14px; background: var(--btn-bg); border: 1px solid var(--bd); border-radius: 8px; padding: 14px 16px; cursor: pointer; transition: border-color .12s, background .12s; }
+  .model:hover { background: var(--btn-bg-2); }
+  .model.on { border-color: var(--brand); background: var(--btn-bg-2); }
+  .model .dot { width: 16px; height: 16px; border-radius: 50%; border: 1.5px solid var(--text-4); flex-shrink: 0; position: relative; }
+  .model.on .dot { border-color: var(--accent); }
+  .model.on .dot::after { content: ''; position: absolute; inset: 3px; border-radius: 50%; background: var(--accent); }
+  .model .info { flex: 1; }
+  .model .info b { display: block; font-size: 15px; font-weight: 510; }
+  .model .info span { display: block; font-size: 13px; color: var(--text-3); margin-top: 1px; }
+  .model .meta { font-family: var(--mono); font-size: 12px; color: var(--text-4); text-align: right; }
+  .model .meta b { display: block; color: var(--text-3); font-weight: 400; }
+
+  /* 显存状态条 */
+  .vram { background: var(--btn-bg); border: 1px solid var(--bd); border-radius: 8px; padding: 16px; }
+  .vram .top { display: flex; justify-content: space-between; font-size: 13px; font-weight: 510; color: var(--text-2); margin-bottom: 10px; }
+  .vram .top em { font-style: normal; font-family: var(--mono); color: var(--text-3); font-weight: 400; }
+  .vram .bar { height: 6px; border-radius: 3px; background: var(--btn-bg-3); overflow: hidden; }
+  .vram .bar i { display: block; height: 100%; width: 68%; background: var(--brand); border-radius: 3px; }
+  .vram .foot { display: flex; gap: 16px; margin-top: 10px; font-size: 12px; color: var(--text-4); }
+  .vram .foot b { color: var(--text-3); font-weight: 400; }
+
+  /* 快捷键表 */
+  .keys { width: 100%; border-collapse: collapse; }
+  .keys td { padding: 12px 0; border-bottom: 1px solid var(--bd-subtle); font-size: 14px; font-weight: 400; color: var(--text-2); }
+  .keys tr:last-child td { border-bottom: none; }
+  .keys td:last-child { text-align: right; }
+  .keys kbd { font-family: var(--mono); font-size: 12px; color: var(--text-2); background: var(--btn-bg-3); border: 1px solid var(--bd); border-radius: 4px; padding: 2px 7px; margin-left: 4px; }
+
+  /* 危险区 */
+  .danger { border: 1px solid rgba(238, 61, 54, 0.3); border-radius: 8px; padding: 18px; background: rgba(238, 61, 54, 0.03); }
+  .danger .row { border-bottom: none; padding: 0; }
+
+  /* 保存条 */
+  .savebar { position: fixed; right: 32px; bottom: 32px; display: flex; align-items: center; gap: 10px; z-index: 40; }
+  .savebar .saved { font-size: 13px; font-weight: 510; color: var(--emerald); opacity: 0; transition: opacity .2s; }
+
+  /* ============ 命令面板 ⌘K ============ */
+  .overlay { position: fixed; inset: 0; background: rgba(0, 0, 0, 0.85); z-index: 100; display: none; align-items: flex-start; justify-content: center; padding: 12vh 24px 24px; }
+  .overlay.open { display: flex; }
+  .palette { width: 100%; max-width: 540px; background: var(--surface); border: 1px solid var(--bd); border-radius: 12px; box-shadow: var(--dialog-shadow); overflow: hidden; }
+  .palette .inp { display: flex; align-items: center; gap: 10px; padding: 14px 16px; border-bottom: 1px solid var(--bd-subtle); }
+  .palette .inp span { color: var(--text-4); font-size: 15px; }
+  .palette input { flex: 1; background: transparent; border: none; outline: none; font-family: var(--font); font-size: 15px; font-weight: 400; color: var(--text); }
+  .palette input::placeholder { color: var(--text-4); }
+  .palette ul { list-style: none; max-height: 280px; overflow-y: auto; padding: 6px; }
+  .palette li { display: flex; align-items: center; gap: 12px; font-size: 13px; font-weight: 510; color: var(--text-2); padding: 9px 10px; border-radius: 6px; cursor: pointer; }
+  .palette li:hover, .palette li.sel { background: var(--btn-bg-2); color: var(--text); }
+  .palette li small { margin-left: auto; font-size: 12px; font-weight: 400; color: var(--text-4); }
+  .palette .foot { display: flex; gap: 14px; padding: 10px 16px; border-top: 1px solid var(--bd-subtle); font-size: 12px; color: var(--text-4); }
+  .palette .foot kbd { font-family: var(--mono); font-size: 11px; background: var(--btn-bg-3); border: 1px solid var(--bd-subtle); border-radius: 4px; padding: 1px 5px; }
+  .palette .none { padding: 20px 16px; font-size: 13px; color: var(--text-4); display: none; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--bd-subtle); padding: 40px 0 32px; }
+  .foot-grid { display: flex; justify-content: space-between; align-items: flex-start; gap: 32px; flex-wrap: wrap; }
+  .foot-links { display: flex; gap: 24px; list-style: none; flex-wrap: wrap; }
+  .foot-links a { font-size: 13px; font-weight: 510; color: var(--text-3); padding: 4px 0; }
+  .foot-links a:hover { color: var(--text); }
+  .foot-note { font-size: 12px; color: var(--text-4); margin-top: 24px; }
+
+  /* ============ 响应式：1280 / 992 / 768 / 480 / 375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 992px) {
+    .layout { grid-template-columns: 1fr; gap: 0; }
+    .side { position: static; display: flex; gap: 4px; overflow-x: auto; padding-bottom: 14px; margin-bottom: 20px; border-bottom: 1px solid var(--line-tint); scrollbar-width: none; }
+    .side::-webkit-scrollbar { display: none; }
+    .side a { white-space: nowrap; margin-bottom: 0; }
+    .side a.on::before { display: none; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; }
+    .nav-inner { gap: 12px; }
+    .cmdk span.txt { display: none; }
+    .container { padding: 0 24px; }
+    .page-head { padding: 40px 0 28px; }
+    .row { flex-direction: column; align-items: flex-start; gap: 12px; }
+    .row .ctl { width: 100%; display: flex; justify-content: space-between; align-items: center; }
+    .savebar { right: 24px; bottom: 24px; }
+  }
+  @media (max-width: 480px) {
+    .models .model { flex-wrap: wrap; }
+    .model .meta { text-align: left; width: 100%; display: flex; gap: 12px; }
+    .btn, .cmdk { min-height: 44px; }
+    .toggle { width: 44px; height: 24px; }
+    .toggle[aria-checked="true"]::after { transform: translateX(20px); }
+    .savebar { left: 24px; justify-content: flex-end; }
+  }
+  @media (max-width: 375px) {
+    .page-head h1 { font-size: 30px; letter-spacing: -0.6px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>暗房 Darkroom <em>v1.4.2</em></a>
+    <ul class="nav-links">
+      <li><a href="#">对话</a></li>
+      <li><a href="#">模型库</a></li>
+      <li><a href="#" style="color:var(--text)">设置</a></li>
+      <li><a href="#">文档</a></li>
+    </ul>
+    <button class="cmdk" id="cmdkBtn"><span>搜索或跳转…</span><span class="txt" style="color:var(--text-4)">⌘K</span></button>
+    <a href="#" class="btn">反馈问题</a>
+  </div>
+</nav>
+
+<header class="page-head">
+  <div class="container">
+    <p class="crumb">暗房 Darkroom / <b>设置</b></p>
+    <h1>设置</h1>
+    <p>一切推理都在这台机器上完成。断网之后，暗房照常工作。</p>
+    <span class="run-state"><i></i>运行中 · 2 个模型已加载 · 显存占用 8.7 / 12 GB</span>
+  </div>
+</header>
+
+<div class="container layout">
+  <nav class="side" id="sideNav">
+    <a href="#general" class="on">通用</a>
+    <a href="#models">模型</a>
+    <a href="#perf">性能</a>
+    <a href="#privacy">隐私</a>
+    <a href="#keys">快捷键</a>
+    <a href="#danger">危险区</a>
+  </nav>
+
+  <div class="content">
+    <section class="set" id="general">
+      <h2>通用</h2>
+      <p class="desc">界面语言、外观与启动行为。</p>
+      <div class="rows">
+        <div class="row">
+          <div class="lab"><b>界面语言</b><span>模型输出语言跟随对话，此处仅切换界面文案。</span></div>
+          <select><option>简体中文</option><option>English</option><option>日本語</option></select>
+        </div>
+        <div class="row">
+          <div class="lab"><b>外观</b><span>暗房为暗色原生设计；亮色主题为实验功能。</span></div>
+          <div class="seg" data-seg><button>跟随系统</button><button class="on">暗色</button><button>亮色</button></div>
+        </div>
+        <div class="row">
+          <div class="lab"><b>启动时恢复上次会话</b><span>重启应用后自动打开关闭前的对话与加载的模型。</span></div>
+          <button class="toggle" role="switch" aria-checked="true" aria-label="启动时恢复上次会话"></button>
+        </div>
+      </div>
+    </section>
+
+    <section class="set" id="models">
+      <h2>模型</h2>
+      <p class="desc">默认加载的本地模型与推理参数。模型文件存放于 <code>~/darkroom/models</code>。</p>
+      <div class="models">
+        <div class="model on">
+          <span class="dot"></span>
+          <div class="info"><b>Qwen3-14B · 通用对话</b><span>中文长文本与代码补全的均衡选择</span></div>
+          <div class="meta"><b>8.4 GB</b>Q4_K_M</div>
+        </div>
+        <div class="model">
+          <span class="dot"></span>
+          <div class="info"><b>Phi-4-mini · 快速轻量</b><span>低显存环境下的日常问答</span></div>
+          <div class="meta"><b>2.9 GB</b>Q4_K_M</div>
+        </div>
+        <div class="model">
+          <span class="dot"></span>
+          <div class="info"><b>Llama-3.2-8B · 英文写作</b><span>英文长文与翻译润色</span></div>
+          <div class="meta"><b>4.9 GB</b>Q5_K_M</div>
+        </div>
+      </div>
+      <div class="slider-row" style="margin-top:8px">
+        <div class="top"><div class="lab"><b>上下文窗口</b></div><span class="val" id="ctxVal">32K tokens</span></div>
+        <input type="range" min="4" max="128" step="4" value="32" id="ctxRange" aria-label="上下文窗口">
+      </div>
+      <div class="slider-row">
+        <div class="top"><div class="lab"><b>采样温度</b></div><span class="val" id="tempVal">0.7</span></div>
+        <input type="range" min="0" max="2" step="0.1" value="0.7" id="tempRange" aria-label="采样温度">
+      </div>
+    </section>
+
+    <section class="set" id="perf">
+      <h2>性能</h2>
+      <p class="desc">显存分配与推理并发。数值过高时系统会自动降级到 CPU 卸载。</p>
+      <div class="vram">
+        <div class="top"><span>显存占用</span><em>8.7 / 12 GB · RTX 4070</em></div>
+        <div class="bar"><i></i></div>
+        <div class="foot"><span><b>Qwen3-14B</b> 8.4 GB · 已加载</span><span><b>Phi-4-mini</b> 2.9 GB · 待机</span></div>
+      </div>
+      <div class="rows" style="margin-top:8px">
+        <div class="row">
+          <div class="lab"><b>量化偏好</b><span>新模型下载时优先选择的量化等级。</span></div>
+          <div class="seg" data-seg><button class="on">Q4_K_M</button><button>Q5_K_M</button><button>Q8_0</button></div>
+        </div>
+        <div class="row">
+          <div class="lab"><b>最大并行请求</b><span>同时进行的推理任务数，含 API 调用。</span></div>
+          <div class="seg" data-seg><button>1</button><button class="on">2</button><button>4</button><button>8</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="set" id="privacy">
+      <h2>隐私</h2>
+      <p class="desc">暗房没有账号体系，也没有云端——以下开关只影响本地行为。</p>
+      <div class="rows">
+        <div class="row">
+          <div class="lab"><b>匿名遥测</b><span>仅上报崩溃堆栈与硬件配置，默认关闭，且永远不包含对话内容。</span></div>
+          <button class="toggle" role="switch" aria-checked="false" aria-label="匿名遥测"></button>
+        </div>
+        <div class="row">
+          <div class="lab"><b>本地对话记录保留</b><span>到期自动粉碎，不可恢复。</span></div>
+          <div class="seg" data-seg><button class="on">7 天</button><button>30 天</button><button>永久</button></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="set" id="keys">
+      <h2>快捷键</h2>
+      <p class="desc">全部快捷键可在命令面板中重绑。</p>
+      <table class="keys">
+        <tr><td>打开命令面板</td><td><kbd>⌘</kbd><kbd>K</kbd></td></tr>
+        <tr><td>新建对话</td><td><kbd>⌘</kbd><kbd>N</kbd></td></tr>
+        <tr><td>打开设置</td><td><kbd>⌘</kbd><kbd>,</kbd></td></tr>
+        <tr><td>聚焦搜索</td><td><kbd>/</kbd></td></tr>
+        <tr><td>切换模型</td><td><kbd>⌘</kbd><kbd>⇧</kbd><kbd>M</kbd></td></tr>
+      </table>
+    </section>
+
+    <section class="set" id="danger">
+      <h2>危险区</h2>
+      <p class="desc">以下操作不可撤销。</p>
+      <div class="danger">
+        <div class="row">
+          <div class="lab"><b>清除全部本地数据</b><span>删除所有对话记录、模型缓存与偏好设置，共约 21.4 GB。</span></div>
+          <button class="btn" id="wipeBtn" style="border-color:rgba(238,61,54,.4);color:#f0717c">清除数据</button>
+        </div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="savebar">
+  <span class="saved" id="savedTip">✓ 已保存</span>
+  <button class="btn btn-brand" id="saveBtn">保存更改</button>
+</div>
+
+<!-- 命令面板 -->
+<div class="overlay" id="overlay">
+  <div class="palette" role="dialog" aria-label="命令面板">
+    <div class="inp"><span>⌕</span><input type="text" id="cmdkInput" placeholder="搜索设置、模型或操作…"></div>
+    <ul id="cmdkList">
+      <li data-go="#general">通用设置<small>设置</small></li>
+      <li data-go="#models">切换默认模型<small>模型</small></li>
+      <li data-go="#perf">性能与显存<small>设置</small></li>
+      <li data-go="#privacy">隐私与本地记录<small>设置</small></li>
+      <li data-go="#keys">快捷键<small>设置</small></li>
+      <li data-act="new">新建对话<small>操作</small></li>
+      <li data-act="unload">卸载待机模型<small>操作</small></li>
+    </ul>
+    <div class="none" id="cmdkNone">没有匹配的结果</div>
+    <div class="foot"><span><kbd>↑↓</kbd> 导航</span><span><kbd>↵</kbd> 选择</span><span><kbd>esc</kbd> 关闭</span></div>
+  </div>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <a class="logo" href="#"><i></i>暗房 Darkroom</a>
+      <ul class="foot-links">
+        <li><a href="#">文档</a></li>
+        <li><a href="#">模型格式说明</a></li>
+        <li><a href="#">本地 API</a></li>
+        <li><a href="#">源代码</a></li>
+        <li><a href="#">发布日志</a></li>
+      </ul>
+    </div>
+    <p class="foot-note">© 2026 暗房 Darkroom · StyleForge 平台 AI 生成习作 · study of linear.app · 你的对话只属于你的硬盘</p>
+  </div>
+</footer>
+
+<script>
+  // 开关
+  document.querySelectorAll('.toggle').forEach(t => {
+    t.addEventListener('click', () => {
+      t.setAttribute('aria-checked', t.getAttribute('aria-checked') === 'true' ? 'false' : 'true');
+    });
+  });
+  // 分段选择器
+  document.querySelectorAll('[data-seg]').forEach(seg => {
+    seg.addEventListener('click', e => {
+      const b = e.target.closest('button');
+      if (!b) return;
+      seg.querySelectorAll('button').forEach(x => x.classList.toggle('on', x === b));
+    });
+  });
+  // 模型选择
+  document.querySelectorAll('.model').forEach(m => {
+    m.addEventListener('click', () => {
+      document.querySelectorAll('.model').forEach(x => x.classList.toggle('on', x === m));
+    });
+  });
+  // 滑块数值
+  const ctxR = document.getElementById('ctxRange'), ctxV = document.getElementById('ctxVal');
+  ctxR.addEventListener('input', () => ctxV.textContent = ctxR.value + 'K tokens');
+  const tR = document.getElementById('tempRange'), tV = document.getElementById('tempVal');
+  tR.addEventListener('input', () => tV.textContent = tR.value);
+  // 保存反馈
+  const savedTip = document.getElementById('savedTip');
+  document.getElementById('saveBtn').addEventListener('click', () => {
+    savedTip.style.opacity = 1;
+    setTimeout(() => savedTip.style.opacity = 0, 1600);
+  });
+  // 危险操作两步确认
+  const wipe = document.getElementById('wipeBtn');
+  let armed = false;
+  wipe.addEventListener('click', () => {
+    if (!armed) { armed = true; wipe.textContent = '再点一次确认清除'; setTimeout(() => { armed = false; wipe.textContent = '清除数据'; }, 3000); }
+    else { armed = false; wipe.textContent = '已清除 ✓'; wipe.disabled = true; }
+  });
+  // 命令面板
+  const overlay = document.getElementById('overlay');
+  const input = document.getElementById('cmdkInput');
+  const list = document.getElementById('cmdkList');
+  const none = document.getElementById('cmdkNone');
+  const items = () => [...list.children];
+  function openPanel() { overlay.classList.add('open'); input.value = ''; filter(''); input.focus(); }
+  function closePanel() { overlay.classList.remove('open'); }
+  function filter(q) {
+    let hit = 0;
+    items().forEach(li => {
+      const show = li.textContent.toLowerCase().includes(q.toLowerCase());
+      li.style.display = show ? 'flex' : 'none';
+      li.classList.remove('sel');
+      if (show) hit++;
+    });
+    if (hit) items().filter(li => li.style.display !== 'none')[0]?.classList.add('sel');
+    none.style.display = hit ? 'none' : 'block';
+  }
+  document.getElementById('cmdkBtn').addEventListener('click', openPanel);
+  overlay.addEventListener('click', e => { if (e.target === overlay) closePanel(); });
+  input.addEventListener('input', () => filter(input.value));
+  list.addEventListener('click', e => {
+    const li = e.target.closest('li');
+    if (!li) return;
+    closePanel();
+    if (li.dataset.go) document.querySelector(li.dataset.go)?.scrollIntoView({ behavior: 'smooth' });
+  });
+  document.addEventListener('keydown', e => {
+    if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') { e.preventDefault(); overlay.classList.contains('open') ? closePanel() : openPanel(); }
+    if (e.key === 'Escape') closePanel();
+    if (e.key === 'Enter' && overlay.classList.contains('open')) {
+      const sel = items().find(li => li.classList.contains('sel') && li.style.display !== 'none');
+      if (sel) { sel.click(); }
+    }
+    if ((e.key === 'ArrowDown' || e.key === 'ArrowUp') && overlay.classList.contains('open')) {
+      e.preventDefault();
+      const vis = items().filter(li => li.style.display !== 'none');
+      let i = vis.findIndex(li => li.classList.contains('sel'));
+      vis.forEach(li => li.classList.remove('sel'));
+      i = e.key === 'ArrowDown' ? (i + 1) % vis.length : (i - 1 + vis.length) % vis.length;
+      vis[i]?.classList.add('sel');
+    }
+  });
+  // 侧栏 scrollspy
+  const secs = [...document.querySelectorAll('section.set')];
+  const links = [...document.querySelectorAll('#sideNav a')];
+  window.addEventListener('scroll', () => {
+    let cur = secs[0];
+    secs.forEach(s => { if (s.getBoundingClientRect().top < 120) cur = s; });
+    links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === '#' + cur.id));
+  }, { passive: true });
+</script>
+</body>
+</html>

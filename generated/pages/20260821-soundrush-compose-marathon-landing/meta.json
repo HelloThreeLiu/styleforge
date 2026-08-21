@@ -1,0 +1,24 @@
+{
+  "id": "20260821-soundrush-compose-marathon-landing",
+  "title": "声浪 SoundRush · 48 小时极限作曲马拉松落地页",
+  "created_at": "2026-08-21T12:40:00+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["clickhouse"],
+  "page_type": "landing",
+  "industry": ["music"],
+  "mood": ["dark-first", "playful", "brutalist"],
+  "innovation": 0,
+  "tags_ai": [
+    "荧光黑底96px巨题",
+    "900字重英雄标题",
+    "实时开跑倒计时",
+    "均衡器竖条动画",
+    "荧光边featured卡",
+    "终端提交清单卡"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

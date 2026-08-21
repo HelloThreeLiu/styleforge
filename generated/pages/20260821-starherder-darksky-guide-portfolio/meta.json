@@ -1,0 +1,24 @@
+{
+  "id": "20260821-starherder-darksky-guide-portfolio",
+  "title": "牧星人 StarHerder · 暗夜保护区星空向导作品集",
+  "created_at": "2026-08-21T22:50:00+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["nightward-v1"],
+  "page_type": "portfolio",
+  "industry": ["travel"],
+  "mood": ["dark-first", "premium", "soft"],
+  "innovation": 0,
+  "tags_ai": [
+    "紫夜环境辉光",
+    "CSS星野作品卡",
+    "玻璃计数卡",
+    "YAML观星记录",
+    "行式团期清单",
+    "呼吸星点动画"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

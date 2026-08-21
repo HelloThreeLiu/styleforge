@@ -1,0 +1,11 @@
+{
+  "id": "darkroom-v1",
+  "name": "暗房控制台",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "source_page": "20260821-darkroom-local-llm-settings",
+  "lineage": ["linear.app"],
+  "inherited_rating": 4,
+  "rating": 4,
+  "child_count": 0,
+  "summary": "Linear 近黑精密 UI 固化为本地优先工具设置台配方：⌘K 命令面板、分区设置流、两步确认危险区与隐私即文案的叙事姿态。"
+}
