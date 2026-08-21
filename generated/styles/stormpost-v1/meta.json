@@ -1,0 +1,11 @@
+{
+  "id": "stormpost-v1",
+  "name": "风暴指挥台",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "source_page": "20260821-stormpost-weather-watch-dashboard",
+  "lineage": ["sanity"],
+  "inherited_rating": 4.5,
+  "rating": 4.5,
+  "child_count": 0,
+  "summary": "sanity 近黑指挥中心语言用于公民监测网络：站点表 + 纯红警报横幅 + 实时 mono 数据流与三态药丸——民间数据的专业控制室。"
+}
