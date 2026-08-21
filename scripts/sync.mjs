@@ -118,7 +118,10 @@ if (dry) {
   process.exit(0);
 }
 
-run('git add -- ' + toCommit.map(({ path: p }) => JSON.stringify(p)).join(' '));
+// Windows 命令行长度有限（约 8K），分批 add；:(literal) 防止路径中的 glob 元字符（如 [ ]）被当作通配符
+for (let i = 0; i < toCommit.length; i += 40) {
+  run('git add -- ' + toCommit.slice(i, i + 40).map(({ path: p }) => JSON.stringify(`:(literal)${p}`)).join(' '));
+}
 const commitArgs = ['-m', subject, ...(body ? ['-m', body] : [])];
 run('git commit ' + commitArgs.map((s) => JSON.stringify(s)).join(' '));
 try {

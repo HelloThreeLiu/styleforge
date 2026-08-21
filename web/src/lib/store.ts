@@ -82,21 +82,12 @@ export function getPage(id: string): { dir: string; meta: PageMeta | null; metaE
   return { dir: entry.dir, meta: entry.meta, metaError: entry.metaError, notes };
 }
 
-function atomicWriteJson(file: string, data: unknown): void {
-  const tmp = file + '.tmp';
-  fs.writeFileSync(tmp, JSON.stringify(data, null, 2) + '\n', 'utf8');
-  try {
-    fs.renameSync(tmp, file);
-  } catch {
-    // Windows 上目标被占用时降级为覆盖写
-    fs.copyFileSync(tmp, file);
-    fs.rmSync(tmp);
-  }
-}
-
-/** 人工策展写回：读旧 meta → 合并 patch → 全量校验 → 原子写回 */
+/** 人工策展写回：读旧 meta → 合并 patch → 全量校验 → 原子写回（写入目标收敛在 generated/pages 内） */
 export function updatePage(id: string, patch: Record<string, unknown>): { ok: true; meta: PageMeta } | { ok: false; status: number; error: string } {
-  const pageDir = path.join(PAGES_DIR, id);
+  if (!/^[a-z0-9-]+$/.test(id)) return { ok: false, status: 400, error: '非法页面 id' };
+  const pagesRoot = path.resolve(PAGES_DIR);
+  const pageDir = path.resolve(pagesRoot, id);
+  if (!pageDir.startsWith(pagesRoot + path.sep)) return { ok: false, status: 400, error: '非法页面 id' };
   const metaFile = path.join(pageDir, 'meta.json');
   if (!fs.existsSync(metaFile)) return { ok: false, status: 404, error: '页面不存在' };
   let current: unknown;
@@ -110,7 +101,15 @@ export function updatePage(id: string, patch: Record<string, unknown>): { ok: tr
   if (!parsed.success) {
     return { ok: false, status: 400, error: parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; ') };
   }
-  atomicWriteJson(metaFile, parsed.data);
+  // 原子写回：先写 .tmp 再 rename；Windows 上目标被占用时降级为覆盖写
+  const tmp = metaFile + '.tmp';
+  fs.writeFileSync(tmp, JSON.stringify(parsed.data, null, 2) + '\n', 'utf8');
+  try {
+    fs.renameSync(tmp, metaFile);
+  } catch {
+    fs.copyFileSync(tmp, metaFile);
+    fs.rmSync(tmp);
+  }
   return { ok: true, meta: parsed.data };
 }
 
