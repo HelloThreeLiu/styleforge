@@ -1,0 +1,38 @@
+{
+  "id": "20260820-inkbox-comic-reader-settings",
+  "title": "墨匣 InkBox · 漫画阅读器设置页",
+  "created_at": "2026-08-20T23:59:30+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "cursor"
+  ],
+  "page_type": "settings",
+  "industry": [
+    "entertainment"
+  ],
+  "mood": [
+    "editorial",
+    "retro",
+    "minimal"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "CSS漫画预览页",
+    "翻页方向实时联动",
+    "网点纸集中线",
+    "药丸分段设置",
+    "暖面平面开关",
+    "金色缓存计量"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

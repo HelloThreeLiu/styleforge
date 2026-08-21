@@ -1,0 +1,325 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>墨匣 InkBox — 漫画阅读器设置</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400;500;600&family=Lora:ital,wght@0,400;0,500;1,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Cursor Tokens（来源：design-md/cursor/DESIGN.md）============ */
+  :root {
+    --ink: #26251e;
+    --cream: #f2f1ed;
+    --s100: #f7f7f4; --s300: #ebeae5; --s400: #e6e5e0; --s500: #e1e0db;
+    --ink-55: rgba(38, 37, 30, 0.55);
+    --ink-60: rgba(38, 37, 30, 0.6);
+    --bd: rgba(38, 37, 30, 0.1);
+    --bd-2: rgba(38, 37, 30, 0.2);
+    --accent: #f54e00;   /* 品牌橙：链接与强调 */
+    --error: #cf2d56;    /* 暖绯红：hover 签名 */
+    --gold: #c08532;
+    --shadow-elev: rgba(0,0,0,0.14) 0px 28px 70px, rgba(0,0,0,0.1) 0px 14px 32px, rgba(38,37,30,0.1) 0px 0px 0px 1px;
+    --shadow-focus: rgba(0,0,0,0.1) 0px 4px 12px;
+    --gothic: 'Archivo', system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --serif: 'Lora', Palatino, Georgia, 'Songti SC', 'SimSun', serif;
+    --mono: 'IBM Plex Mono', ui-monospace, Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--gothic); background: var(--cream); color: var(--ink); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 960px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--gothic); }
+  :focus-visible { outline: none; box-shadow: var(--shadow-focus); }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(242, 241, 237, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--bd); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { font-size: 18px; font-weight: 500; letter-spacing: -0.02em; display: flex; align-items: center; gap: 9px; }
+  .logo i { width: 18px; height: 18px; background: var(--s400); border: 1.5px solid var(--ink); border-radius: 4px; font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; left: 3px; top: 3px; bottom: 3px; width: 6px; background: var(--accent); border-radius: 1px; }
+  .logo em { font-family: var(--mono); font-style: normal; font-size: 13px; color: var(--ink-55); }
+  .nav-links { display: flex; gap: 4px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--ink-55); padding: 8px 12px; border-radius: 8px; transition: color .15s; }
+  .nav-links a:hover { color: var(--error); }
+  .nav-links a.active { color: var(--ink); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 1.5px; background: var(--ink); margin: 4px auto; }
+
+  /* ============ 按钮 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 400; line-height: 1; padding: 11px 16px; border-radius: 8px; border: none; cursor: pointer; background: var(--s300); color: var(--ink); transition: color .15s, box-shadow .15s; min-height: 40px; }
+  .btn:hover { color: var(--error); box-shadow: var(--shadow-focus); }
+  .pill { display: inline-flex; align-items: center; font-size: 14px; font-weight: 400; line-height: 1; padding: 7px 12px; border-radius: 9999px; background: var(--s400); color: var(--ink-60); border: none; cursor: pointer; transition: color .15s, background .15s; min-height: 36px; }
+  .pill:hover { color: var(--error); }
+  .pill.active { background: var(--s100); color: var(--ink); box-shadow: 0 0 0 1px var(--bd); }
+
+  /* ============ 页头 ============ */
+  .pagehead { padding: 64px 0 40px; }
+  .path { font-family: var(--mono); font-size: 12px; letter-spacing: -0.1px; color: var(--ink-55); margin-bottom: 16px; }
+  .path b { color: var(--accent); font-weight: 500; }
+  .pagehead h1 { font-size: clamp(30px, 4vw, 36px); font-weight: 400; line-height: 1.2; letter-spacing: -0.02em; }
+  .pagehead .sub { font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ink-55); margin-top: 12px; max-width: 540px; }
+
+  /* ============ 设置卡 ============ */
+  .card { background: var(--s400); border: 1px solid var(--bd); border-radius: 8px; padding: 28px; margin-bottom: 20px; }
+  .card h2 { font-size: 22px; font-weight: 400; line-height: 1.3; letter-spacing: -0.01em; margin-bottom: 6px; }
+  .card .desc { font-family: var(--serif); font-size: 15px; line-height: 1.5; color: var(--ink-55); margin-bottom: 20px; }
+  .row { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 14px 0; border-bottom: 1px solid var(--bd); }
+  .row:last-of-type { border-bottom: none; }
+  .row .txt b { font-size: 15px; font-weight: 500; display: block; }
+  .row .txt span { font-family: var(--serif); font-size: 13px; color: var(--ink-55); }
+
+  /* 开关（暖面平面）*/
+  .sw { position: relative; width: 46px; height: 26px; flex-shrink: 0; }
+  .sw input { position: absolute; inset: 0; opacity: 0; margin: 0; cursor: pointer; }
+  .sw .track { position: absolute; inset: 0; border-radius: 9999px; background: var(--s500); border: 1px solid var(--bd-2); transition: background .15s, border-color .15s; }
+  .sw .track::after { content: ''; position: absolute; left: 3px; top: 3px; width: 18px; height: 18px; border-radius: 50%; background: var(--s100); transition: transform .15s; }
+  .sw input:checked + .track { background: var(--ink); border-color: var(--ink); }
+  .sw input:checked + .track::after { transform: translateX(20px); background: var(--cream); }
+
+  /* 阅读器预览：CSS 漫画页 */
+  .preview-wrap { background: var(--s300); border-radius: 10px; padding: 28px; display: grid; place-items: center; }
+  .preview { width: 264px; aspect-ratio: 3/4.2; background: var(--paper, #fdfbf4); border-radius: 3px; box-shadow: var(--shadow-elev); padding: 18px 16px; position: relative; transition: background .2s; }
+  .preview.dark { background: #2a2721; }
+  .panels { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; height: 100%; direction: var(--dir, ltr); }
+  .panel { border: 2px solid rgba(24, 22, 18, 0.85); border-radius: 2px; position: relative; overflow: hidden; background: rgba(255, 255, 255, 0.35); }
+  .preview.dark .panel { border-color: rgba(240, 236, 226, 0.8); background: rgba(240, 236, 226, 0.12); }
+  .p-wide { grid-column: 1 / -1; height: 74px; }
+  .p-halftone { background: radial-gradient(circle, rgba(38,37,30,0.4) 1px, transparent 1.4px) 0 0 / 9px 9px, rgba(255,255,255,0.35); }
+  .preview.dark .p-halftone { background: radial-gradient(circle, rgba(240,236,226,0.35) 1px, transparent 1.4px) 0 0 / 9px 9px, rgba(240,236,226,0.12); }
+  .p-speed { background: repeating-linear-gradient(105deg, transparent 0 7px, rgba(38,37,30,0.14) 7px 8px); }
+  .preview.dark .p-speed { background: repeating-linear-gradient(105deg, transparent 0 7px, rgba(240,236,226,0.14) 7px 8px); }
+  .p-sun::after { content: ''; position: absolute; right: 10px; top: -26px; width: 52px; height: 52px; border-radius: 50%; background: var(--gold); opacity: .85; }
+  .bubble { position: absolute; left: 10px; top: 12px; width: 58px; height: 40px; background: #fffdf6; border: 2px solid rgba(24,22,18,0.85); border-radius: 50%; }
+  .bubble::after { content: ''; position: absolute; left: 14px; bottom: -8px; width: 10px; height: 10px; background: #fffdf6; border-right: 2px solid rgba(24,22,18,0.85); border-bottom: 2px solid rgba(24,22,18,0.85); transform: rotate(45deg); }
+  .bubble i { position: absolute; inset: 0; display: grid; place-items: center; font-style: normal; font-family: var(--gothic); font-size: 10px; font-weight: 600; color: var(--ink); }
+  .page-no { position: absolute; bottom: 6px; right: 12px; font-family: var(--mono); font-size: 10px; color: rgba(38,37,30,0.5); }
+  .preview.dark .page-no { color: rgba(240,236,226,0.5); }
+  .dir-hint { position: absolute; top: 50%; transform: translateY(-50%); font-size: 13px; color: var(--accent); font-weight: 600; letter-spacing: 2px; }
+  .dir-hint.l { left: 4px; } .dir-hint.r { right: 4px; }
+  .preview-cap { font-family: var(--mono); font-size: 11px; color: var(--ink-55); margin-top: 14px; }
+
+  /* 缓存计量 */
+  .meter { margin: 6px 0 18px; }
+  .meter .m-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-55); margin-bottom: 8px; }
+  .meter .m-top b { color: var(--ink); font-family: var(--mono); font-weight: 500; }
+  .meter .track { height: 10px; border-radius: 9999px; background: var(--s500); overflow: hidden; }
+  .meter .track i { display: block; height: 100%; width: 26%; border-radius: 9999px; background: linear-gradient(90deg, #8a6a2f, var(--gold)); }
+
+  /* 保存条 */
+  .save-row { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-top: 8px; flex-wrap: wrap; }
+  .save-row .meta { font-family: var(--mono); font-size: 12px; color: var(--ink-55); }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--bd); padding: 44px 0 32px; margin-top: 32px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .footer-grid p { font-family: var(--serif); font-size: 14px; line-height: 1.5; color: var(--ink-55); max-width: 280px; margin-top: 10px; }
+  .footer-grid h4 { font-family: var(--mono); font-size: 11px; text-transform: uppercase; color: var(--ink-55); margin-bottom: 10px; }
+  .footer-grid a { display: block; font-size: 14px; padding: 4px 0; color: rgba(38,37,30,0.8); }
+  .footer-grid a:hover { color: var(--accent); }
+  .footer-bottom { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--bd); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--ink-55); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--bd); }
+    .nav-links.open { display: flex; }
+    .nav-links a { padding: 12px 8px; }
+    .menu-btn { display: block; }
+    .pagehead { padding: 44px 0 28px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .pagehead h1 { font-size: 30px; }
+    .card { padding: 22px 18px; }
+    .pill { padding: 9px 12px; }
+    .save-row .btn { width: 100%; min-height: 44px; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>墨匣 <em>inkbox</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#">书架</a></li>
+      <li><a href="#">书城</a></li>
+      <li><a href="#">同步</a></li>
+      <li><a href="#" class="active">设置</a></li>
+    </ul>
+    <div style="display:flex;gap:10px;align-items:center">
+      <a href="#" class="pill">书架</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</nav>
+
+<div class="container">
+  <header class="pagehead">
+    <p class="path">settings / <b>阅读偏好与书架</b></p>
+    <h1>把阅读器调成你的手感</h1>
+    <p class="sub">翻页方向、纸色、预加载与书架归档——所有偏好即时同步到你的三台设备。</p>
+  </header>
+
+  <!-- 阅读方向 + 预览 -->
+  <section class="card">
+    <h2>阅读方向与纸色</h2>
+    <p class="desc">改动会立即反映在右侧的预览页上——先调后存，看得见的设置才算数。</p>
+    <div style="display:grid;grid-template-columns:1fr auto;gap:28px;align-items:start">
+      <div>
+        <p style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--ink-55);margin-bottom:10px">Direction · 翻页方向</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:24px">
+          <button class="pill active" data-dir="rtl">右 → 左（日漫）</button>
+          <button class="pill" data-dir="ltr">左 → 右（美漫）</button>
+          <button class="pill" data-dir="ttb">上下滚动（条漫）</button>
+        </div>
+        <p style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--ink-55);margin-bottom:10px">Paper · 纸色</p>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="pill active" data-paper="day">米纸</button>
+          <button class="pill" data-paper="bright">纯白</button>
+          <button class="pill" data-paper="dark">夜间墨色</button>
+        </div>
+        <p class="desc" style="margin:22px 0 0">预加载：<span style="font-family:var(--mono);color:var(--ink)">3 页</span>（后续章节 Wi-Fi 下自动预载）</p>
+      </div>
+      <div class="preview-wrap">
+        <div class="preview" id="preview">
+          <span class="dir-hint l" id="hintL">◀</span>
+          <span class="dir-hint r" id="hintR">▶</span>
+          <div class="panels" id="panels">
+            <div class="panel p-wide p-sun"><span class="bubble"><i>下一话…</i></span></div>
+            <div class="panel p-halftone"></div>
+            <div class="panel p-speed"></div>
+            <div class="panel" style="grid-column:1/-1;height:64px"></div>
+          </div>
+          <span class="page-no">vol.7 · p.12</span>
+        </div>
+        <p class="preview-cap" id="previewCap">preview · rtl · 米纸</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- 书架管理 -->
+  <section class="card">
+    <h2>书架管理</h2>
+    <p class="desc">书架顶部的分类标签与自动归档规则。</p>
+    <p style="font-family:var(--mono);font-size:11px;text-transform:uppercase;color:var(--ink-55);margin-bottom:10px">Shelf tags · 分类标签</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px">
+      <span class="pill active">连载中 · 24</span>
+      <span class="pill">已完结 · 61</span>
+      <span class="pill">催更中 · 3</span>
+      <span class="pill">每年重读 · 9</span>
+    </div>
+    <div class="row">
+      <div class="txt"><b>完结自动归档</b><span>读完最后一话后移入"已完结"并收进折叠区</span></div>
+      <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="txt"><b>新章自动下载</b><span>订阅作品更新后预载下一话</span></div>
+      <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="txt"><b>隐藏书架统计角标</b><span>不显示未读数字，读完一本少一个红点</span></div>
+      <label class="sw"><input type="checkbox"><span class="track"></span></label>
+    </div>
+  </section>
+
+  <!-- 下载与缓存 -->
+  <section class="card">
+    <h2>下载与缓存</h2>
+    <p class="desc">离线书柜占用与网络策略。</p>
+    <div class="meter">
+      <div class="m-top"><span>离线书柜</span><b>2.1 GB / 8 GB</b></div>
+      <div class="track"><i></i></div>
+    </div>
+    <div class="row">
+      <div class="txt"><b>仅 Wi-Fi 下载</b><span>流量环境下只阅读已缓存章节</span></div>
+      <label class="sw"><input type="checkbox" checked><span class="track"></span></label>
+    </div>
+    <div class="row">
+      <div class="txt"><b>智能清理</b><span>90 天未读的已完结缓存自动释放，书架记录保留</span></div>
+      <label class="sw"><input type="checkbox"><span class="track"></span></label>
+    </div>
+    <div class="save-row">
+      <span class="meta">上次保存：今天 11:47 · 已同步 3 台设备</span>
+      <button class="btn" id="saveBtn">保存偏好</button>
+    </div>
+  </section>
+</div>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>墨匣 <em>inkbox</em></a>
+        <p>把每一格漫画读出纸感的阅读器。本地优先，云端只是备份。</p>
+      </div>
+      <div>
+        <h4>reader</h4>
+        <a href="#">书架</a><a href="#">书城</a><a href="#">下载</a>
+      </div>
+      <div>
+        <h4>library</h4>
+        <a href="#">订阅</a><a href="#">备份</a><a href="#">导入</a>
+      </div>
+      <div>
+        <h4>about</h4>
+        <a href="#">更新日志</a><a href="#">联系我们</a><a href="#">隐私</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 InkBox · StyleForge 平台 AI 生成习作 · study of cursor</span>
+      <span>v3.2.0</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 阅读方向：预览分格方向与提示箭头联动
+  const preview = document.getElementById('preview');
+  const panels = document.getElementById('panels');
+  const cap = document.getElementById('previewCap');
+  const paper = { day: ['米纸', false, '#fdfbf4'], bright: ['纯白', false, '#ffffff'], dark: ['夜间墨色', true, '#2a2721'] };
+  let curPaper = 'day', curDir = 'rtl';
+  const render = () => {
+    const p = paper[curPaper];
+    preview.classList.toggle('dark', p[1]);
+    preview.style.setProperty('--paper', p[2]);
+    panels.style.setProperty('--dir', curDir === 'ttb' ? 'ltr' : curDir);
+    panels.style.gridAutoFlow = curDir === 'ttb' ? 'row' : '';
+    document.getElementById('hintL').style.display = curDir === 'ltr' ? 'none' : '';
+    document.getElementById('hintR').style.display = curDir === 'rtl' ? 'none' : '';
+    cap.textContent = `preview · ${curDir} · ${p[0]}`;
+  };
+  document.querySelectorAll('[data-dir]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-dir]').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      curDir = btn.dataset.dir;
+      render();
+    });
+  });
+  document.querySelectorAll('[data-paper]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('[data-paper]').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      curPaper = btn.dataset.paper;
+      render();
+    });
+  });
+  render();
+  // 保存反馈
+  const saveBtn = document.getElementById('saveBtn');
+  saveBtn.addEventListener('click', () => {
+    const t = saveBtn.textContent;
+    saveBtn.textContent = '✓ 已保存并同步';
+    setTimeout(() => { saveBtn.textContent = t; }, 1600);
+  });
+</script>
+</body>
+</html>

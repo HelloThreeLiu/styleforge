@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>远征档案 EXPEDITION LOG — KODA 的游戏库与成就墙</title>
+<style>
+  /* ============ SpaceX Tokens（来源：design-md/spacex/DESIGN.md）============ */
+  :root {
+    --black: #000000;                 /* 太空黑 */
+    --spectral: #f0f0fa;              /* 星光白：微蓝紫调 */
+    --ghost-bg: rgba(240, 240, 250, 0.1);
+    --ghost-bd: rgba(240, 240, 250, 0.35);
+    --overlay: rgba(0, 0, 0, 0.5);    /* 摄影压暗层 */
+    --d-din: 'D-DIN', 'D-DIN-Bold', Arial, Verdana, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--d-din); background: var(--black); color: var(--spectral); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--d-din); }
+  :focus-visible { outline: 1px solid var(--spectral); outline-offset: 3px; }
+  ::selection { background: rgba(240, 240, 250, 0.25); }
+
+  /* 全大写 + 正字距——航天钢印声部（中文以宽字距承担同等气质） */
+  .up { text-transform: uppercase; letter-spacing: 1.17px; }
+  .zh { letter-spacing: 0.14em; }
+  .micro { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; line-height: 0.94; color: rgba(240, 240, 250, 0.75); }
+  .caption { font-size: 12px; letter-spacing: 0.1em; line-height: 1.6; color: rgba(240, 240, 250, 0.8); }
+
+  /* ============ 导航：透明叠于场景之上 ============ */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: linear-gradient(180deg, rgba(0,0,0,0.75), transparent); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 68px; padding: 0 5vw; }
+  .wordmark { font-size: 14px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.17px; }
+  .wordmark em { font-style: normal; color: rgba(240, 240, 250, 0.55); font-weight: 400; }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.17px; line-height: 0.94; color: var(--spectral); opacity: 0.85; transition: opacity .15s; }
+  .nav-links a:hover { opacity: 1; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 1.5px; background: var(--spectral); margin: 4px auto; }
+
+  /* 幽灵按钮：全站唯一交互件 */
+  .ghost { display: inline-block; background: var(--ghost-bg); border: 1px solid var(--ghost-bd); border-radius: 32px; color: var(--spectral); font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.17px; line-height: 0.94; padding: 18px; min-width: 190px; text-align: center; cursor: pointer; transition: background .2s, border-color .2s; }
+  .ghost:hover { background: rgba(240, 240, 250, 0.2); border-color: rgba(240, 240, 250, 0.6); }
+
+  /* ============ 场景一：星野与行星弧（英雄）============ */
+  .scene { position: relative; min-height: 100vh; display: flex; align-items: flex-end; padding: 0 5vw 9vh; overflow: hidden; }
+  .scene .txt { position: relative; z-index: 2; max-width: 640px; }
+  .scene h1, .scene h2 { font-size: clamp(30px, 4.4vw, 48px); font-weight: 700; line-height: 1.05; text-transform: uppercase; letter-spacing: 0.96px; margin: 18px 0 16px; }
+  .scene h2 { font-size: clamp(26px, 3.8vw, 40px); }
+  .zh-display { font-size: clamp(30px, 4.4vw, 48px); font-weight: 700; line-height: 1.14; letter-spacing: 0.12em; margin: 10px 0 16px; }
+  .scene .body { font-size: 16px; line-height: 1.7; color: rgba(240, 240, 250, 0.85); max-width: 520px; margin-bottom: 30px; }
+
+  /* 星野（纯 CSS 摄影层）*/
+  .stars, .more-stars { position: absolute; inset: 0; z-index: 0; }
+  .stars { background:
+    radial-gradient(1.5px 1.5px at 8% 18%, rgba(240,240,250,.9) 50%, transparent 51%),
+    radial-gradient(1px 1px at 22% 42%, rgba(240,240,250,.5) 50%, transparent 51%),
+    radial-gradient(2px 2px at 34% 12%, rgba(240,240,250,.8) 50%, transparent 51%),
+    radial-gradient(1px 1px at 47% 30%, rgba(240,240,250,.45) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 58% 9%, rgba(240,240,250,.7) 50%, transparent 51%),
+    radial-gradient(1px 1px at 66% 36%, rgba(240,240,250,.5) 50%, transparent 51%),
+    radial-gradient(2px 2px at 79% 20%, rgba(240,240,250,.85) 50%, transparent 51%),
+    radial-gradient(1px 1px at 90% 44%, rgba(240,240,250,.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 15% 60%, rgba(240,240,250,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 52% 66%, rgba(240,240,250,.3) 50%, transparent 51%); }
+  /* 行星弧 */
+  .planet { position: absolute; left: 50%; bottom: -62vh; transform: translateX(-50%); width: 160vw; height: 160vw; border-radius: 50%;
+    background: radial-gradient(circle at 50% 24%, #12142a 0%, #0a0b18 34%, #050509 60%, #000 75%);
+    box-shadow: 0 -1px 0 0 rgba(240, 240, 250, 0.28), 0 -18px 90px 8px rgba(240, 240, 250, 0.1); z-index: 1; }
+  .scene .legibility { position: absolute; inset: 0; z-index: 1; background: linear-gradient(180deg, rgba(0,0,0,0.15), rgba(0,0,0,0.72) 78%); }
+
+  /* ============ 场景二：网格地平线（游戏库数据）============ */
+  .s-library { align-items: center; }
+  .horizon { position: absolute; inset: 0; z-index: 0; overflow: hidden; }
+  .horizon::before { content: ''; position: absolute; left: -40%; right: -40%; top: 44%; bottom: -36%;
+    background:
+      repeating-linear-gradient(90deg, rgba(240,240,250,0.14) 0 1px, transparent 1px 90px),
+      repeating-linear-gradient(0deg, rgba(240,240,250,0.14) 0 1px, transparent 1px 60px);
+    transform: perspective(560px) rotateX(62deg);
+    -webkit-mask-image: linear-gradient(180deg, transparent, #000 34%, #000 82%, transparent);
+    mask-image: linear-gradient(180deg, transparent, #000 34%, #000 82%, transparent); }
+  .horizon::after { content: ''; position: absolute; left: 0; right: 0; top: calc(44% - 1px); height: 1px; background: rgba(240, 240, 250, 0.35); box-shadow: 0 0 24px 3px rgba(240, 240, 250, 0.18); }
+
+  /* 任务数据表（纯文本，无容器）*/
+  .mission { width: 100%; max-width: 760px; }
+  .mission .row { display: grid; grid-template-columns: 1fr 110px 110px; gap: 18px; padding: 15px 0; border-bottom: 1px solid rgba(240, 240, 250, 0.14); align-items: baseline; }
+  .mission .row.head { font-size: 11px; letter-spacing: 1px; text-transform: uppercase; color: rgba(240, 240, 250, 0.6); border-bottom-color: rgba(240, 240, 250, 0.3); }
+  .mission .g { font-size: 17px; font-weight: 700; letter-spacing: 0.06em; text-transform: uppercase; }
+  .mission .g span { display: block; font-size: 10px; font-weight: 400; letter-spacing: 1px; color: rgba(240, 240, 250, 0.55); text-transform: uppercase; margin-top: 3px; }
+  .mission .num { font-size: 15px; text-align: right; font-variant-numeric: tabular-nums; color: rgba(240, 240, 250, 0.9); }
+
+  /* ============ 场景三：成就墙 ============ */
+  .s-wall { align-items: center; }
+  .nebula { position: absolute; inset: 0; z-index: 0; background:
+    radial-gradient(34% 42% at 18% 26%, rgba(240, 240, 250, 0.05), transparent 70%),
+    radial-gradient(30% 36% at 82% 62%, rgba(240, 240, 250, 0.045), transparent 70%),
+    radial-gradient(1px 1px at 12% 70%, rgba(240,240,250,.4) 50%, transparent 51%),
+    radial-gradient(1.5px 1.5px at 44% 18%, rgba(240,240,250,.5) 50%, transparent 51%),
+    radial-gradient(1px 1px at 70% 78%, rgba(240,240,250,.35) 50%, transparent 51%),
+    radial-gradient(1px 1px at 92% 30%, rgba(240,240,250,.45) 50%, transparent 51%); }
+  .wall { position: relative; z-index: 2; width: 100%; max-width: 880px; margin-top: 26px; }
+  .wall-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 26px; margin-bottom: 26px; }
+  .ach { text-align: center; }
+  .ach .frame { width: 100%; aspect-ratio: 1; border: 1px solid var(--ghost-bd); border-radius: 4px; display: grid; place-items: center; font-size: 26px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; background: rgba(240, 240, 250, 0.07); transition: background .2s, border-color .2s; }
+  .ach:hover .frame { background: rgba(240, 240, 250, 0.14); border-color: rgba(240, 240, 250, 0.55); }
+  .ach.locked .frame { border-color: rgba(240, 240, 250, 0.12); background: transparent; color: rgba(240, 240, 250, 0.22); font-size: 13px; }
+  .ach b { display: block; font-size: 11px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase; margin-top: 12px; }
+  .ach span { display: block; font-size: 10px; letter-spacing: 0.8px; text-transform: uppercase; color: rgba(240, 240, 250, 0.5); margin-top: 4px; }
+  .ach.locked b { color: rgba(240, 240, 250, 0.35); }
+
+  /* ============ 场景四：像素山脉（正在游玩）============ */
+  .s-now .m1, .s-now .m2 { position: absolute; left: 0; right: 0; bottom: 0; z-index: 0; }
+  .s-now .m1 { height: 34vh; background: #0b0c18; clip-path: polygon(0 62%, 9% 38%, 18% 55%, 27% 22%, 36% 48%, 47% 14%, 58% 44%, 69% 26%, 80% 52%, 90% 34%, 100% 58%, 100% 100%, 0 100%); }
+  .s-now .m2 { height: 22vh; background: #04040a; clip-path: polygon(0 55%, 12% 30%, 24% 52%, 38% 20%, 52% 46%, 66% 26%, 78% 50%, 90% 32%, 100% 48%, 100% 100%, 0 100%); }
+  .moonlet { position: absolute; top: 18%; right: 12%; width: 68px; height: 68px; border-radius: 50%; z-index: 0; background: radial-gradient(circle at 36% 32%, rgba(240,240,250,0.95), rgba(240,240,250,0.5) 55%, rgba(240,240,250,0.2) 75%); box-shadow: 0 0 44px rgba(240, 240, 250, 0.22); }
+
+  /* ============ 页脚 ============ */
+  footer { padding: 56px 5vw 40px; border-top: 1px solid rgba(240, 240, 250, 0.14); display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 68px; left: 0; right: 0; background: rgba(0, 0, 0, 0.92); flex-direction: column; gap: 20px; padding: 24px 5vw 30px; }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .scene { padding: 0 6vw 12vh; }
+    .mission .row { grid-template-columns: 1fr 84px 84px; gap: 10px; }
+    .wall-row { grid-template-columns: repeat(3, 1fr); gap: 18px; }
+  }
+  @media (max-width: 480px) {
+    .zh-display { font-size: 30px; }
+    .ghost { width: 100%; min-width: 0; }
+    .mission .row { grid-template-columns: 1fr 70px; }
+    .mission .num:last-child { display: none; }
+    .mission .row.head .num:last-child { display: none; }
+    .wall-row { grid-template-columns: repeat(2, 1fr); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="nav-inner">
+    <a class="wordmark" href="#">KODA<em>.LOG</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#library">游戏库</a></li>
+      <li><a href="#wall">成就墙</a></li>
+      <li><a href="#now">正在游玩</a></li>
+    </ul>
+    <a href="#wall" class="ghost" style="padding:12px 18px;min-width:0;font-size:11px;">成就总览</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<!-- 场景一：英雄 -->
+<section class="scene">
+  <div class="stars" aria-hidden="true"></div>
+  <div class="planet" aria-hidden="true"></div>
+  <div class="legibility" aria-hidden="true"></div>
+  <div class="txt">
+    <p class="micro">Player Profile · 玩家档案 · EST. 2013</p>
+    <h1>Expedition Log</h1>
+    <p class="zh-display">远征档案</p>
+    <p class="body zh">十三年，89 款游戏，1,247 小时。这是一份公开的航行日志——从第一颗像素星到最后一枚未解锁的勋章，全部记录在案。</p>
+    <a href="#library" class="ghost">浏览游戏库</a>
+  </div>
+</section>
+
+<!-- 场景二：游戏库（任务数据）-->
+<section class="scene s-library" id="library">
+  <div class="horizon" aria-hidden="true"></div>
+  <div class="legibility" style="background: linear-gradient(180deg, rgba(0,0,0,0.66), rgba(0,0,0,0.8))" aria-hidden="true"></div>
+  <div class="txt" style="max-width:760px;width:100%">
+    <p class="micro">Flight Log · 本年主力档案 · Top 05</p>
+    <h2>Library</h2>
+    <p class="zh-display" style="font-size:clamp(24px,3vw,32px)">游戏库</p>
+    <div class="mission">
+      <div class="row head"><span>游戏 / Mission</span><span class="num" style="text-align:left">Hours</span><span class="num" style="text-align:left">Done</span></div>
+      <div class="row"><span class="g">Elden Ring<span>Nightreign · 第 7 周</span></span><span class="num">214</span><span class="num">96%</span></div>
+      <div class="row"><span class="g">Factorio<span>太空时代 · 第 3 张图</span></span><span class="num">187</span><span class="num">—</span></div>
+      <div class="row"><span class="g">Outer Wilds<span>三周目 · 全档案</span></span><span class="num">61</span><span class="num">100%</span></div>
+      <div class="row"><span class="g">Hades II<span>热度 32 · 火把流</span></span><span class="num">58</span><span class="num">88%</span></div>
+      <div class="row" style="border-bottom:none"><span class="g">Tunic<span>双语字典通关</span></span><span class="num">27</span><span class="num">100%</span></div>
+    </div>
+    <p class="caption zh" style="margin-top:24px">完整清单 89 款 · 生涯总时长 1,247 小时 · 通关 46 款</p>
+  </div>
+</section>
+
+<!-- 场景三：成就墙 -->
+<section class="scene s-wall" id="wall">
+  <div class="nebula" aria-hidden="true"></div>
+  <div class="legibility" aria-hidden="true"></div>
+  <div class="txt" style="max-width:880px;width:100%;text-align:center">
+    <p class="micro">Trophy Wall · 勋章陈列 · 037 / 120</p>
+    <h2>Achievements</h2>
+    <p class="zh-display" style="font-size:clamp(24px,3vw,32px)">成就墙</p>
+    <div class="wall" style="text-align:left">
+      <div class="wall-row">
+        <div class="ach"><span class="frame">星</span><b>初见星海</b><span>Outer Wilds · 首次点火</span></div>
+        <div class="ach"><span class="frame">环</span><b>薪火相传</b><span>Elden Ring · 全结局</span></div>
+        <div class="ach"><span class="frame">厂</span><b>流水线之神</b><span>Factorio · 1SPM</span></div>
+        <div class="ach"><span class="frame">殿</span><b>直抵冥府</b><span>Hades II · 热度 32</span></div>
+      </div>
+      <div class="wall-row">
+        <div class="ach"><span class="frame">典</span><b>双语学者</b><span>Tunic · 手写字典</span></div>
+        <div class="ach"><span class="frame">灯</span><b>灯塔看守</b><span>Outer Wilds · 22 分钟循环</span></div>
+        <div class="ach locked"><span class="frame">LOCKED</span><b>无伤之径</b><span>Sekiro · 招式之王</span></div>
+        <div class="ach locked"><span class="frame">LOCKED</span><b>千星帝国</b><span>Stellaris · 银河霸主</span></div>
+      </div>
+    </div>
+    <p class="caption zh" style="margin-top:8px">已陈列 037 枚 · 待解锁 083 枚 · 下一个目标：无伤之径</p>
+  </div>
+</section>
+
+<!-- 场景四：正在游玩 -->
+<section class="scene s-now" id="now">
+  <div class="stars more-stars" aria-hidden="true"></div>
+  <div class="moonlet" aria-hidden="true"></div>
+  <div class="m1" aria-hidden="true"></div>
+  <div class="m2" aria-hidden="true"></div>
+  <div class="legibility" style="background: linear-gradient(180deg, rgba(0,0,0,0.4), rgba(0,0,0,0.85) 82%)" aria-hidden="true"></div>
+  <div class="txt">
+    <p class="micro">Now Playing · 正在游玩 · Session 214</p>
+    <h2>Elden Ring Nightreign</h2>
+    <p class="zh-display" style="font-size:clamp(24px,3vw,32px)">第 7 周 · 仍在远征</p>
+    <p class="body zh">队伍固定三人，周三与周六晚九点开荒。这周的目标是把最后一座夜王打下来——如果失败，下周三见。</p>
+    <a href="#" class="ghost">查看远征笔记</a>
+  </div>
+</section>
+
+<footer>
+  <span class="micro">© 2026 KODA.LOG · StyleForge 平台 AI 生成习作 · Study of SpaceX</span>
+  <span class="micro">Zh-CN · Steam / PSN / NS 三端同步</span>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

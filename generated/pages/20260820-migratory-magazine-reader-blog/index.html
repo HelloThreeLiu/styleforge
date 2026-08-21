@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>候鸟 Migratory — 独立杂志 · 深度阅读器</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@500;600&family=Poppins:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ MiniMax Tokens（来源：design-md/minimax/DESIGN.md）============ */
+  :root {
+    --bg: #ffffff;
+    --text: #222222; --text-2: #45515e; --text-3: #8e8e93;
+    --dark: #181e25;
+    --brand: #1456f0; --blue-500: #3b82f6;
+    --pink: #ea5ec1;
+    --border: #e5e7eb; --border-light: #f2f3f5;
+    --shadow-card: rgba(0, 0, 0, 0.08) 0px 4px 6px;
+    --shadow-brand: rgba(44, 30, 116, 0.16) 0px 0px 15px;
+    --shadow-lift: rgba(36, 36, 36, 0.08) 0px 12px 16px -4px;
+    --ui: 'DM Sans', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mid: 'Poppins', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --data: 'Roboto', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue-500); outline-offset: 2px; }
+
+  /* ============ 导航 ============ */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.94); border-bottom: 1px solid var(--border-light); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-family: var(--display); font-size: 19px; font-weight: 600; }
+  .logo i { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(from 210deg, var(--pink), #8b5cf6 45%, var(--blue-500) 90%); font-style: normal; }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--text-3); letter-spacing: 0.06em; }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #18181b; padding: 8px 16px; border-radius: 9999px; transition: background .15s; }
+  .nav-links a:hover { background: rgba(0, 0, 0, 0.05); }
+  .nav-links a.active { background: rgba(0, 0, 0, 0.05); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; }
+  .menu-btn span { display: block; width: 20px; height: 2px; background: #18181b; border-radius: 2px; margin: 4px auto; }
+
+  /* 按钮：8px CTA / 药丸归导航 */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; border-radius: 8px; padding: 11px 20px; cursor: pointer; border: none; min-height: 44px; transition: background .15s, transform .15s, box-shadow .15s; }
+  .btn-dark { background: var(--dark); color: #ffffff; }
+  .btn-dark:hover { background: #2a323c; }
+  .btn-white { background: #ffffff; color: #18181b; }
+  .btn-white:hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+
+  /* ============ 英雄区 ============ */
+  .hero { text-align: center; padding: 76px 0 44px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--brand); background: rgba(20, 86, 240, 0.06); border-radius: 30px; padding: 6px 14px; margin-bottom: 24px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(38px, 6vw, 80px); font-weight: 500; line-height: 1.10; }
+  .hero p { margin: 18px auto 28px; font-size: 16px; line-height: 1.50; color: var(--text-2); max-width: 560px; }
+  .sort { display: inline-flex; gap: 4px; background: rgba(0, 0, 0, 0.05); border-radius: 9999px; padding: 4px; }
+  .sort button { font-size: 14px; font-weight: 500; padding: 9px 18px; border-radius: 9999px; border: none; background: transparent; color: var(--text-2); min-height: 40px; transition: background .15s, color .15s; }
+  .sort button.active { background: #ffffff; color: #18181b; box-shadow: var(--shadow-card); }
+
+  /* ============ 本期封面（精选三件套）============ */
+  .cover-story { display: grid; grid-template-columns: 1fr 1.1fr; gap: 0; background: linear-gradient(150deg, #f5c5ec 0%, #c9b8f7 38%, #8fb4fb 100%); border-radius: 24px; box-shadow: var(--shadow-brand); overflow: hidden; margin: 36px 0 20px; }
+  .cover-art { position: relative; min-height: 280px; background:
+    radial-gradient(2.5px 2.5px at 22% 30%, rgba(24,30,37,.35) 50%, transparent 51%),
+    radial-gradient(2px 2px at 36% 62%, rgba(24,30,37,.3) 50%, transparent 51%),
+    radial-gradient(3px 3px at 58% 24%, rgba(24,30,37,.3) 50%, transparent 51%),
+    radial-gradient(2px 2px at 74% 55%, rgba(24,30,37,.32) 50%, transparent 51%),
+    radial-gradient(2px 2px at 86% 34%, rgba(24,30,37,.28) 50%, transparent 51%),
+    radial-gradient(2.5px 2.5px at 46% 82%, rgba(24,30,37,.26) 50%, transparent 51%); }
+  .cover-art .bird { position: absolute; top: 42%; left: 50%; width: 46px; height: 22px; }
+  .cover-art .bird::before, .cover-art .bird::after { content: ''; position: absolute; bottom: 0; width: 24px; height: 22px; border: 2.5px solid rgba(24, 30, 37, 0.78); border-top: none; border-radius: 0 0 26px 26px; }
+  .cover-art .bird::before { left: 0; transform: rotate(14deg); }
+  .cover-art .bird::after { right: 0; transform: rotate(-14deg) scaleX(-1); }
+  .cover-body { padding: 44px 48px; color: #18181b; display: flex; flex-direction: column; }
+  .cover-body .badge-hot { align-self: flex-start; background: var(--dark); color: #ffffff; font-size: 12px; font-weight: 500; border-radius: 30px; padding: 5px 14px; margin-bottom: 18px; }
+  .cover-body h2 { font-family: var(--display); font-size: clamp(26px, 3vw, 34px); font-weight: 600; line-height: 1.30; margin-bottom: 12px; }
+  .cover-body p { font-size: 15px; line-height: 1.70; color: rgba(24, 30, 37, 0.72); margin-bottom: 22px; }
+  .cover-meta { display: flex; align-items: center; gap: 12px; margin-top: auto; }
+  .cover-meta .ava { width: 38px; height: 38px; border-radius: 50%; background: linear-gradient(140deg, #243044, #4a5a74); color: #fff; display: grid; place-items: center; font-size: 13px; font-weight: 700; }
+  .cover-meta b { font-size: 14px; font-weight: 500; display: block; }
+  .cover-meta span { font-family: var(--data); font-size: 13px; color: rgba(24, 30, 37, 0.62); }
+
+  /* ============ 文章流 ============ */
+  .stream { padding: 32px 0 8px; }
+  .sec-head { display: flex; align-items: baseline; justify-content: space-between; gap: 20px; flex-wrap: wrap; margin-bottom: 28px; }
+  .sec-head h2 { font-family: var(--display); font-size: 31px; font-weight: 600; }
+  .sec-head p { font-family: var(--mid); font-size: 16px; font-weight: 500; color: var(--text-2); }
+  .articles { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .art { background: #ffffff; border: 1px solid var(--border-light); border-radius: 20px; padding: 24px; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .art:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .art .cat { display: inline-block; width: fit-content; font-size: 12px; font-weight: 500; color: var(--text-2); background: #f0f0f0; border-radius: 9999px; padding: 4px 12px; margin-bottom: 14px; }
+  .art h3 { font-family: var(--display); font-size: 22px; font-weight: 600; line-height: 1.40; margin-bottom: 10px; }
+  .art p { font-size: 14px; line-height: 1.65; color: var(--text-2); margin-bottom: 18px; flex: 1; }
+  .art .meta { display: flex; align-items: center; gap: 10px; }
+  .art .meta .ava { width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 12px; font-weight: 700; flex-shrink: 0; }
+  .art .meta b { font-size: 13px; font-weight: 500; display: block; }
+  .art .meta span { font-family: var(--data); font-size: 12px; color: var(--text-3); }
+  .a1 { background: linear-gradient(140deg, #ea5ec1, #8b5cf6); }
+  .a2 { background: linear-gradient(140deg, #9dc08b, #5fa58c); }
+  .a3 { background: linear-gradient(140deg, #8fb4fb, #5b8def); }
+  .a4 { background: linear-gradient(140deg, #f0b6cf, #d98bb0); }
+
+  /* ============ 专栏作者 ============ */
+  .authors { padding: 56px 0 8px; }
+  .author-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .author { background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); padding: 22px; }
+  .author .v-top { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+  .author .ava { width: 44px; height: 44px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 700; }
+  .author b { font-size: 15px; font-weight: 500; display: block; }
+  .author span { font-family: var(--mid); font-size: 12px; font-weight: 500; color: var(--text-3); }
+  .author p { font-size: 13px; line-height: 1.65; color: var(--text-2); }
+
+  /* ============ 终章 CTA ============ */
+  .cta-card { background: linear-gradient(150deg, #f5c5ec 0%, #c9b8f7 38%, #8fb4fb 100%); border-radius: 24px; box-shadow: var(--shadow-brand); padding: 52px 40px; text-align: center; color: #18181b; margin-top: 44px; }
+  .cta-card h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 600; }
+  .cta-card p { font-size: 16px; color: rgba(24, 30, 37, 0.72); margin: 10px auto 26px; max-width: 460px; }
+
+  /* ============ 页脚 ============ */
+  footer { background: var(--dark); margin-top: 76px; padding: 56px 0 0; color: rgba(255, 255, 255, 0.8); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-grid .logo { color: #ffffff; margin-bottom: 14px; }
+  .footer-grid .logo em { color: rgba(255, 255, 255, 0.5); }
+  .footer-grid p { font-size: 13px; line-height: 1.70; color: rgba(255, 255, 255, 0.55); max-width: 300px; }
+  .footer-grid h4 { font-size: 14px; font-weight: 500; color: #ffffff; margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 14px; color: rgba(255, 255, 255, 0.8); padding: 5px 0; }
+  .footer-grid a:hover { color: #ffffff; }
+  .footer-bottom { margin-top: 48px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 22px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) {
+    .cover-story { grid-template-columns: 1fr; }
+    .cover-art { min-height: 180px; }
+    .articles, .author-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--border-light); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .hero { padding: 52px 0 36px; }
+    .sort { width: 100%; justify-content: center; flex-wrap: wrap; }
+    .cover-body { padding: 32px 28px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    footer { margin-top: 56px; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 38px; }
+    .articles, .author-grid { max-width: none; }
+    .cta-card { padding: 40px 24px; }
+    .cta-card .btn { width: 100%; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>候鸟 <em>MIGRATORY</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#cover" class="active">本期</a></li>
+      <li><a href="#stream">深度</a></li>
+      <li><a href="#authors">专栏</a></li>
+      <li><a href="#">归档</a></li>
+    </ul>
+    <a href="#" class="btn btn-dark" style="padding:9px 16px;font-size:13px">订阅纸刊</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">第 24 期 · 夜行者 · 已上线</span>
+    <h1>长文章，仍值得<br>一个安静的夜晚</h1>
+    <p>候鸟是一份只发长文的独立杂志：单篇 4,000 字起步，无信息流、无推送、无广告——每月一期，慢慢读。</p>
+    <div class="sort" role="group" aria-label="文章排序">
+      <button class="active">编辑精选</button>
+      <button>最多共读</button>
+      <button>未读优先</button>
+    </div>
+  </div>
+</section>
+
+<section id="cover">
+  <div class="container">
+    <article class="cover-story">
+      <div class="cover-art" aria-hidden="true"><span class="bird"></span></div>
+      <div class="cover-body">
+        <span class="badge-hot">本期封面</span>
+        <h2>夜班公交的最后一站：<br>一座城市的清醒者名单</h2>
+        <p>凌晨 00:47 到 04:12，我们跟完了 316 路夜班车的全程七趟。车上有下夜班的护士、赶稿的编剧、失眠的老人和刚下飞机的旅人——这辆车记得这座城不肯睡去的全部理由。</p>
+        <div class="cover-meta">
+          <span class="ava">麦</span>
+          <div><b>麦冬 · 特稿部</b><span>38 分钟阅读 · 摄影 老周</span></div>
+        </div>
+      </div>
+    </article>
+  </div>
+</section>
+
+<section class="stream" id="stream">
+  <div class="container">
+    <div class="sec-head">
+      <h2>本期深度</h2>
+      <p>五篇长文，两种失眠</p>
+    </div>
+    <div class="articles">
+      <article class="art">
+        <span class="cat">人物</span>
+        <h3>修钟表的最后一位年轻人</h3>
+        <p>二十六岁，学徒七年，修过的最老的表造于 1912 年。他说时间的毛病大多出在人身上，表只是替它受过。</p>
+        <div class="meta"><span class="ava a1">苏</span><div><b>苏挽</b><span>21 分钟 · 4,800 字</span></div></div>
+      </article>
+      <article class="art">
+        <span class="cat">调查</span>
+        <h3>县城书店的第七次重生</h3>
+        <p>过去五年，我们跟踪了同一家书店的六次关店与重开。第七次，老板把教辅区改成了免费自习室。</p>
+        <div class="meta"><span class="ava a2">禾</span><div><b>禾一</b><span>26 分钟 · 6,100 字</span></div></div>
+      </article>
+      <article class="art">
+        <span class="cat">随笔</span>
+        <h3>在无人码头等一场雾</h3>
+        <p>关于等待的形态学：渔汛、雾季与一封没有回音的信。写作者在海边住了四十天，只为了看清一件事。</p>
+        <div class="meta"><span class="ava a3">白</span><div><b>白帆</b><span>18 分钟 · 4,200 字</span></div></div>
+      </article>
+      <article class="art">
+        <span class="cat">科学</span>
+        <h3>萤火虫的光污染诉讼</h3>
+        <p>一座城市为了萤火虫关掉了江边全部景观灯。三年后，昆虫学家带来的计数结果让所有人安静下来。</p>
+        <div class="meta"><span class="ava a4">麦</span><div><b>麦冬</b><span>24 分钟 · 5,500 字</span></div></div>
+      </article>
+      <article class="art">
+        <span class="cat">记忆</span>
+        <h3>外婆的酸浆番茄，走了多远</h3>
+        <p>一包家传种子如何在三年里抵达四十个阳台。我们顺着种子的邮路，画出了另一种人际关系。</p>
+        <div class="meta"><span class="ava a2">田</span><div><b>田埂</b><span>16 分钟 · 3,900 字</span></div></div>
+      </article>
+      <article class="art">
+        <span class="cat">图像</span>
+        <h3>凌晨四点的菜市场光谱</h3>
+        <p>一位灯光摄影师连续三十天蹲守批发市场，把不同摊位的灯温拍成了城市里最诚实的色卡。</p>
+        <div class="meta"><span class="ava a1">老</span><div><b>老周</b><span>12 分钟 · 图文</span></div></div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<section class="authors" id="authors">
+  <div class="container">
+    <div class="sec-head">
+      <h2>专栏作者</h2>
+      <p>在本刊写了三年以上的人</p>
+    </div>
+    <div class="author-grid">
+      <div class="author">
+        <div class="v-top"><span class="ava a1">麦</span><div><b>麦冬</b><span>特稿部 · 夜行系列</span></div></div>
+        <p>前社会新闻记者，现为自由撰稿人。相信深夜是理解一座城市的唯一入口。</p>
+      </div>
+      <div class="author">
+        <div class="v-top"><span class="ava a2">禾一</span><div><b>禾一</b><span>县域观察 · 书店系列</span></div></div>
+        <p>生长于县城，写作于县城。她的系列报道让三家小镇书店活过了冬天。</p>
+      </div>
+      <div class="author">
+        <div class="v-top"><span class="ava a3">白帆</span><div><b>白帆</b><span>随笔 · 海的语法</span></div></div>
+        <p>水手出身，写海与等待。专栏《海的语法》已陪伴读者进入第四年。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-card">
+      <h2>把一期杂志的时间，还给自己</h2>
+      <p>纸刊每期附朗读版二维码；数字版无推送、无弹窗，只有一篇篇读完的安心。</p>
+      <a href="#" class="btn btn-white">订阅第 24 期</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>候鸟 <em>MIGRATORY</em></a>
+        <p>一份只发长文的独立杂志。慢慢飞，慢慢读。</p>
+      </div>
+      <div>
+        <h4>杂志</h4>
+        <a href="#">本期</a><a href="#">过刊归档</a><a href="#">投稿须知</a>
+      </div>
+      <div>
+        <h4>作者</h4>
+        <a href="#">专栏列表</a><a href="#">作者自述</a><a href="#">驻刊计划</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">我们的故事</a><a href="#">印刷与纸材</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 候鸟 Migratory · StyleForge 平台 AI 生成习作 · study of minimax</span>
+      <span>zh-CN · 每月一期</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 排序切换：药丸分段（编辑精选/最多共读/未读优先）
+  document.querySelectorAll('.sort button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.sort button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+    });
+  });
+</script>
+</body>
+</html>

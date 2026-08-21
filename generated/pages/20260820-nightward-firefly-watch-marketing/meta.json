@@ -1,0 +1,38 @@
+{
+  "id": "20260820-nightward-firefly-watch-marketing",
+  "title": "夜巡 NightWard · 城市萤火虫观察计划营销页",
+  "created_at": "2026-08-20T23:59:59+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "sentry"
+  ],
+  "page_type": "marketing",
+  "industry": [
+    "science"
+  ],
+  "mood": [
+    "dark-first",
+    "playful",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "紫夜萤火动画",
+    "玻璃数据卡",
+    "观测YAML代码卡",
+    "内凹触感紫按钮",
+    "样线观测夜列表",
+    "环境辉光夜航"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "promoted",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

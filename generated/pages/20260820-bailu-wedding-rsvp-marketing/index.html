@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>白露 & 沈舟 — 十月五日 · 松山见</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Inter+Tight:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Framer Tokens（来源：design-md/framer/DESIGN.md）============ */
+  :root {
+    --void: #000000;
+    --white: #ffffff;
+    --silver: #a6a6a6;
+    --ghost: rgba(255, 255, 255, 0.6);
+    --blue: #0099ff;                      /* 仅交互强调 */
+    --blue-ring: rgba(0, 153, 255, 0.15);
+    --frosted: rgba(255, 255, 255, 0.1);
+    --hairline: rgba(255, 255, 255, 0.08);
+    --ring: 0 0 0 1px var(--blue-ring);
+    --float: rgba(255,255,255,0.1) 0 0.5px 0 0.5px, rgba(0,0,0,0.25) 0 10px 30px;
+    --display: 'Inter Tight', 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --body: 'Inter', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--body); background: var(--void); color: var(--white); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--body); }
+  :focus-visible { outline: 1px solid var(--blue); outline-offset: 3px; }
+  ::selection { background: rgba(0, 153, 255, 0.3); }
+
+  /* ============ 导航 ============ */
+  nav { position: fixed; top: 0; left: 0; right: 0; z-index: 100; background: rgba(0, 0, 0, 0.9); border-bottom: 1px solid var(--hairline); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .mono { font-family: var(--display); font-size: 17px; font-weight: 500; letter-spacing: -0.04em; }
+  .mono em { color: var(--blue); font-style: normal; }
+  .nav-links { display: flex; gap: 4px; list-style: none; }
+  .nav-links a { font-size: 15px; font-weight: 400; color: rgba(255, 255, 255, 0.75); padding: 8px 14px; border-radius: 100px; transition: color .15s, background .15s; }
+  .nav-links a:hover { color: var(--white); background: var(--frosted); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; cursor: pointer; }
+  .menu-btn span { display: block; width: 18px; height: 1.5px; background: var(--white); margin: 4px auto; }
+
+  /* ============ 按钮 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 500; padding: 12px 26px; border-radius: 100px; border: none; cursor: pointer; transition: transform .15s, background .2s; min-height: 44px; }
+  .btn-white { background: var(--white); color: #000; }
+  .btn-white:hover { transform: scale(1.04); }
+  .btn-frosted { background: var(--frosted); color: var(--white); border-radius: 40px; }
+  .btn-frosted:hover { background: rgba(255, 255, 255, 0.2); }
+
+  /* ============ 英雄区：巨压缩名字 + 蓝辉光 ============ */
+  .hero { padding: 180px 0 100px; text-align: center; position: relative; overflow: hidden; }
+  .hero::before { content: ''; position: absolute; top: -180px; left: 50%; transform: translateX(-50%); width: 720px; height: 560px; background: radial-gradient(ellipse, rgba(0, 153, 255, 0.12), transparent 62%); filter: blur(30px); pointer-events: none; }
+  .date-eyebrow { font-family: var(--body); font-size: 14px; letter-spacing: 0.35em; color: var(--silver); text-transform: uppercase; margin-bottom: 28px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(52px, 10vw, 110px); font-weight: 500; line-height: 1.04; letter-spacing: -0.04em; position: relative; }
+  .hero h1 em { font-style: normal; color: var(--ghost); }
+  .hero .amp { display: block; font-family: var(--display); font-size: clamp(22px, 3vw, 32px); color: var(--silver); letter-spacing: 0.3em; margin: 18px 0; font-weight: 500; }
+  .hero .sub { font-size: 17px; line-height: 1.6; color: var(--silver); max-width: 460px; margin: 30px auto 38px; }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; position: relative; }
+
+  /* 倒计时 */
+  .count { display: flex; justify-content: center; gap: 36px; margin-top: 56px; position: relative; }
+  .count div b { font-family: var(--display); font-size: 40px; font-weight: 500; display: block; letter-spacing: -0.03em; }
+  .count div span { font-size: 12px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--ghost); }
+
+  /* ============ 分区通用 ============ */
+  section { padding: 96px 0; position: relative; }
+  .sec-label { font-size: 13px; letter-spacing: 0.25em; text-transform: uppercase; color: var(--ghost); text-align: center; margin-bottom: 14px; }
+  .sec-title { font-family: var(--display); font-size: clamp(32px, 4.4vw, 62px); font-weight: 500; line-height: 1.06; letter-spacing: -0.035em; text-align: center; margin-bottom: 56px; }
+
+  /* 当日流程 */
+  .timeline { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; }
+  .tl { background: #090909; border-radius: 12px; box-shadow: var(--ring); padding: 26px 22px; transition: box-shadow .2s; }
+  .tl:hover { box-shadow: var(--ring), var(--float); }
+  .tl b { font-family: var(--display); font-size: 28px; font-weight: 500; letter-spacing: -0.02em; display: block; margin-bottom: 4px; }
+  .tl i { display: block; width: 26px; height: 1px; background: var(--blue); margin: 12px 0; } /* 分隔刻度——交互蓝的最小存在 */
+  .tl h3 { font-size: 17px; font-weight: 500; margin-bottom: 8px; }
+  .tl p { font-size: 14px; line-height: 1.6; color: var(--silver); }
+
+  /* 场地卡：细线几何画 */
+  .venue { display: grid; grid-template-columns: 1fr 1fr; gap: 48px; align-items: center; background: #090909; border-radius: 15px; box-shadow: var(--ring); padding: 48px; }
+  .venue h3 { font-family: var(--display); font-size: 32px; font-weight: 500; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .venue p { font-size: 15px; line-height: 1.7; color: var(--silver); margin-bottom: 10px; }
+  .venue .addr { font-size: 14px; color: var(--ghost); }
+  .venue .addr a { color: var(--blue); } /* 交互蓝：地图链接 */
+  .venue .addr a:hover { text-decoration: underline; }
+  .art { aspect-ratio: 4/3; position: relative; overflow: hidden; border-radius: 10px; }
+  .art .moon { position: absolute; top: 18%; left: 22%; width: 54px; height: 54px; border-radius: 50%; background: radial-gradient(circle at 38% 34%, #ffffff, #b8cdd9 70%); box-shadow: 0 0 40px rgba(255, 255, 255, 0.25); }
+  .art .hill1 { position: absolute; bottom: 0; left: -10%; width: 70%; height: 46%; background: #0d0d0d; border-radius: 50% 50% 0 0; }
+  .art .hill2 { position: absolute; bottom: 0; right: -14%; width: 78%; height: 56%; background: #111111; border-radius: 50% 50% 0 0; }
+  .art .arch { position: absolute; bottom: 18%; left: 50%; transform: translateX(-50%); width: 74px; height: 92px; border: 1.5px solid rgba(255, 255, 255, 0.5); border-bottom: none; border-radius: 74px 74px 0 0; }
+  .art .arch::after { content: ''; position: absolute; bottom: -40px; left: 50%; transform: translateX(-50%); width: 1.5px; height: 40px; background: rgba(0, 153, 255, 0.55); box-shadow: 22px 0 0 rgba(0, 153, 255, 0.55); opacity: .9; }
+  .art .star { position: absolute; width: 2px; height: 2px; border-radius: 50%; background: rgba(255, 255, 255, 0.7); }
+
+  /* ============ 回函表单 ============ */
+  .rsvp-wrap { max-width: 640px; margin: 0 auto; background: #090909; border-radius: 15px; box-shadow: var(--ring), var(--float); padding: 48px; }
+  .field { margin-bottom: 26px; }
+  .field label { display: block; font-size: 14px; font-weight: 500; color: var(--silver); margin-bottom: 10px; letter-spacing: 0.02em; }
+  .field input[type="text"], .field select { width: 100%; background: var(--void); border: none; box-shadow: var(--ring); border-radius: 8px; padding: 14px 16px; font-family: var(--body); font-size: 15px; color: var(--white); outline: none; transition: box-shadow .15s; }
+  .field input:focus, .field select:focus { box-shadow: 0 0 0 1px var(--blue); }
+  .seg { display: flex; gap: 10px; flex-wrap: wrap; }
+  .seg label { cursor: pointer; }
+  .seg input { position: absolute; opacity: 0; }
+  .seg span { display: inline-flex; padding: 11px 22px; border-radius: 100px; background: var(--frosted); font-size: 14px; color: var(--silver); transition: all .15s; min-height: 44px; align-items: center; }
+  .seg input:checked + span { background: var(--white); color: #000; font-weight: 500; }
+  .seg input:focus-visible + span { outline: 1px solid var(--blue); outline-offset: 2px; }
+  .rsvp-note { font-size: 13px; color: var(--ghost); text-align: center; margin-top: 18px; }
+
+  /* 住宿交通 */
+  .duo { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  .info-card { background: #090909; border-radius: 12px; box-shadow: var(--ring); padding: 30px; }
+  .info-card h3 { font-size: 18px; font-weight: 500; margin-bottom: 10px; }
+  .info-card p { font-size: 14px; line-height: 1.7; color: var(--silver); margin-bottom: 6px; }
+  .info-card a { color: var(--blue); font-size: 14px; }
+  .info-card a:hover { text-decoration: underline; }
+
+  /* 礼物说明 */
+  .gift { text-align: center; max-width: 560px; margin: 0 auto; }
+  .gift p { font-size: 16px; line-height: 1.8; color: var(--silver); }
+  .gift b { color: var(--white); font-weight: 500; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--hairline); padding: 56px 0 40px; text-align: center; }
+  footer .mono { font-size: 15px; color: var(--silver); }
+  footer p { font-size: 13px; color: var(--ghost); margin-top: 14px; }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) { .timeline { grid-template-columns: 1fr 1fr; } }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #000; flex-direction: column; padding: 12px 24px 24px; gap: 2px; border-bottom: 1px solid var(--hairline); }
+    .nav-links.open { display: flex; }
+    .nav-links a { display: flex; padding: 12px 8px; }
+    .menu-btn { display: block; }
+    .hero { padding: 140px 0 72px; }
+    section { padding: 64px 0; }
+    .venue { grid-template-columns: 1fr; padding: 32px; }
+    .duo { grid-template-columns: 1fr; }
+    .count { gap: 24px; }
+  }
+  @media (max-width: 480px) {
+    .hero h1 { font-size: 52px; }
+    .timeline { grid-template-columns: 1fr; }
+    .rsvp-wrap { padding: 28px 22px; }
+    .hero-actions .btn { width: 100%; max-width: 320px; }
+    .count div b { font-size: 30px; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="mono" href="#"><em>白</em>露 · 沈舟</a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#day">当日流程</a></li>
+      <li><a href="#venue">场地</a></li>
+      <li><a href="#stay">住宿交通</a></li>
+      <li><a href="#rsvp">回函</a></li>
+    </ul>
+    <a href="#rsvp" class="btn btn-white" style="padding:10px 20px;font-size:14px">RSVP</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container">
+    <p class="date-eyebrow">2026 · 10 · 05 · 松山 · 日落时分</p>
+    <h1>白露<em>·</em>沈舟<span class="amp">AND · 和你</span>我们要结婚了</h1>
+    <p class="sub">八年，从校园后山的日出到松山的这条山路。这一次，我们在日落时分说"我愿意"——想请你来见证。</p>
+    <div class="hero-actions">
+      <a href="#rsvp" class="btn btn-white">立即回函</a>
+      <a href="#" class="btn btn-frosted">加入日历</a>
+    </div>
+    <div class="count" aria-label="倒计时">
+      <div><b>46</b><span>Days</span></div>
+      <div><b>17</b><span>Hours</span></div>
+      <div><b>32</b><span>Mins</span></div>
+    </div>
+  </div>
+</header>
+
+<section id="day">
+  <div class="container">
+    <p class="sec-label">The Day · 当日流程</p>
+    <h2 class="sec-title">从黄昏到星光</h2>
+    <div class="timeline">
+      <div class="tl"><b>16:30</b><i></i><h3>迎宾入席</h3><p>山道两旁有指路牌与接驳车，建议提前 30 分钟上山看日落。</p></div>
+      <div class="tl"><b>17:30</b><i></i><h3>日落仪式</h3><p>草坪仪式约 25 分钟。十月的松山晚风微凉，请备一件外套。</p></div>
+      <div class="tl"><b>18:30</b><i></i><h3>山顶晚宴</h3><p>长桌晚宴，本地食材。座位按回函顺序安排，想坐一起的朋友请备注。</p></div>
+      <div class="tl"><b>21:00</b><i></i><h3>星空酒会</h3><p>篝火、热红酒与一支只跳一次的舞。之后有下山接驳车。</p></div>
+    </div>
+  </div>
+</section>
+
+<section id="venue">
+  <div class="container">
+    <p class="sec-label">Venue · 场地</p>
+    <h2 class="sec-title">松山 · 半山草坪</h2>
+    <div class="venue">
+      <div>
+        <h3>云见山庄 · 草坪与观星台</h3>
+        <p>仪式在半山草坪举行，晚宴移步山顶观星台。山庄只有 18 间房，已为远道的朋友们预留——先回函先得。</p>
+        <p>山道在婚礼前一周封路养护，请按邀请函背面路线图自驾或乘坐接驳车。</p>
+        <p class="addr">云省松山市云见山庄 · <a href="#">查看地图</a> · <a href="#">导航路线</a></p>
+      </div>
+      <div class="art" aria-label="场地示意：山丘月亮与拱门">
+        <span class="moon"></span>
+        <span class="star" style="top:14%;left:64%"></span>
+        <span class="star" style="top:26%;left:82%"></span>
+        <span class="star" style="top:10%;left:38%"></span>
+        <span class="star" style="top:32%;left:12%"></span>
+        <span class="hill1"></span>
+        <span class="hill2"></span>
+        <span class="arch"></span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="rsvp">
+  <div class="container">
+    <p class="sec-label">RSVP · 回函</p>
+    <h2 class="sec-title">请告诉我们你来</h2>
+    <div class="rsvp-wrap">
+      <div class="field">
+        <label for="r-name">姓名</label>
+        <input id="r-name" type="text" placeholder="你的名字，或"某某一家"">
+      </div>
+      <div class="field">
+        <label>能否出席</label>
+        <div class="seg">
+          <label><input type="radio" name="attend" checked><span>准时赴约</span></label>
+          <label><input type="radio" name="attend"><span>心意到场</span></label>
+        </div>
+      </div>
+      <div class="field">
+        <label for="r-guest">同行人数（含自己）</label>
+        <select id="r-guest">
+          <option>1 位</option><option>2 位</option><option>3 位</option><option>4 位及以上</option>
+        </select>
+      </div>
+      <div class="field">
+        <label for="r-note">备注（饮食禁忌 / 想坐在一起的朋友 / 一句话祝福）</label>
+        <input id="r-note" type="text" placeholder="写在请柬背面也可以">
+      </div>
+      <button class="btn btn-white" id="rsvpBtn" style="width:100%">送出回函</button>
+      <p class="rsvp-note">回函截止 9 月 20 日 · 山庄房间按回函顺序预留</p>
+    </div>
+  </div>
+</section>
+
+<section id="stay">
+  <div class="container">
+    <p class="sec-label">Stay & Go · 住宿交通</p>
+    <h2 class="sec-title">远道的朋友看这里</h2>
+    <div class="duo">
+      <div class="info-card">
+        <h3>住</h3>
+        <p>云见山庄已预留 18 间房（10 月 4–5 两晚），报"白沈婚宴"享协议价。</p>
+        <p>山下松山古镇另有民宿群，接驳车早 10 点起每小时一班。</p>
+        <a href="#">房间预留情况</a>
+      </div>
+      <div class="info-card">
+        <h3>行</h3>
+        <p>高铁松山站出站后转 31 路公交至山门，或打车约 25 分钟。</p>
+        <p>婚礼当日 15:00–22:30 山门设循环接驳车，车牌尾号 520。</p>
+        <a href="#">下载路线图</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="gift" style="padding-top:0">
+  <div class="container">
+    <div class="gift">
+      <p>关于礼物：你们的<b>到场</b>就是最好的礼物。若一定想留下什么，我们准备了一本<b>空白相册</b>——婚宴入口处，请放一张你拍的照片，任何一张。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <p class="mono">白露 <em>&</em> 沈舟 · 2026.10.05</p>
+    <p>© StyleForge 平台 AI 生成习作 · study of framer · 有任何问题，找伴娘团</p>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 回函提交反馈
+  const rsvpBtn = document.getElementById('rsvpBtn');
+  rsvpBtn.addEventListener('click', () => {
+    const name = document.getElementById('r-name').value.trim();
+    rsvpBtn.textContent = name ? `✓ ${name}，收到你的回函` : '✓ 回函已送出';
+    setTimeout(() => { rsvpBtn.textContent = '送出回函'; }, 2200);
+  });
+</script>
+</body>
+</html>

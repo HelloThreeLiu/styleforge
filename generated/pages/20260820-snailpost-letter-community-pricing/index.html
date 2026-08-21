@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>慢递 SnailPost — 手写信社区 · 会员</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,700;1,9..144,500;1,9..144,700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Ink & Ember Tokens（来源：generated/styles/ink-ember-v1/DESIGN.md）============ */
+  :root {
+    --paper: #f6efe2;
+    --paper-deep: #efe5d1;
+    --ink: #221b12;
+    --ink-60: #6f6250;
+    --ink-25: #c9bda8;
+    --ember: #f4481e;       /* 烬火橙——全站唯一彩色，只给"热"的东西 */
+    --ember-deep: #c93512;
+    --rule: 2px solid var(--ink);
+    --shadow-hard: 5px 5px 0 var(--ink);
+    --shadow-hard-sm: 3px 3px 0 var(--ink);
+    --sticker-rotate: -2.5deg;
+    --serif: 'Fraunces', Georgia, 'Songti SC', 'SimSun', serif;
+    --sans: 'Inter', -apple-system, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: var(--paper); color: var(--ink); font-family: var(--sans); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1120px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--sans); }
+  ::selection { background: var(--ember); color: var(--paper); }
+
+  /* ============ 通用元素 ============ */
+  .sticker { display: inline-block; border: var(--rule); background: var(--paper); padding: 6px 14px; font-size: 12px; font-weight: 600; letter-spacing: .12em; box-shadow: var(--shadow-hard-sm); transform: rotate(var(--sticker-rotate)); }
+  .sticker.ember { background: var(--ember); color: var(--paper); }
+  .btn { display: inline-block; border: var(--rule); padding: 14px 28px; font-size: 15px; font-weight: 600; letter-spacing: .04em; cursor: pointer; background: var(--paper); color: var(--ink); box-shadow: var(--shadow-hard); transition: transform .12s, box-shadow .12s, background .12s; }
+  .btn:hover { transform: translate(2px, 2px); box-shadow: 2px 2px 0 var(--ink); }
+  .btn-ember { background: var(--ember); color: var(--paper); }
+  .btn-ember:hover { background: var(--ember-deep); }
+  .eyebrow { font-size: 12px; font-weight: 600; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-60); }
+
+  /* ============ 导航 ============ */
+  nav { border-bottom: var(--rule); background: var(--paper); position: sticky; top: 0; z-index: 100; }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 72px; }
+  .logo { display: flex; align-items: center; gap: 14px; }
+  .logo .mark { font-family: var(--serif); font-style: italic; font-weight: 700; font-size: 30px; letter-spacing: -.02em; }
+  .logo .mark em { color: var(--ember); font-style: italic; }
+  .nav-links { display: flex; gap: 30px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; border-bottom: 2px solid transparent; padding-bottom: 2px; }
+  .nav-links a:hover { border-bottom-color: var(--ember); }
+  .menu-btn { display: none; background: none; border: var(--rule); cursor: pointer; padding: 8px; box-shadow: var(--shadow-hard-sm); }
+  .menu-btn svg { width: 18px; height: 18px; stroke: var(--ink); display: block; }
+
+  /* ============ 英雄区：点阵纸面 + 巨衬线 ============ */
+  .hero { padding: 88px 0 64px; position: relative; overflow: hidden; background-image: radial-gradient(rgba(34, 27, 18, 0.13) 1px, transparent 1px); background-size: 22px 22px; }
+  .hero-grid { display: grid; grid-template-columns: 1.15fr 1fr; gap: 56px; align-items: center; }
+  .hero h1 { font-family: var(--serif); font-weight: 700; font-size: clamp(48px, 6.5vw, 84px); line-height: 1.02; letter-spacing: -0.015em; margin: 26px 0 24px; }
+  .hero h1 em { font-style: italic; color: var(--ember); }
+  .hero p { font-size: 17px; line-height: 1.65; color: var(--ink-60); max-width: 460px; }
+  .hero-actions { display: flex; gap: 18px; margin-top: 34px; flex-wrap: wrap; }
+  .hero-meta { margin-top: 30px; display: flex; gap: 26px; font-size: 13px; color: var(--ink-60); }
+  .hero-meta b { color: var(--ink); font-family: var(--serif); font-size: 20px; font-weight: 700; display: block; }
+
+  /* 信封与火漆装置 */
+  .device { border: var(--rule); background: var(--paper); box-shadow: var(--shadow-hard); padding: 26px; transform: rotate(1.2deg); position: relative; }
+  .device-head { display: flex; justify-content: space-between; align-items: center; padding-bottom: 16px; border-bottom: var(--rule); }
+  .live { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 600; letter-spacing: .14em; }
+  .live i { width: 9px; height: 9px; border-radius: 50%; background: var(--ember); animation: pulse 1.6s infinite; font-style: normal; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .25; } }
+  .device-title { font-family: var(--serif); font-weight: 700; font-size: 22px; margin: 18px 0 4px; }
+  .device-sub { font-size: 13px; color: var(--ink-60); margin-bottom: 18px; }
+  .envelope { position: relative; height: 150px; border: var(--rule); background: #fffdf6; overflow: hidden; }
+  .envelope::before { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(115deg, transparent 48.5%, var(--ink-25) 48.5% 51.5%, transparent 51.5%),
+    linear-gradient(-115deg, transparent 47.5%, var(--ink-25) 47.5% 52.5%, transparent 52.5%); }
+  .addr { position: absolute; left: 24px; top: 46%; font-family: var(--serif); font-style: italic; font-size: 15px; color: var(--ink); line-height: 1.6; }
+  .stamp { position: absolute; right: 18px; top: 18px; width: 44px; height: 52px; border: 1.5px dashed var(--ink-60); display: grid; place-items: center; font-family: var(--serif); font-style: italic; font-size: 12px; color: var(--ink-60); background: var(--paper-deep); transform: rotate(2deg); }
+  .seal { position: absolute; right: 26px; bottom: -20px; width: 62px; height: 62px; background: radial-gradient(circle at 35% 30%, #ff6a42, var(--ember) 55%, var(--ember-deep)); border-radius: 46% 54% 50% 50% / 52% 48% 55% 45%; box-shadow: var(--shadow-hard-sm); display: grid; place-items: center; font-family: var(--serif); font-weight: 700; font-style: italic; color: var(--paper); font-size: 22px; transform: rotate(-6deg); }
+  .device-foot { margin-top: 26px; display: flex; justify-content: space-between; align-items: center; }
+
+  /* ============ 跑马灯 ============ */
+  .ticker { border-top: var(--rule); border-bottom: var(--rule); background: var(--ink); color: var(--paper); overflow: hidden; padding: 13px 0; }
+  .ticker-track { display: flex; gap: 48px; white-space: nowrap; width: max-content; animation: marquee 28s linear infinite; }
+  .ticker span { font-size: 14px; font-weight: 500; letter-spacing: .05em; }
+  .ticker span b { color: var(--ember); font-weight: 600; }
+  @keyframes marquee { from { transform: translateX(0); } to { transform: translateX(-50%); } }
+
+  /* ============ 会员三档 ============ */
+  section.plans { padding: 88px 0; }
+  .section-head { text-align: center; margin-bottom: 48px; }
+  .section-head h2 { font-family: var(--serif); font-weight: 700; font-size: clamp(36px, 4.5vw, 56px); line-height: 1.05; margin-top: 12px; }
+  .section-head h2 em { font-style: italic; color: var(--ember); }
+  .plan-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; align-items: stretch; }
+  .plan { border: var(--rule); background: var(--paper); box-shadow: var(--shadow-hard); padding: 28px 26px; display: flex; flex-direction: column; position: relative; }
+  .plan h3 { font-family: var(--serif); font-weight: 700; font-size: 24px; }
+  .plan .for { font-size: 13px; color: var(--ink-60); margin: 4px 0 20px; }
+  .plan .price { display: flex; align-items: baseline; gap: 6px; }
+  .plan .price b { font-family: var(--serif); font-weight: 700; font-size: 44px; }
+  .plan .price span { font-size: 13px; color: var(--ink-60); }
+  .plan .note { font-size: 12px; color: var(--ink-60); min-height: 18px; margin: 4px 0 18px; }
+  .plan ul { list-style: none; display: flex; flex-direction: column; gap: 11px; margin-bottom: 24px; }
+  .plan li { display: flex; gap: 10px; font-size: 14px; line-height: 1.55; color: rgba(34, 27, 18, 0.85); }
+  .plan li::before { content: '—'; color: var(--ink-60); flex-shrink: 0; }
+  .plan li.na { color: var(--ink-25); }
+  .plan .btn { margin-top: auto; text-align: center; }
+  .plan.featured { border: 3px solid var(--ember); box-shadow: 6px 6px 0 var(--ember); }
+  .plan.featured .flag { position: absolute; top: -14px; right: 22px; transform: rotate(2deg); }
+  .plan.featured .btn { background: var(--ember); color: var(--paper); }
+  .plan.featured .btn:hover { background: var(--ember-deep); }
+  .mini-seal { position: absolute; top: -18px; left: 22px; width: 38px; height: 38px; background: radial-gradient(circle at 35% 30%, #ff6a42, var(--ember) 55%, var(--ember-deep)); border-radius: 46% 54% 50% 50% / 52% 48% 55% 45%; display: grid; place-items: center; font-family: var(--serif); font-style: italic; font-weight: 700; color: var(--paper); font-size: 14px; transform: rotate(-8deg); box-shadow: 2px 2px 0 rgba(34,27,18,.35); }
+
+  /* ============ 流程三步 ============ */
+  section.how { background: var(--paper-deep); border-top: var(--rule); border-bottom: var(--rule); padding: 72px 0; }
+  .how-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 0; }
+  .how-step { padding: 8px 28px; border-left: var(--rule); }
+  .how-step:first-child { border-left: none; padding-left: 0; }
+  .how-step b { font-family: var(--serif); font-weight: 700; font-size: 26px; display: block; margin-bottom: 8px; }
+  .how-step b em { font-style: italic; color: var(--ember); }
+  .how-step p { font-size: 14px; line-height: 1.65; color: var(--ink-60); }
+
+  /* ============ 信件摘录 ============ */
+  section.letters { padding: 88px 0; }
+  .letter { border: var(--rule); background: #fffdf6; box-shadow: var(--shadow-hard); padding: 32px 36px; max-width: 720px; margin: 0 auto; transform: rotate(-0.8deg); }
+  .letter p { font-family: var(--serif); font-style: italic; font-size: 19px; line-height: 1.75; color: var(--ink); }
+  .letter cite { display: block; margin-top: 18px; font-style: normal; font-size: 13px; color: var(--ink-60); }
+  .letter .postmark { position: absolute; }
+
+  /* ============ 终章 ============ */
+  .outro { padding: 24px 0 96px; text-align: center; }
+  .outro h2 { font-family: var(--serif); font-weight: 700; font-size: clamp(40px, 5.5vw, 68px); line-height: 1.04; margin: 22px auto 18px; max-width: 700px; }
+  .outro h2 em { font-style: italic; color: var(--ember); }
+  .outro p { color: var(--ink-60); font-size: 16px; max-width: 420px; margin: 0 auto 32px; line-height: 1.65; }
+
+  /* ============ 页脚（焦墨反转）============ */
+  footer { background: var(--ink); color: var(--paper); padding: 64px 0 36px; }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-grid h4 { font-size: 12px; font-weight: 600; letter-spacing: .18em; text-transform: uppercase; color: rgba(246, 239, 226, .5); margin-bottom: 16px; }
+  .footer-grid a { display: block; color: rgba(246, 239, 226, .85); font-size: 14px; padding: 4px 0; }
+  .footer-grid a:hover { color: var(--ember); }
+  .footer-grid p { font-size: 14px; color: rgba(246, 239, 226, .55); max-width: 280px; line-height: 1.7; margin-top: 14px; }
+  .footer-bottom { margin-top: 48px; padding-top: 22px; border-top: 1px solid rgba(246, 239, 226, .18); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: rgba(246, 239, 226, .45); }
+  footer .logo .mark { color: var(--paper); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 72px; left: 0; right: 0; background: var(--paper); flex-direction: column; padding: 18px 24px 24px; gap: 16px; border-bottom: var(--rule); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .hero { padding: 56px 0; }
+    .hero-grid { grid-template-columns: 1fr; gap: 44px; }
+    .plan-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+    .plan.featured { order: -1; }
+    .how-grid { grid-template-columns: 1fr; gap: 28px; }
+    .how-step { border-left: none; padding-left: 0; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 480px) {
+    .plan-grid { max-width: none; }
+    .hero-actions .btn { width: 100%; text-align: center; }
+    .device { transform: none; }
+    .letter { transform: none; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><span class="mark">慢递<em>.</em></span></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#plans">会员</a></li>
+      <li><a href="#how">如何慢递</a></li>
+      <li><a href="#letters">信件摘录</a></li>
+      <li><a href="#">社区</a></li>
+    </ul>
+    <div style="display:flex;gap:16px;align-items:center">
+      <a href="#outro" class="btn" style="padding:10px 20px;font-size:13px">开始写信</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><svg viewBox="0 0 24 24" fill="none" stroke-width="2.5"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+    </div>
+  </div>
+</nav>
+
+<header class="hero">
+  <div class="container hero-grid">
+    <div>
+      <span class="sticker">手写信社区 · 会员制第七年</span>
+      <h1>把邮件<br>熬成<em>一封信</em></h1>
+      <p>慢递是一个只写长信的社区。信在这里平均要走六天——不是效率问题，是仪式问题。配上一位笔友、一张信纸和一枚火漆，重新学会等待。</p>
+      <div class="hero-actions">
+        <a href="#plans" class="btn btn-ember">成为会员</a>
+        <a href="#how" class="btn">看看流程</a>
+      </div>
+      <div class="hero-meta">
+        <div><b>12,403</b>封信正在途中</div>
+        <div><b>98.6%</b>最终抵达率</div>
+        <div><b>6 天</b>平均在途时间</div>
+      </div>
+    </div>
+    <aside class="device" aria-label="一封慢递的示意">
+      <div class="device-head">
+        <span class="live"><i></i>在途中 · ON THE WAY</span>
+        <span class="eyebrow">NO. 0847</span>
+      </div>
+      <h3 class="device-title">致：内蒙古 · 海拉尔</h3>
+      <p class="device-sub">由笔友「阿茹娜」寄出 · 已在途 4 天 11 小时</p>
+      <div class="envelope">
+        <span class="addr">亲爱的阿茹娜：<br>见字如面。窗外的白桦……</span>
+        <span class="stamp">6天</span>
+      </div>
+      <span class="seal">慢</span>
+      <div class="device-foot">
+        <span class="sticker ember" style="transform:rotate(1.5deg)">火漆已封</span>
+        <span style="font-family:var(--serif);font-style:italic;color:var(--ink-60);font-size:13px">预计 8 月 24 日抵达</span>
+      </div>
+    </aside>
+  </div>
+</header>
+
+<div class="ticker" aria-hidden="true">
+  <div class="ticker-track">
+    <span><b>本月在途</b> 12,403 封</span><span><b>最远寄达</b> 冰岛 · 雷克雅未克</span><span><b>最长在途</b> 41 天（仍在走）</span><span><b>本月火漆</b> 封印 2,908 枚</span><span><b>笔友配对</b> 成功 1,206 对</span>
+    <span><b>本月在途</b> 12,403 封</span><span><b>最远寄达</b> 冰岛 · 雷克雅未克</span><span><b>最长在途</b> 41 天（仍在走）</span><span><b>本月火漆</b> 封印 2,908 枚</span><span><b>笔友配对</b> 成功 1,206 对</span>
+  </div>
+</div>
+
+<section class="plans" id="plans">
+  <div class="container">
+    <div class="section-head">
+      <span class="sticker">Membership · 三种慢法</span>
+      <h2>选一种<br>你想要的<em>慢</em></h2>
+    </div>
+    <div class="plan-grid">
+      <div class="plan">
+        <h3>笔友</h3>
+        <p class="for">想先试试水温的人</p>
+        <div class="price"><b>¥0</b><span>/ 永久免费</span></div>
+        <p class="note">不需要绑定支付方式</p>
+        <ul>
+          <li>每月 3 封电子慢递（6 天在途）</li>
+          <li>1 次笔友配对</li>
+          <li>社区徽章「第一封信」</li>
+          <li class="na">实体信纸与火漆</li>
+        </ul>
+        <a href="#" class="btn">免费开始</a>
+      </div>
+      <div class="plan featured">
+        <span class="mini-seal">慢</span>
+        <span class="flag"><span class="sticker ember" style="transform:rotate(2deg)">最受欢迎</span></span>
+        <h3>火漆</h3>
+        <p class="for">认真对待每一封信的人</p>
+        <div class="price"><b>¥18</b><span>/ 月</span></div>
+        <p class="note">年付 ¥180，赠定制火漆章一枚</p>
+        <ul>
+          <li>无限电子慢递</li>
+          <li>每季寄送一沓实体信纸与邮票</li>
+          <li>专属火漆印章（首年定制刻字）</li>
+          <li>优先笔友配对与重逢信提醒</li>
+          <li>生日当月的手写贺信</li>
+        </ul>
+        <a href="#" class="btn">封上火漆</a>
+      </div>
+      <div class="plan">
+        <h3>邮局主理人</h3>
+        <p class="for">想开一家慢递分局的人</p>
+        <div class="price"><b>¥88</b><span>/ 年</span></div>
+        <p class="note">含火漆会员全部权益</p>
+        <ul>
+          <li>主理一座城市「慢递分局」</li>
+          <li>线下信件朗读夜优先席</li>
+          <li>年度《慢递选集》实体版</li>
+          <li>社区议事投票权</li>
+        </ul>
+        <a href="#" class="btn">开设分局</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="how" id="how">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:36px">
+      <span class="eyebrow">HOW IT WORKS</span>
+      <h2 style="font-family:var(--serif);font-weight:700;font-size:clamp(30px,4vw,44px);margin-top:12px">一封信的三道工序</h2>
+    </div>
+    <div class="how-grid">
+      <div class="how-step">
+        <b>落<em>笔</em></b>
+        <p>在编辑器里写一封不设字数上限的信。写到一半可以搁置——慢递会替你保存那份未写完的心情。</p>
+      </div>
+      <div class="how-step">
+        <b>封<em>蜡</em></b>
+        <p>选一枚火漆纹样封缄。信一旦封蜡即不可撤回——这是我们对抗"随手撤回"的全部努力。</p>
+      </div>
+      <div class="how-step">
+        <b>等<em>待</em></b>
+        <p>系统按真实距离模拟在途时间（同城 3 天，跨境最多 41 天）。抵达那天，对方会收到一封唯一的抵达通知。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="letters" id="letters">
+  <div class="container">
+    <div class="section-head" style="margin-bottom:40px">
+      <span class="sticker">经收信人同意摘录</span>
+    </div>
+    <div class="letter">
+      <p>"信到的那天是个加班的深夜。看到'海拉尔'三个字的时候，我忽然想起我们约定时窗外的白桦——六天前的一句话，走得比我这一周都远。"</p>
+      <cite>—— 第 4,102 封在途信 · 收信人 深圳 · 有鱼</cite>
+    </div>
+  </div>
+</section>
+
+<section class="outro" id="outro">
+  <div class="container">
+    <span class="sticker">今晚就能寄出</span>
+    <h2>第一封信，<br>写给<em>六天后</em>的谁？</h2>
+    <p>免费档也能寄出真正的慢递。六天后有人展信，而你几乎已经忘了写过什么——这就是全部的魔法。</p>
+    <a href="#" class="btn btn-ember">开始写信</a>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><span class="mark">慢递<em style="color:var(--ember)">.</em></span></a>
+        <p>一个只写长信的社区。慢是仪式，不是缺陷。</p>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="#">笔友广场</a><a href="#">信件摘录</a><a href="#">慢递分局</a>
+      </div>
+      <div>
+        <h4>会员</h4>
+        <a href="#">三档权益</a><a href="#">火漆图鉴</a><a href="#">礼品卡</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">我们的故事</a><a href="#">隐私（我们不读信）</a><a href="#">联系局里</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 慢递 SnailPost · StyleForge 平台 AI 生成习作 · study of ink-ember-v1</span>
+      <span>INK & EMBER v1 · 纸上的炉火</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+</script>
+</body>
+</html>

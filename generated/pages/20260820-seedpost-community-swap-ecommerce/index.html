@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>种子邮局 SeedPost — 社区种子交换</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&family=Outfit:wght@500;600&family=Poppins:wght@500&family=Roboto:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  /* ============ Pastel Gallery Tokens（来源：generated/styles/pastel-gallery-v1/DESIGN.md）============ */
+  :root {
+    --bg: #ffffff;            /* 白是结构色 */
+    --text: #222222; --text-2: #45515e; --text-3: #8e8e93;
+    --dark: #181e25;          /* 主 CTA / 页脚 */
+    --blue: #1456f0;          /* 功能蓝：✓、徽章、选中 */
+    --pink: #ea5ec1;          /* 品牌粉：仅 logo 与渐变 */
+    --border: #e5e7eb; --border-light: #f2f3f5;
+    --shadow-card: rgba(0, 0, 0, 0.08) 0px 4px 6px;
+    --shadow-brand: rgba(44, 30, 116, 0.16) 0px 0px 15px;
+    --shadow-lift: rgba(36, 36, 36, 0.08) 0px 12px 16px -4px;
+    --grad: linear-gradient(150deg, #f5c5ec 0%, #c9b8f7 38%, #8fb4fb 100%);
+    --ui: 'DM Sans', 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --display: 'Outfit', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mid: 'Poppins', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --data: 'Roboto', 'DM Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--bg); color: var(--text); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 24px; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--blue); outline-offset: 2px; }
+
+  /* ============ 导航：白底 + 药丸 + 8px 深色 CTA ============ */
+  header { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.94); border-bottom: 1px solid var(--border-light); }
+  .nav-inner { display: flex; align-items: center; justify-content: space-between; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-family: var(--display); font-size: 19px; font-weight: 600; }
+  .logo i { width: 26px; height: 26px; border-radius: 50%; background: conic-gradient(from 210deg, var(--pink), #8b5cf6 45%, #3b82f6 90%); font-style: normal; }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--text-3); letter-spacing: 0.06em; }
+  .nav-links { display: flex; gap: 6px; list-style: none; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: #18181b; padding: 8px 16px; border-radius: 9999px; transition: background .15s; }
+  .nav-links a:hover { background: rgba(0, 0, 0, 0.05); }
+  .nav-links a.active { background: rgba(0, 0, 0, 0.05); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: none; }
+  .menu-btn span { display: block; width: 20px; height: 2px; background: #18181b; border-radius: 2px; margin: 4px auto; }
+
+  /* ============ 按钮：8px CTA / 药丸只归导航与筛选 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 500; border-radius: 8px; padding: 11px 20px; cursor: pointer; border: none; min-height: 44px; transition: background .15s, transform .15s, box-shadow .15s; }
+  .btn-dark { background: var(--dark); color: #ffffff; }
+  .btn-dark:hover { background: #2a323c; }
+  .btn-light { background: #f0f0f0; color: #333333; }
+  .btn-light:hover { background: #e4e4e4; }
+  .btn-white { background: #ffffff; color: #18181b; }
+  .btn-white:hover { transform: translateY(-1px); box-shadow: var(--shadow-lift); }
+
+  /* ============ 英雄区 ============ */
+  .hero { text-align: center; padding: 80px 0 48px; }
+  .hero-badge { display: inline-flex; align-items: center; gap: 8px; font-size: 12px; font-weight: 500; color: var(--blue); background: rgba(20, 86, 240, 0.06); border-radius: 30px; padding: 6px 14px; margin-bottom: 26px; }
+  .hero h1 { font-family: var(--display); font-size: clamp(38px, 6vw, 80px); font-weight: 500; line-height: 1.10; }
+  .hero p { margin: 20px auto 30px; font-size: 16px; line-height: 1.50; color: var(--text-2); max-width: 560px; }
+  .hero .free { font-family: var(--mid); font-size: 15px; font-weight: 500; color: var(--text-3); }
+  .hero .free b { color: var(--blue); font-weight: 500; }
+
+  /* 筛选分段（药丸）*/
+  .filter { display: inline-flex; gap: 4px; background: rgba(0, 0, 0, 0.05); border-radius: 9999px; padding: 4px; margin-top: 26px; }
+  .filter button { font-size: 14px; font-weight: 500; padding: 9px 18px; border-radius: 9999px; border: none; background: transparent; color: var(--text-2); min-height: 40px; transition: background .15s, color .15s; }
+  .filter button.active { background: #ffffff; color: #18181b; box-shadow: var(--shadow-card); }
+
+  /* ============ 种子架 ============ */
+  .shelf { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; padding: 40px 0 8px; }
+  .seed { background: #ffffff; border: 1px solid var(--border-light); border-radius: 20px; padding: 22px; display: flex; flex-direction: column; transition: transform .2s, box-shadow .2s; }
+  .seed:hover { transform: translateY(-4px); box-shadow: var(--shadow-lift); }
+  .seed h3 { font-family: var(--display); font-size: 21px; font-weight: 600; margin: 16px 0 2px; }
+  .seed .from { font-size: 13px; color: var(--text-3); margin-bottom: 10px; }
+  .seed .meta { display: flex; gap: 8px; margin-bottom: 16px; }
+  .seed .meta span { font-size: 12px; font-weight: 500; color: var(--text-2); background: #f0f0f0; border-radius: 9999px; padding: 4px 12px; }
+  .seed .swap { display: flex; align-items: center; justify-content: space-between; margin-top: auto; gap: 10px; }
+  .beans { font-family: var(--data); font-size: 15px; font-weight: 500; font-variant-numeric: tabular-nums; }
+  .beans i { display: inline-block; width: 14px; height: 14px; border-radius: 50% 50% 50% 4px; background: #c9a86a; transform: rotate(-45deg); font-style: normal; vertical-align: -2px; margin-right: 5px; }
+  .beans small { font-size: 12px; color: var(--text-3); font-weight: 400; }
+  .seed .btn { padding: 9px 16px; font-size: 13px; }
+
+  /* 精选卡三件套：渐变 + 紫辉光 + 深色徽章 */
+  .seed.featured { background: var(--grad); border: none; border-radius: 24px; box-shadow: var(--shadow-brand); position: relative; }
+  .seed.featured:hover { transform: translateY(-6px); box-shadow: rgba(44, 30, 116, 0.16) 0px 12px 26px -6px; }
+  .seed.featured h3, .seed.featured .beans { color: #18181b; }
+  .seed.featured .from, .seed.featured .meta span { color: rgba(24, 30, 37, 0.65); }
+  .seed.featured .meta span { background: rgba(255, 255, 255, 0.45); }
+  .badge-hot { position: absolute; top: -13px; right: 20px; background: var(--dark); color: #ffffff; font-size: 12px; font-weight: 500; border-radius: 30px; padding: 5px 14px; }
+
+  /* 种子袋 CSS 图（内容即色彩）*/
+  .packet { position: relative; height: 130px; border-radius: 12px; background: #fffdf8; border: 1px solid var(--border); overflow: hidden; }
+  .packet .band { position: absolute; left: 0; right: 0; top: 0; height: 34px; }
+  .packet .name { position: absolute; left: 12px; top: 42px; font-family: var(--mid); font-size: 12px; font-weight: 500; color: var(--text-2); }
+  .packet .seeds { position: absolute; left: 12px; right: 12px; bottom: 10px; height: 46px; background:
+    radial-gradient(3px 2.4px at 12% 30%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 30% 66%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 48% 26%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 66% 60%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 84% 34%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 20% 86%, #8a6a3f 50%, transparent 51%),
+    radial-gradient(3px 2.4px at 58% 88%, #8a6a3f 50%, transparent 51%); }
+  .b-tomato { background: linear-gradient(140deg, #e88a8a, #d46a6a); }
+  .b-eggplant { background: linear-gradient(140deg, #b9a3d6, #9377bd); }
+  .b-bean { background: linear-gradient(140deg, #9dc08b, #76a05f); }
+  .b-leaf { background: linear-gradient(140deg, #8fc6b4, #5fa58c); }
+  .b-flower { background: linear-gradient(140deg, #f0b6cf, #d98bb0); }
+
+  /* ============ 以豆换豆三步 ============ */
+  .steps { padding: 64px 0 24px; }
+  .sec-head { text-align: center; margin-bottom: 36px; }
+  .sec-head h2 { font-family: var(--display); font-size: 31px; font-weight: 600; }
+  .sec-head p { font-family: var(--mid); font-size: 16px; font-weight: 500; color: var(--text-2); margin-top: 8px; }
+  .step-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .step { border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); padding: 24px; }
+  .step i { width: 30px; height: 30px; border-radius: 50%; background: rgba(20, 86, 240, 0.08); color: var(--blue); font-style: normal; font-family: var(--data); font-size: 14px; font-weight: 500; display: grid; place-items: center; margin-bottom: 14px; }
+  .step b { font-family: var(--mid); font-size: 17px; font-weight: 500; display: block; margin-bottom: 8px; }
+  .step p { font-size: 14px; line-height: 1.60; color: var(--text-2); }
+
+  /* 豆子账本（Roboto 数据）*/
+  .ledger { margin-top: 24px; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); overflow: hidden; }
+  .ledger table { width: 100%; border-collapse: collapse; }
+  .ledger th { text-align: left; font-size: 13px; font-weight: 600; color: var(--text-2); background: #fafbfc; padding: 12px 20px; border-bottom: 1px solid var(--border-light); }
+  .ledger td { font-family: var(--data); font-size: 15px; font-variant-numeric: tabular-nums; padding: 13px 20px; border-bottom: 1px solid var(--border-light); }
+  .ledger tr:last-child td { border-bottom: none; }
+  .ledger td:first-child { font-family: var(--ui); color: var(--text-2); }
+  .ledger .up { color: var(--blue); font-weight: 500; }
+
+  /* ============ 种植者说 ============ */
+  .voices { padding: 56px 0 8px; }
+  .voice-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px; }
+  .voice { background: #ffffff; border: 1px solid var(--border-light); border-radius: 16px; box-shadow: var(--shadow-card); padding: 24px; }
+  .v-top { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
+  .v-ava { width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; color: #fff; font-size: 14px; font-weight: 700; flex-shrink: 0; }
+  .v-top b { font-size: 15px; font-weight: 500; display: block; }
+  .v-top span { font-size: 13px; color: var(--text-3); }
+  .voice p { font-size: 14px; line-height: 1.70; color: var(--text-2); }
+
+  /* ============ 终章 CTA：渐变大卡 ============ */
+  .cta-card { background: var(--grad); border-radius: 24px; box-shadow: var(--shadow-brand); padding: 56px 40px; text-align: center; color: #18181b; margin-top: 40px; }
+  .cta-card h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 40px); font-weight: 600; }
+  .cta-card p { font-size: 16px; color: rgba(24, 30, 37, 0.72); margin: 10px auto 26px; max-width: 460px; }
+
+  /* ============ 页脚 ============ */
+  footer { background: var(--dark); margin-top: 80px; padding: 56px 0 0; color: rgba(255, 255, 255, 0.8); }
+  .footer-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 40px; }
+  .footer-grid .logo { color: #ffffff; margin-bottom: 14px; }
+  .footer-grid .logo em { color: rgba(255, 255, 255, 0.5); }
+  .footer-grid p { font-size: 13px; line-height: 1.70; color: rgba(255, 255, 255, 0.55); max-width: 300px; }
+  .footer-grid h4 { font-size: 14px; font-weight: 500; color: #ffffff; margin-bottom: 14px; }
+  .footer-grid a { display: block; font-size: 14px; color: rgba(255, 255, 255, 0.8); padding: 5px 0; }
+  .footer-grid a:hover { color: #ffffff; }
+  .footer-bottom { margin-top: 48px; border-top: 1px solid rgba(255, 255, 255, 0.08); padding: 22px 0; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: rgba(255, 255, 255, 0.5); }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 1024px) {
+    .shelf { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+    .seed.featured { order: -1; }
+    .step-grid, .voice-grid { grid-template-columns: 1fr; max-width: 460px; margin: 0 auto; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: #ffffff; flex-direction: column; padding: 12px 24px 20px; gap: 2px; border-bottom: 1px solid var(--border-light); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; }
+    .hero { padding: 56px 0 40px; }
+    .ledger { overflow-x: auto; }
+    .ledger table { min-width: 520px; }
+    .footer-grid { grid-template-columns: 1fr 1fr; }
+    footer { margin-top: 56px; }
+  }
+  @media (max-width: 480px) {
+    .shelf, .step-grid, .voice-grid { max-width: none; }
+    .hero h1 { font-size: 38px; }
+    .filter { width: 100%; justify-content: center; flex-wrap: wrap; }
+    .cta-card { padding: 44px 24px; }
+    .cta-card .btn { width: 100%; }
+    .footer-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>种子邮局 <em>SEEDPOST</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#shelf" class="active">种子架</a></li>
+      <li><a href="#how">以豆换豆</a></li>
+      <li><a href="#voices">种植者说</a></li>
+    </ul>
+    <div style="display:flex;gap:14px;align-items:center">
+      <a href="#" style="font-size:14px;font-weight:500;color:#18181b">我的豆子 · 12</a>
+      <a href="#" class="btn btn-dark" style="padding:9px 16px;font-size:13px">寄出种子</a>
+      <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+    </div>
+  </div>
+</header>
+
+<section class="hero">
+  <div class="container">
+    <span class="hero-badge">秋播交换窗口 · 开放中</span>
+    <h1>把阳台的收成<br>寄给下一户人家</h1>
+    <p>种子邮局是一座不收钱的商店：寄出你多出的种子，换来「豆子」，再用豆子挑走别人家的种子。一粒种子的旅行，从你家窗台开始。</p>
+    <p class="free"><b>以豆换豆</b> · 没有价格，只有缘分</p>
+    <div class="filter" role="group" aria-label="种子筛选">
+      <button class="active" data-cat="all">全部</button>
+      <button data-cat="fruit">茄果</button>
+      <button data-cat="bean">豆类</button>
+      <button data-cat="leaf">叶菜</button>
+      <button data-cat="flower">花草</button>
+    </div>
+  </div>
+</section>
+
+<section id="shelf">
+  <div class="container">
+    <div class="shelf">
+      <div class="seed featured" data-cat="fruit">
+        <span class="badge-hot">本季最受欢迎</span>
+        <div class="packet"><span class="band b-tomato"></span><span class="name">TOMATO · 传家种</span><span class="seeds"></span></div>
+        <h3>外婆的酸浆番茄</h3>
+        <p class="from">湖南娄底 · 由「田埂」家传三代</p>
+        <div class="meta"><span>难度：入门</span><span>约 40 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>3 <small>豆 / 包</small></span><button class="btn btn-white swapBtn">用豆子换</button></div>
+      </div>
+      <div class="seed" data-cat="fruit">
+        <div class="packet"><span class="band b-eggplant"></span><span class="name">EGGPLANT · 产出稳定</span><span class="seeds"></span></div>
+        <h3>紫长茄 · 三月早</h3>
+        <p class="from">江苏南通 · 社区苗圃提纯</p>
+        <div class="meta"><span>难度：入门</span><span>约 60 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>2 <small>豆 / 包</small></span><button class="btn btn-light swapBtn">用豆子换</button></div>
+      </div>
+      <div class="seed" data-cat="bean">
+        <div class="packet"><span class="band b-bean"></span><span class="name">BEAN · 固氮好手</span><span class="seeds"></span></div>
+        <h3>四季豆 · 无架矮生</h3>
+        <p class="from">云南昆明 · 阳台党最爱</p>
+        <div class="meta"><span>难度：入门</span><span>约 25 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>1 <small>豆 / 包</small></span><button class="btn btn-light swapBtn">用豆子换</button></div>
+      </div>
+      <div class="seed" data-cat="leaf">
+        <div class="packet"><span class="band b-leaf"></span><span class="name">GREENS · 28 天速生</span><span class="seeds"></span></div>
+        <h3>快菜 · 耐寒小白菜</h3>
+        <p class="from">北京海淀 · 秋播正当时</p>
+        <div class="meta"><span>难度：入门</span><span>约 200 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>1 <small>豆 / 包</small></span><button class="btn btn-light swapBtn">用豆子换</button></div>
+      </div>
+      <div class="seed" data-cat="flower">
+        <div class="packet"><span class="band b-flower"></span><span class="name">FLOWER · 可食可赏</span><span class="seeds"></span></div>
+        <h3>七彩旱金莲</h3>
+        <p class="from">四川成都 · 花与叶皆入菜</p>
+        <div class="meta"><span>难度：进阶</span><span>约 30 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>3 <small>豆 / 包</small></span><button class="btn btn-light swapBtn">用豆子换</button></div>
+      </div>
+      <div class="seed" data-cat="leaf">
+        <div class="packet"><span class="band b-leaf"></span><span class="name">GREENS · 需春化</span><span class="seeds"></span></div>
+        <h3>皱叶羽衣甘蓝</h3>
+        <p class="from">上海闵行 · 越冬更甜</p>
+        <div class="meta"><span>难度：进阶</span><span>约 80 粒</span></div>
+        <div class="swap"><span class="beans"><i></i>2 <small>豆 / 包</small></span><button class="btn btn-light swapBtn">用豆子换</button></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="steps" id="how">
+  <div class="container">
+    <div class="sec-head">
+      <h2>以豆换豆，怎么换</h2>
+      <p>三步，一个秋天</p>
+    </div>
+    <div class="step-grid">
+      <div class="step"><i>1</i><b>寄出你的种子</b><p>自留种装袋、写上名字与习性，投进社区种子邮筒或线上预约上门取件。</p></div>
+      <div class="step"><i>2</i><b>收到豆子</b><p>志愿者清点、发芽率抽检后，按稀有度给账本打入 1–5 颗豆子。</p></div>
+      <div class="step"><i>3</i><b>挑走新种子</b><p>在种子架上用豆子兑换任意种子包——来年秋天，再把收成寄回来。</p></div>
+    </div>
+    <div class="ledger">
+      <table>
+        <thead><tr><th>本月账本</th><th>寄入</th><th>换出</th><th>流通豆</th></tr></thead>
+        <tbody>
+          <tr><td>茄果类</td><td>124 包</td><td>98 包</td><td class="up">+86</td></tr>
+          <tr><td>豆类</td><td>77 包</td><td>81 包</td><td class="up">+12</td></tr>
+          <tr><td>叶菜与花草</td><td>205 包</td><td>189 包</td><td class="up">+140</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<section class="voices" id="voices">
+  <div class="container">
+    <div class="sec-head">
+      <h2>种植者说</h2>
+      <p>种子在人与人之间走过的路</p>
+    </div>
+    <div class="voice-grid">
+      <div class="voice">
+        <div class="v-top"><span class="v-ava" style="background:linear-gradient(140deg,#ea5ec1,#8b5cf6)">田</span><div><b>田埂</b><span>湖南 · 阳台 6 年</span></div></div>
+        <p>"外婆留下的酸浆番茄，如今在 40 多个阳台上结了果。有种子的地方，就没有真正的告别。"</p>
+      </div>
+      <div class="voice">
+        <div class="v-top"><span class="v-ava" style="background:linear-gradient(140deg,#9dc08b,#5fa58c)">禾</span><div><b>禾苗苗</b><span>云南 · 第一次秋播</span></div></div>
+        <p>"用一包多余的四季豆，换到了没见过的旱金莲。开春如果它活了，我打算请整层楼吃饭。"</p>
+      </div>
+      <div class="voice">
+        <div class="v-top"><span class="v-ava" style="background:linear-gradient(140deg,#8fb4fb,#5b8def)">北</span><div><b>北窗台</b><span>北京 · 越冬实验中</span></div></div>
+        <p>"账本上那颗小小的豆子，比我付过的大部分钱都让我惦记——因为它是别人夏天的收成。"</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="container">
+    <div class="cta-card">
+      <h2>开春之前，把窗台变成苗圃</h2>
+      <p>寄出第一包种子，就拥有整面种子架——秋播窗口还剩 19 天。</p>
+      <a href="#" class="btn btn-white">预约寄出种子</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div>
+        <a class="logo" href="#"><i></i>种子邮局 <em>SEEDPOST</em></a>
+        <p>一座不收钱的种子商店。豆子是唯一的货币，收成是最好的利息。</p>
+      </div>
+      <div>
+        <h4>种子架</h4>
+        <a href="#">茄果</a><a href="#">豆类</a><a href="#">叶菜</a><a href="#">花草</a>
+      </div>
+      <div>
+        <h4>社区</h4>
+        <a href="#">寄种指南</a><a href="#">发芽率报告</a><a href="#">志愿者名录</a>
+      </div>
+      <div>
+        <h4>关于</h4>
+        <a href="#">我们的故事</a><a href="#">种子保卫计划</a><a href="#">联系邮局</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <span>© 2026 SeedPost · StyleForge 平台 AI 生成习作 · study of pastel-gallery-v1</span>
+      <span>zh-CN</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 种子筛选：药丸分段真实过滤
+  document.querySelectorAll('.filter button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('.filter button').forEach((b) => b.classList.remove('active'));
+      btn.classList.add('active');
+      const cat = btn.dataset.cat;
+      document.querySelectorAll('.seed').forEach((s) => {
+        s.style.display = (cat === 'all' || s.dataset.cat === cat) ? '' : 'none';
+      });
+    });
+  });
+  // 兑换反馈
+  document.querySelectorAll('.swapBtn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const t = btn.textContent;
+      btn.textContent = '✓ 已放进邮包';
+      setTimeout(() => { btn.textContent = t; }, 1400);
+    });
+  });
+</script>
+</body>
+</html>

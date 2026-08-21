@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>密邮 CipherMail — 登录</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<style>
+  /* ============ Spotify Tokens（来源：design-md/spotify/DESIGN.md）============ */
+  :root {
+    --black: #121212;
+    --surface: #181818;
+    --mid: #1f1f1f;
+    --card-hover: #282828;
+    --green: #1ed760;        /* 绿：仅功能性使用 */
+    --green-deep: #1db954;
+    --white: #ffffff;
+    --silver: #b3b3b3;
+    --border-gray: #4d4d4d;
+    --outline-border: #7c7c7c;
+    --shadow-heavy: rgba(0, 0, 0, 0.5) 0px 8px 24px;
+    --shadow-medium: rgba(0, 0, 0, 0.3) 0px 8px 8px;
+    --inset-input: rgb(18, 18, 18) 0px 1px 0px, rgb(124, 124, 124) 0px 0px 0px 1px inset; /* 输入框签名组合 */
+    --font: 'Inter', 'Helvetica Neue', helvetica, arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--black); color: var(--white); -webkit-font-smoothing: antialiased; padding-bottom: 88px; overflow-x: clip; }
+  .shell { max-width: 1000px; margin: 0 auto; padding: 48px 24px; display: grid; grid-template-columns: 1.1fr 1fr; gap: 64px; align-items: center; min-height: calc(100vh - 200px); }
+  a { color: inherit; text-decoration: none; }
+  :focus-visible { outline: 1px solid var(--white); outline-offset: 3px; }
+  ::selection { background: var(--green); color: #000; }
+
+  /* ============ 左侧：品牌陈述 + 专辑式封面 + tracklist 特性 ============ */
+  .brand .logo { display: flex; align-items: center; gap: 12px; font-size: 18px; font-weight: 700; margin-bottom: 34px; }
+  .brand .logo i { width: 34px; height: 34px; border-radius: 50%; background: var(--green); color: #000; font-style: normal; font-size: 15px; display: grid; place-items: center; font-weight: 700; }
+  .brand h1 { font-size: clamp(32px, 4vw, 48px); font-weight: 700; line-height: 1.12; letter-spacing: -0.02em; margin-bottom: 14px; }
+  .brand h1 span { color: var(--green); }
+  .brand > p { font-size: 16px; line-height: 1.6; color: var(--silver); max-width: 420px; margin-bottom: 36px; }
+
+  /* 专辑式信封封面——封面艺术即色彩源 */
+  .cover-row { display: flex; gap: 20px; align-items: flex-end; margin-bottom: 30px; }
+  .cover { width: 132px; height: 132px; border-radius: 6px; position: relative; overflow: hidden; box-shadow: var(--shadow-medium); flex-shrink: 0;
+    background: linear-gradient(140deg, #1f4e3e, #123528 55%, #0c2018); }
+  .cover .env { position: absolute; inset: 26px 22px; border: 1.5px solid rgba(30, 215, 96, 0.55); border-radius: 3px; }
+  .cover .env::before { content: ''; position: absolute; inset: 0; background:
+    linear-gradient(115deg, transparent 48%, rgba(30, 215, 96, 0.55) 48% 52%, transparent 52%),
+    linear-gradient(-115deg, transparent 47%, rgba(30, 215, 96, 0.55) 47% 53%, transparent 53%); }
+  .cover .keyhole { position: absolute; left: 50%; top: 55%; transform: translate(-50%, -50%); width: 14px; height: 14px; }
+  .cover .keyhole::before { content: ''; position: absolute; left: 50%; top: 0; transform: translateX(-50%); width: 6px; height: 6px; border-radius: 50%; background: var(--green); box-shadow: 0 0 10px rgba(30, 215, 96, 0.8); }
+  .cover .keyhole::after { content: ''; position: absolute; left: 50%; top: 5px; transform: translateX(-50%); border-left: 4px solid transparent; border-right: 4px solid transparent; border-bottom: 9px solid var(--green); }
+  .cover-meta { padding-bottom: 4px; }
+  .cover-meta b { font-size: 16px; font-weight: 700; display: block; }
+  .cover-meta span { font-size: 12px; color: var(--silver); }
+
+  /* tracklist 特性列表 */
+  .tracks { background: var(--surface); border-radius: 8px; padding: 6px 18px 12px; }
+  .tracks-head { display: grid; grid-template-columns: 28px 1fr 120px; gap: 12px; padding: 12px 0 8px; border-bottom: 1px solid var(--border-gray); font-size: 12px; color: var(--silver); }
+  .track { display: grid; grid-template-columns: 28px 1fr 120px; gap: 12px; align-items: center; padding: 10px 0; border-bottom: 1px solid rgba(77, 77, 77, 0.35); font-size: 14px; }
+  .track:last-child { border-bottom: none; }
+  .track:hover { background: rgba(255, 255, 255, 0.03); }
+  .track .no { color: var(--silver); }
+  .track:hover .no { color: var(--green); }
+  .track .t-title { font-weight: 700; }
+  .track .t-sub { font-size: 12px; color: var(--silver); margin-top: 2px; font-weight: 400; }
+  .track .dur { color: var(--silver); text-align: right; font-variant-numeric: tabular-nums; }
+
+  /* ============ 右侧：登录卡 ============ */
+  .auth { background: var(--surface); border-radius: 8px; padding: 36px 36px 28px; box-shadow: var(--shadow-heavy); }
+  .auth h2 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+  .auth .sub { font-size: 14px; color: var(--silver); margin-bottom: 26px; }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 8px; }
+  .field .input-wrap { position: relative; }
+  .field input { width: 100%; background: var(--mid); border: none; box-shadow: var(--inset-input); border-radius: 4px; padding: 14px 16px; font-family: var(--font); font-size: 15px; color: var(--white); outline: none; transition: box-shadow .15s; }
+  .field input:focus { box-shadow: rgb(18, 18, 18) 0px 1px 0px, rgb(255, 255, 255) 0px 0px 0px 1px inset; }
+  .field input::placeholder { color: var(--silver); }
+  .field .peek { position: absolute; right: 8px; top: 50%; transform: translateY(-50%); background: transparent; border: none; color: var(--silver); font-size: 12px; font-weight: 700; padding: 8px 10px; cursor: pointer; border-radius: 4px; }
+  .field .peek:hover { color: var(--white); background: var(--card-hover); }
+  .row-between { display: flex; justify-content: space-between; align-items: center; margin: 4px 0 22px; }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-size: 13px; color: var(--silver); cursor: pointer; }
+  .check input { accent-color: var(--green-deep); width: 15px; height: 15px; cursor: pointer; }
+  .row-between a { font-size: 13px; color: var(--silver); }
+  .row-between a:hover { color: var(--white); text-decoration: underline; }
+  .btn-green { display: flex; width: 100%; align-items: center; justify-content: center; background: var(--green); color: #000000; border: none; border-radius: 500px; font-family: var(--font); font-size: 15px; font-weight: 700; letter-spacing: 1.6px; text-transform: uppercase; padding: 13px 20px; cursor: pointer; transition: transform .12s, background .15s; min-height: 48px; }
+  .btn-green:hover { transform: scale(1.03); background: #3be477; }
+  .divider { display: flex; align-items: center; gap: 14px; margin: 24px 0; color: var(--silver); font-size: 12px; }
+  .divider::before, .divider::after { content: ''; flex: 1; height: 1px; background: var(--border-gray); }
+  .btn-dark { display: flex; width: 100%; align-items: center; justify-content: center; gap: 10px; background: var(--mid); color: var(--white); border: none; border-radius: 500px; font-family: var(--font); font-size: 14px; font-weight: 700; padding: 12px 20px; cursor: pointer; margin-bottom: 10px; transition: background .15s, color .15s; min-height: 48px; }
+  .btn-dark:hover { background: var(--card-hover); }
+  .btn-dark i { font-style: normal; color: var(--silver); }
+  .fine { font-size: 11px; line-height: 1.6; color: var(--silver); text-align: center; margin-top: 18px; }
+  .fine b { color: var(--white); }
+
+  /* ============ 底部安全状态条（Now Playing 化）============ */
+  .statusbar { position: fixed; left: 0; right: 0; bottom: 0; z-index: 200; background: var(--surface); border-top: 1px solid #000; box-shadow: var(--shadow-heavy); height: 76px; display: flex; align-items: center; }
+  .sb-inner { max-width: 1000px; margin: 0 auto; padding: 0 24px; display: grid; grid-template-columns: 1fr 2fr 1fr; gap: 20px; align-items: center; width: 100%; }
+  .sb-track { display: flex; align-items: center; gap: 12px; min-width: 0; }
+  .sb-art { width: 46px; height: 46px; border-radius: 6px; background: linear-gradient(140deg, #1f4e3e, #123528); border: 1px solid rgba(30, 215, 96, 0.4); flex-shrink: 0; }
+  .sb-track b { font-size: 14px; font-weight: 700; display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sb-track span { font-size: 12px; color: var(--silver); }
+  .sb-center { display: flex; flex-direction: column; align-items: center; gap: 8px; }
+  .sb-key { display: flex; align-items: center; gap: 8px; font-size: 12px; color: var(--silver); font-variant-numeric: tabular-nums; }
+  .sb-key .bits { display: flex; gap: 3px; }
+  .sb-key .bits i { width: 4px; border-radius: 2px; background: var(--border-gray); animation: eq 1.2s ease-in-out infinite; height: 16px; }
+  .sb-key .bits i:nth-child(2) { animation-delay: .15s; }
+  .sb-key .bits i:nth-child(3) { animation-delay: .3s; background: var(--green); }
+  .sb-key .bits i:nth-child(4) { animation-delay: .45s; }
+  .sb-key .bits i:nth-child(5) { animation-delay: .6s; }
+  @keyframes eq { 0%, 100% { transform: scaleY(0.3); } 50% { transform: scaleY(1); } }
+  .sb-right { display: flex; justify-content: flex-end; gap: 14px; color: var(--silver); font-size: 12px; align-items: center; }
+  .sb-right .live { color: var(--green); font-weight: 700; }
+
+  /* ============ 响应式：768 / 375 ============ */
+  @media (max-width: 768px) {
+    body { padding-bottom: 96px; }
+    .shell { grid-template-columns: 1fr; gap: 44px; padding: 32px 20px; }
+    .cover-row { display: none; }
+    .tracks-head .col-dur, .track .dur { display: none; }
+    .tracks-head, .track { grid-template-columns: 28px 1fr; }
+    .auth { padding: 28px 22px 22px; }
+    .sb-inner { grid-template-columns: 1fr auto; }
+    .sb-center { display: none; }
+  }
+  @media (max-width: 480px) {
+    .brand h1 { font-size: 32px; }
+    .btn-green, .btn-dark { min-height: 52px; }
+    .sb-right span:first-child { display: none; }
+  }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <!-- 左：品牌陈述 -->
+  <section class="brand">
+    <a class="logo" href="#"><i>密</i>密邮 CipherMail</a>
+    <h1>你的邮箱，<br>只属于<span>你</span>。</h1>
+    <p>端到端加密的邮件客户端。服务器只看见密文，我们自己也看不见你的信——这是架构保证，不是隐私承诺。</p>
+
+    <div class="cover-row" aria-hidden="true">
+      <div class="cover">
+        <span class="env"><span class="keyhole"></span></div>
+      </div>
+      <div class="cover-meta">
+        <b>CipherMail v4 · 绿盾协议</b>
+        <span>2026 · 开源 · 审计报告第 11 期</span>
+      </div>
+    </div>
+
+    <div class="tracks" aria-label="安全特性">
+      <div class="tracks-head"><span>#</span><span>特性</span><span class="col-dur" style="text-align:right">状态</span></div>
+      <div class="track"><span class="no">1</span><span><span class="t-title">端到端加密</span><span class="t-sub" style="display:block">OpenPGP · 密钥只存本机</span></span><span class="dur">✓ 默认开启</span></div>
+      <div class="track"><span class="no">2</span><span><span class="t-title">零知识服务器</span><span class="t-sub" style="display:block">连元数据都最小化收集</span></span><span class="dur">✓ 已审计</span></div>
+      <div class="track"><span class="no">3</span><span><span class="t-title">密钥轮换</span><span class="t-sub" style="display:block">每 24 小时自动更换会话密钥</span></span><span class="dur">✓ 运行中</span></div>
+      <div class="track"><span class="no">4</span><span><span class="t-title">开源客户端</span><span class="t-sub" style="display:block">GPL-3.0 · 每次发布可复现构建</span></span><span class="dur">✓ 公开</span></div>
+    </div>
+  </section>
+
+  <!-- 右：登录卡 -->
+  <section class="auth" aria-label="登录">
+    <h2>登录密邮</h2>
+    <p class="sub">使用你的加密邮箱地址继续</p>
+    <form onsubmit="return false">
+      <div class="field">
+        <label for="f-mail">邮箱地址</label>
+        <div class="input-wrap">
+          <input id="f-mail" type="email" placeholder="you@cipher.mail" autocomplete="email">
+        </div>
+      </div>
+      <div class="field">
+        <label for="f-pass">主密码</label>
+        <div class="input-wrap">
+          <input id="f-pass" type="password" placeholder="主密码派生密钥，我们不存储" autocomplete="current-password">
+          <button type="button" class="peek" id="peekBtn" aria-label="显示密码">显示</button>
+        </div>
+      </div>
+      <div class="row-between">
+        <label class="check"><input type="checkbox" checked>记住此设备（30 天）</label>
+        <a href="#">找回密钥？</a>
+      </div>
+      <button type="submit" class="btn-green" id="loginBtn">登 录</button>
+      <div class="divider">或使用</div>
+      <button type="button" class="btn-dark"><i>🔑</i>硬件密钥（Passkey / YubiKey）</button>
+      <button type="button" class="btn-dark"><i>🗂</i>本地密钥库文件</button>
+    </form>
+    <p class="fine">还没有加密邮箱？<b>创建账户</b> · 忘记主密码将<b>无法恢复</b>任何邮件——这是加密的代价与荣耀。</p>
+  </section>
+</div>
+
+<!-- 底部安全状态条 -->
+<div class="statusbar" aria-label="安全状态">
+  <div class="sb-inner">
+    <div class="sb-track">
+      <div class="sb-art"></div>
+      <div><b>会话密钥 · 密钥轮换中</b><span>本机会话 · 剩余 14:26 后轮换</span></div>
+    </div>
+    <div class="sb-center">
+      <div class="sb-key"><span>加密强度</span><span class="bits"><i></i><i></i><i></i><i></i><i></i></span><span>AES-256-GCM</span></div>
+    </div>
+    <div class="sb-right"><span>TLS 1.3</span><span class="live">● 连接已加密</span></div>
+  </div>
+</div>
+
+<script>
+  // 显示/隐藏密码
+  const passInput = document.getElementById('f-pass');
+  const peekBtn = document.getElementById('peekBtn');
+  peekBtn.addEventListener('click', () => {
+    const show = passInput.type === 'password';
+    passInput.type = show ? 'text' : 'password';
+    peekBtn.textContent = show ? '隐藏' : '显示';
+  });
+  // 登录反馈
+  const loginBtn = document.getElementById('loginBtn');
+  loginBtn.addEventListener('click', () => {
+    const mail = document.getElementById('f-mail').value.trim();
+    loginBtn.textContent = '正在解密本地密钥库…';
+    setTimeout(() => {
+      loginBtn.textContent = mail ? `✓ 欢迎回来，${mail.split('@')[0]}` : '✓ 已通过本机密钥验证';
+      setTimeout(() => { loginBtn.textContent = '登 录'; }, 2000);
+    }, 900);
+  });
+</script>
+</body>
+</html>

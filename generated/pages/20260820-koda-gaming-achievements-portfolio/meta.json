@@ -1,0 +1,38 @@
+{
+  "id": "20260820-koda-gaming-achievements-portfolio",
+  "title": "远征档案 KODA · 游戏库与成就墙",
+  "created_at": "2026-08-20T23:59:59+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "spacex"
+  ],
+  "page_type": "portfolio",
+  "industry": [
+    "gaming"
+  ],
+  "mood": [
+    "dark-first",
+    "minimal",
+    "futuristic"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "全屏电影式场景",
+    "CSS星野行星弧",
+    "透视网格地平线",
+    "全大写钢印排版",
+    "幽灵按钮唯一交互",
+    "锁定态成就墙"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

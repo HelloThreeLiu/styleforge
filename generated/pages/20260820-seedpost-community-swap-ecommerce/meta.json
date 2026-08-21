@@ -1,0 +1,38 @@
+{
+  "id": "20260820-seedpost-community-swap-ecommerce",
+  "title": "种子邮局 SeedPost · 社区种子交换商店",
+  "created_at": "2026-08-20T23:59:59+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "pastel-gallery-v1"
+  ],
+  "page_type": "e-commerce",
+  "industry": [
+    "food"
+  ],
+  "mood": [
+    "soft",
+    "playful",
+    "minimal"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "以豆换豆非货币商店",
+    "渐变精选种子卡",
+    "CSS种子袋图鉴",
+    "药丸筛选联动",
+    "Roboto豆子账本",
+    "紫调辉光精选"
+  ],
+  "tags_user": [],
+  "rating": 3.5,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}

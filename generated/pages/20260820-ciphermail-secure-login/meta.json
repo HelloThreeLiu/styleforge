@@ -1,0 +1,38 @@
+{
+  "id": "20260820-ciphermail-secure-login",
+  "title": "密邮 CipherMail · 加密邮箱客户端登录页",
+  "created_at": "2026-08-20T23:59:50+08:00",
+  "generator": {
+    "agent": "zcode / GLM-5.3",
+    "invoked_by": "curator"
+  },
+  "origin": "study",
+  "lineage": [
+    "spotify"
+  ],
+  "page_type": "login",
+  "industry": [
+    "dev-tool"
+  ],
+  "mood": [
+    "dark-first",
+    "minimal",
+    "premium"
+  ],
+  "innovation": 0,
+  "tags_ai": [
+    "专辑式信封封面",
+    "tracklist安全特性",
+    "inset输入框签名",
+    "大写字标绿CTA",
+    "加密状态播放条",
+    "绿色均衡条动画"
+  ],
+  "tags_user": [],
+  "rating": 3,
+  "status": "published",
+  "files": {
+    "html": "index.html",
+    "notes": "notes.md"
+  }
+}
