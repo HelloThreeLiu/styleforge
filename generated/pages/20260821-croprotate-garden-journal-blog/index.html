@@ -1,0 +1,332 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>茬口 CropRotate — 城市菜园种植日志</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;600&family=Inter:wght@300;400;500;600&family=Roboto+Mono:wght@400;600&display=swap" rel="stylesheet">
+<style>
+  /* ============ Cal.com Tokens（来源：design-md/cal/DESIGN.md）============ */
+  :root {
+    --charcoal: #242424;      /* 近黑标题与按钮 */
+    --midnight: #111111;      /* 最深文本 */
+    --white: #ffffff;
+    --gray: #898989;          /* 次级文本 */
+    --light: #f5f5f5;         /* 极浅分区 */
+    --link: #0099ff;          /* 唯一蓝：仅正文链接 */
+    --focus: rgba(59, 130, 246, 0.5);
+    --ring: rgba(34, 42, 53, 0.08);
+    /* 工作马阴影：接触 + ring + 柔散 三层合成 */
+    --card-shadow: rgba(19, 19, 22, 0.7) 0px 1px 5px -4px, rgba(34, 42, 53, 0.08) 0px 0px 0px 1px, rgba(34, 42, 53, 0.05) 0px 4px 8px 0px;
+    --soft-only: rgba(34, 42, 53, 0.05) 0px 4px 8px;
+    --btn-inset: rgba(255, 255, 255, 0.15) 0px 2px 0px inset;
+    --well-inset: rgba(0, 0, 0, 0.16) 0px 1px 1.9px 0px inset;
+    --display: 'Sora', 'Cal Sans', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --ui: 'Inter', system-ui, 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Roboto Mono', ui-monospace, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--ui); background: var(--white); color: var(--charcoal); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--ui); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); }
+  .container { max-width: 1080px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(255, 255, 255, 0.92); backdrop-filter: blur(10px); }
+  .nav-inner { display: flex; align-items: center; gap: 26px; height: 64px; }
+  .logo { display: flex; align-items: center; gap: 10px; font-family: var(--display); font-size: 19px; font-weight: 600; }
+  .logo i { width: 22px; height: 22px; border-radius: 7px; background: var(--charcoal); font-style: normal; position: relative; box-shadow: var(--soft-only); }
+  .logo i::after { content: ''; position: absolute; left: 5px; top: 5px; width: 4px; height: 9px; background: var(--white); border-radius: 1px; box-shadow: 8px 0 0 var(--white); }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 400; color: var(--gray); font-family: var(--ui); }
+  .nav-links { display: flex; gap: 2px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 14px; font-weight: 500; color: var(--midnight); padding: 9px 12px; border-radius: 8px; }
+  .nav-links a:hover { color: var(--link); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: var(--white); border: none; border-radius: 8px; box-shadow: var(--card-shadow); }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--charcoal); margin: 3.5px auto; }
+
+  /* ============ 按钮（深主 / ring 白 ghost / 药丸）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 16px; font-weight: 600; line-height: 1; padding: 13px 22px; border-radius: 8px; border: none; min-height: 44px; transition: opacity .15s, box-shadow .15s; }
+  .btn-dark { background: var(--charcoal); color: var(--white); }
+  .btn-dark:hover { opacity: 0.7; }
+  .btn-ghost { background: var(--white); color: var(--charcoal); box-shadow: var(--card-shadow); }
+  .btn-ghost:hover { box-shadow: var(--card-shadow), var(--soft-only); }
+  .pill { display: inline-flex; align-items: center; font-size: 13px; font-weight: 500; background: var(--white); color: var(--charcoal); border-radius: 9999px; padding: 5px 14px; box-shadow: var(--card-shadow); }
+
+  /* ============ Hero ============ */
+  .hero { text-align: center; padding: 96px 0 80px; }
+  .hero .badge-row { display: flex; justify-content: center; gap: 8px; margin-bottom: 24px; flex-wrap: wrap; }
+  .hero h1 { font-family: var(--display); font-size: clamp(34px, 5.8vw, 64px); font-weight: 600; line-height: 1.10; max-width: 720px; margin: 0 auto; }
+  .hero p { font-size: 18px; font-weight: 300; line-height: 1.50; color: var(--gray); max-width: 560px; margin: 20px auto 32px; }
+  .hero p a { color: var(--link); text-decoration: underline; }
+  .hero-actions { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+
+  /* ============ 日志条目（blog 核心）============ */
+  section.journal { padding: 0 0 64px; }
+  .sec-head { display: flex; justify-content: space-between; align-items: center; gap: 16px; margin-bottom: 28px; flex-wrap: wrap; }
+  .sec-head h2 { font-family: var(--display); font-size: 48px; font-weight: 600; line-height: 1.10; }
+  .tabs { display: inline-flex; border: none; background: var(--white); border-radius: 9999px; box-shadow: var(--card-shadow); padding: 4px; gap: 2px; }
+  .tabs button { font-size: 14px; font-weight: 500; background: transparent; border: none; border-radius: 9999px; padding: 7px 14px; color: var(--gray); min-height: 36px; }
+  .tabs button.on { background: var(--charcoal); color: var(--white); }
+  .entries { display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px; }
+  .entry { background: var(--white); border-radius: 12px; box-shadow: var(--card-shadow); padding: 24px; display: flex; flex-direction: column; gap: 10px; transition: box-shadow .2s; }
+  .entry:hover { box-shadow: var(--card-shadow), rgba(34, 42, 53, 0.05) 0px 4px 12px; }
+  .entry .meta-row { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .entry .term { font-size: 13px; font-weight: 500; color: var(--gray); }
+  .entry .read { font-family: var(--mono); font-size: 12px; font-weight: 400; color: var(--gray); }
+  .entry h3 { font-family: var(--display); font-size: 24px; font-weight: 600; line-height: 1.30; }
+  .entry p { font-size: 16px; font-weight: 300; line-height: 1.50; color: var(--gray); flex: 1; }
+  .entry .foot { font-size: 14px; font-weight: 300; color: var(--gray); }
+  .entry .foot a { color: var(--link); text-decoration: underline; }
+  .empty { display: none; padding: 48px 0; text-align: center; font-size: 16px; font-weight: 300; color: var(--gray); grid-column: 1 / -1; }
+
+  /* ============ 本月菜畦面板（自绘产品 UI 卡）============ */
+  section.bed { background: var(--light); padding: 80px 0; }
+  .bed-card { background: var(--white); border-radius: 16px; box-shadow: var(--card-shadow); padding: 32px; max-width: 720px; margin: 0 auto; }
+  .bed-head { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; gap: 12px; flex-wrap: wrap; }
+  .bed-head h2 { font-family: var(--display); font-size: 24px; font-weight: 600; line-height: 1.30; }
+  .bed-head span { font-family: var(--mono); font-size: 12px; color: var(--gray); }
+  .bed-desc { font-size: 14px; font-weight: 300; line-height: 1.50; color: var(--gray); margin-bottom: 20px; }
+  .crop-row { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; align-items: center; padding: 13px 0; box-shadow: 0px 1px 0px 0px var(--ring); }
+  .crop-row:last-of-type { box-shadow: none; }
+  .crop-row b { font-size: 16px; font-weight: 600; line-height: 1.10; font-family: var(--display); }
+  .crop-row b small { display: block; font-family: var(--ui); font-size: 12px; font-weight: 300; color: var(--gray); margin-top: 3px; }
+  .crop-row .days { font-family: var(--mono); font-size: 13px; color: var(--gray); }
+  .st { font-size: 12px; font-weight: 500; border-radius: 9999px; padding: 4px 12px; background: var(--white); box-shadow: var(--card-shadow); white-space: nowrap; }
+  .st-ok { color: var(--charcoal); }
+  .st-hold { color: var(--gray); }
+
+  /* ============ 订阅 ============ */
+  section.sub { padding: 80px 0 88px; text-align: center; }
+  section.sub h2 { font-family: var(--display); font-size: clamp(28px, 4vw, 48px); font-weight: 600; line-height: 1.10; margin-bottom: 14px; }
+  section.sub p { font-size: 16px; font-weight: 300; line-height: 1.50; color: var(--gray); max-width: 440px; margin: 0 auto 28px; }
+  .sub-form { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; }
+  .sub-form input { font-family: var(--ui); font-size: 15px; font-weight: 400; color: var(--charcoal); background: var(--white); border: none; border-radius: 8px; box-shadow: var(--card-shadow), var(--well-inset); padding: 13px 16px; width: 280px; min-height: 48px; }
+  .sub-form input:focus { outline: 2px solid var(--focus); }
+  .sub-form input::placeholder { color: var(--gray); }
+  .sub-ok { font-size: 14px; font-weight: 400; color: var(--gray); margin-top: 14px; opacity: 0; transition: opacity .2s; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--ring); padding: 48px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 14px; font-weight: 300; line-height: 1.50; color: var(--gray); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-family: var(--display); font-size: 16px; font-weight: 600; line-height: 1.10; margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 14px; font-weight: 300; color: var(--gray); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--link); }
+  .foot-note { margin-top: 40px; padding-top: 20px; box-shadow: 0px 1px 0px 0px var(--ring); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 12px; color: var(--gray); }
+
+  /* ============ 响应式：1199 / 810 / 768 / 640 / 375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 810px) {
+    .entries { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 64px; left: 0; right: 0; background: var(--white); flex-direction: column; padding: 12px 32px 18px; gap: 2px; box-shadow: var(--card-shadow); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 24px; }
+    .hero { padding: 64px 0 56px; }
+    section.bed { padding: 56px 0; }
+    .sec-head h2 { font-size: 36px; }
+  }
+  @media (max-width: 640px) {
+    .crop-row { grid-template-columns: 1fr auto; }
+    .crop-row .days { display: none; }
+    .sub-form input { width: 100%; }
+    .sub-form .btn { width: 100%; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 34px; }
+    .entry h3 { font-size: 20px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>茬口 <em>CropRotate</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#journal">种植日志</a></li>
+      <li><a href="#bed">本月菜畦</a></li>
+      <li><a href="#sub">订阅</a></li>
+      <li><a href="#">菜园地图</a></li>
+    </ul>
+    <a href="#sub" class="btn btn-dark">开始记录</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <div class="badge-row">
+    <span class="pill">北京 · 朝阳菜园</span>
+    <span class="pill">第 4 年 · 32 块畦</span>
+  </div>
+  <h1>种菜这件事，<br>值得一本正经的日志。</h1>
+  <p>茬口是一座城市菜园的公开种植日志：什么时候下种、什么时候换茬、哪年番茄得了晚疫病——全部记在案，配得上<a href="#">二十四节气的耐心</a>。</p>
+  <div class="hero-actions">
+    <a href="#journal" class="btn btn-dark">读最新日志</a>
+    <a href="#bed" class="btn btn-ghost">看本月菜畦</a>
+  </div>
+</header>
+
+<section class="journal container" id="journal">
+  <div class="sec-head">
+    <h2>种植日志</h2>
+    <div class="tabs" id="tabs">
+      <button class="on" data-f="all">全部</button>
+      <button data-f="spring">春茬</button>
+      <button data-f="summer">夏茬</button>
+      <button data-f="autumn">秋茬</button>
+      <button data-f="note">农事笔记</button>
+    </div>
+  </div>
+  <div class="entries" id="entries">
+    <article class="entry" data-k="autumn">
+      <div class="meta-row"><span class="term">处暑 · 秋茬</span><span class="read">6 min read</span></div>
+      <h3>白露前的最后一茬小白菜</h3>
+      <p>秋茬的时间窗比想象中窄：早三天虫害重，晚三天赶不上封冻前采收。今年按日志倒推，8 月 26 日下种刚好。</p>
+      <p class="foot"><a href="#">全文</a> · 下种 08-26 · 预采 09-30</p>
+    </article>
+    <article class="entry" data-k="note summer">
+      <div class="meta-row"><span class="term">大暑 · 农事笔记</span><span class="read">4 min read</span></div>
+      <h3>番茄晚疫病的第三年复盘</h3>
+      <p>2024 年全军覆没，2025 年提前打药保住一半，今年换成宽行距 + 拱棚，病叶率降到 7%。三年的表格都在文末。</p>
+      <p class="foot"><a href="#">全文</a> · 附三年对照表</p>
+    </article>
+    <article class="entry" data-k="summer">
+      <div class="meta-row"><span class="term">夏至 · 夏茬</span><span class="read">5 min read</span></div>
+      <h3>架豆与黄瓜的伴生实验</h3>
+      <p>把架豆种在黄瓜两侧，蚜虫确实少了两成——但藤蔓打架，采收难度翻倍。明年调整间距到 40cm 再试。</p>
+      <p class="foot"><a href="#">全文</a> · 实验 · 第 2 年</p>
+    </article>
+    <article class="entry" data-k="spring">
+      <div class="meta-row"><span class="term">谷雨 · 春茬</span><span class="read">7 min read</span></div>
+      <h3>土豆的芽眼朝上还是朝下？</h3>
+      <p>为了这个问题我们挖了两次完整的结薯层：朝上组平均单株 412 克，朝下组 388 克。差距不大，但切薯方式影响更大。</p>
+      <p class="foot"><a href="#">全文</a> · 下种 04-20 · 挖收 07-12</p>
+    </article>
+    <article class="entry" data-k="spring note">
+      <div class="meta-row"><span class="term">清明 · 农事笔记</span><span class="read">3 min read</span></div>
+      <h3>育苗盘的土，终于配对了</h3>
+      <p>椰糠 : 蚯蚓粪 : 珍珠岩 = 6 : 3 : 1，出苗率从 71% 提到 94%。配方是失败十一次之后剩下的那个。</p>
+      <p class="foot"><a href="#">全文</a> · 配方 · 公开</p>
+    </article>
+    <article class="entry" data-k="autumn note">
+      <div class="meta-row"><span class="term">霜降 · 农事笔记</span><span class="read">5 min read</span></div>
+      <h3>堆肥翻堆的黄金温度线</h3>
+      <p>62℃ 是我们的翻堆信号：低于它病原菌没杀死，高于它有益菌开始阵亡。一支 30 元的温度计，管住了整个堆肥区。</p>
+      <p class="foot"><a href="#">全文</a> · 附温度曲线</p>
+    </article>
+  </div>
+  <p class="empty" id="empty">这一季还没有日志——下一个节气见。</p>
+</section>
+
+<section class="bed" id="bed">
+  <div class="container">
+    <div class="bed-card">
+      <div class="bed-head">
+        <h2>本月菜畦</h2>
+        <span>beds: 32 · updated 08-21</span>
+      </div>
+      <p class="bed-desc">菜畦面板随日志自动更新——每一行的天数，都是从下种那天开始数的。</p>
+      <div class="crop-row">
+        <b>小白菜<small>畦 07 · 秋茬主力和田</small></b>
+        <span class="days">day 51 / 60</span>
+        <span class="st st-ok">采收倒计时</span>
+      </div>
+      <div class="crop-row">
+        <b>樱桃萝卜<small>畦 12 · 耐寒实验区</small></b>
+        <span class="days">day 22 / 30</span>
+        <span class="st st-ok">间苗完成</span>
+      </div>
+      <div class="crop-row">
+        <b>菠菜<small>畦 03 · 遮阳网下</small></b>
+        <span class="days">day 9 / 45</span>
+        <span class="st st-ok">出苗 94%</span>
+      </div>
+      <div class="crop-row">
+        <b>大蒜<small>畦 18 · 越冬茬</small></b>
+        <span class="days">day 0 · 待种</span>
+        <span class="st st-hold">寒露下种</span>
+      </div>
+      <div class="crop-row">
+        <b>堆肥区 ×3<small>翻堆 · 62℃ 信号线</small></b>
+        <span class="days">cycle 18d</span>
+        <span class="st st-ok">腐熟中</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="sub container" id="sub">
+  <h2>跟着节气，一年二十四封。</h2>
+  <p>每个节气一封日志信：本畦实况、农事提醒与失败复盘。菜园的邻居优先，其他人也欢迎。</p>
+  <form class="sub-form" id="subForm">
+    <input type="email" id="subEmail" placeholder="you@garden.cn" required aria-label="邮箱">
+    <button type="submit" class="btn btn-dark">订阅节气信</button>
+  </form>
+  <p class="sub-ok" id="subOk">✓ 已订阅——白露见</p>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>茬口 <em>CropRotate</em></a>
+        <p>城市菜园的公开种植日志。种得不好也记下来，明年才有得翻。</p>
+      </div>
+      <div>
+        <h5>Journal</h5>
+        <a href="#journal">种植日志</a><a href="#">历年归档</a><a href="#">失败合集</a>
+      </div>
+      <div>
+        <h5>Garden</h5>
+        <a href="#bed">本月菜畦</a><a href="#">菜园地图</a><a href="#">认领一畦</a>
+      </div>
+      <div>
+        <h5>About</h5>
+        <a href="#">菜园公约</a><a href="#">联系我们</a><a href="#">开放数据</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 茬口 CropRotate · StyleForge 平台 AI 生成习作 · study of cal</span>
+      <span>zone 7a · beds 32 · season 4</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  const empty = document.getElementById('empty');
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === btn));
+    let hit = 0;
+    document.querySelectorAll('#entries .entry').forEach(en => {
+      const show = btn.dataset.f === 'all' || en.dataset.k.includes(btn.dataset.f);
+      en.style.display = show ? 'flex' : 'none';
+      if (show) hit++;
+    });
+    empty.style.display = hit ? 'none' : 'block';
+  });
+  const ok = document.getElementById('subOk');
+  document.getElementById('subForm').addEventListener('submit', e => {
+    e.preventDefault();
+    ok.style.opacity = 1;
+    document.getElementById('subEmail').value = '';
+    setTimeout(() => ok.style.opacity = 0, 2400);
+  });
+</script>
+</body>
+</html>

@@ -1,0 +1,24 @@
+{
+  "id": "20260821-protoshed-gamejam-portfolio",
+  "title": "原型间 Protoshed · 独立游戏 jam 作品集",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["cursor"],
+  "page_type": "portfolio",
+  "industry": ["gaming"],
+  "mood": ["editorial", "soft"],
+  "innovation": 0,
+  "tags_ai": [
+    "暖奶油三字声",
+    "CSS像素场景封面",
+    "四色开发时间线",
+    "负字距哥特标题",
+    "弃坑照常上架",
+    "斜体首字下沉"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

@@ -1,0 +1,24 @@
+{
+  "id": "20260821-papermouse-zine-shop-ecommerce",
+  "title": "纸耗子 PaperMouse · 独立 zine 邮购小店",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["posthog"],
+  "page_type": "e-commerce",
+  "industry": ["media"],
+  "mood": ["editorial", "playful"],
+  "innovation": 0,
+  "tags_ai": [
+    "鼠尾草暖纸画布",
+    "hover橙闪签名",
+    "倾斜邮购明信片",
+    "手作封面八型",
+    "粗字重宽行高",
+    "大写栏目标签"
+  ],
+  "tags_user": [],
+  "rating": 4,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

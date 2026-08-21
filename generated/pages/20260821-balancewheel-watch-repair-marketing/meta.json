@@ -1,0 +1,24 @@
+{
+  "id": "20260821-balancewheel-watch-repair-marketing",
+  "title": "摆轮 BalanceWheel · 古董钟表维修工作室营销页",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["bmw"],
+  "page_type": "marketing",
+  "industry": ["consumer"],
+  "mood": ["premium", "minimal"],
+  "innovation": 0,
+  "tags_ai": [
+    "零圆角工业几何",
+    "300对900字重极差",
+    "大写轻体展示",
+    "CSS步进秒针表盘",
+    "暗色展厅节奏",
+    "白底边暗面按钮"
+  ],
+  "tags_user": [],
+  "rating": 4.5,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

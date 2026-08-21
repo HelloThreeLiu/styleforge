@@ -119,12 +119,16 @@ if (candidates.length < 2) candidates = pool;
 const picked = shuffle(candidates).slice(0, 2);
 
 // 多样性约束：类型/行业建议避开最近 8 页已用值。主题自带行业与类型提示，
-// 优先挑提示完全合规的主题（不足 2 个时逐级放宽：仅类型合规 → 全量），并在本轮内避免撞类型/撞行业
+// 逐级放宽（类型+行业合规 → 仅类型合规 → 全量主题池），且轮内先严格去重（不撞类型/行业）
+// 再放宽（仅不撞类型），最后兜底全量池——任何情况下都保证凑满 2 个建议
 const recentTypes = new Set(recent.map((p) => p.meta?.page_type).filter(Boolean));
 const recentIndustries = new Set(recent.flatMap((p) => p.meta?.industry ?? []));
-const fitBoth = THEMES.filter((t) => !recentTypes.has(t.page_type) && !recentIndustries.has(t.industry));
-const fitType = THEMES.filter((t) => !recentTypes.has(t.page_type));
-const shuffled = shuffle(fitBoth.length >= 2 ? fitBoth : fitType);
+const themePools = [
+  THEMES.filter((t) => !recentTypes.has(t.page_type) && !recentIndustries.has(t.industry)),
+  THEMES.filter((t) => !recentTypes.has(t.page_type)),
+  THEMES,
+];
+const shuffled = shuffle(themePools.find((pl) => pl.length >= 2) ?? []);
 const chosen = shuffled.length ? [shuffled[0]] : [];
 for (const t of shuffled) {
   if (chosen.length >= 2) break;
@@ -136,9 +140,18 @@ for (const t of shuffled) {
   if (chosen.some((c) => c.page_type === t.page_type)) continue;
   chosen.push(t);
 }
-const picks = picked
-  .map((s, i) => (chosen[i] ? { ...s, suggest_page_type: chosen[i].page_type, suggest_industry: chosen[i].industry, suggest_theme: chosen[i].theme } : null))
-  .filter(Boolean);
+for (const t of shuffle(THEMES)) {
+  if (chosen.length >= 2) break;
+  if (chosen.every((c) => c.theme !== t.theme)) chosen.push(t);
+}
+// 风格抽取与主题建议解耦：抽中的风格永远输出，缺建议的槽位标注让 Agent 按 §11 自行选题，
+// 杜绝"主题池收缩连带丢风格"的缺额
+const picks = picked.map((s, i) => {
+  const t = chosen[i];
+  return t
+    ? { ...s, suggest_page_type: t.page_type, suggest_industry: t.industry, suggest_theme: t.theme }
+    : { ...s, suggest_note: '主题池未能给出建议，按 §11 多样性约束自行选题' };
+});
 
 const plan = {
   round_at: new Date().toISOString(),
@@ -165,11 +178,13 @@ if (asJson) {
     console.log(`     建议页面类型: ${p.suggest_page_type} · 建议行业: ${p.suggest_industry} · 建议主题: ${p.suggest_theme}`);
   });
   console.log('  （类型/行业建议已避开最近 8 页使用过的值；主题来自非商品化主题池，生成时遵守 §11 多样性约束）');
-  console.log(`\n[待评分提醒] rating 为 null 的页面：${pendingRating.length} 个（收尾汇报的待评分清单 = 此清单 + 本轮新生成页面）`);
-  if (!pendingRating.length) console.log('  （无——画廊无积压）');
+  console.log(`\n[待评分提醒] rating 为 null 的页面：${pendingRating.length} 个（本轮评分步骤必须覆盖此清单 + 本轮新生成页面，评分完成后积压清零）`);
+  if (!pendingRating.length) console.log('  （无——画廊无积压，仅需评本轮新页面）');
   for (const p of pendingRating) console.log(`  - ${p.page}  ${p.title}（${p.status}）`);
   console.log(`[已评分未达沉淀线 <4] ${ratedBelow.length} 个（已评分，不属于待评分）：`);
   for (const p of ratedBelow) console.log(`  - ${p.page}  ${p.title}  ★${p.rating}（${p.status}）`);
   console.log('\n下一步：沉淀候选逐一走 §10 协议（完成后 npm run promote -- <page-id> <style-id>）；');
-  console.log('再按抽取结果各生成 1 个 study 页面（两页类型/主题不得雷同），最后 npm run snapshot && npm run verify && npm run validate && npm run sync（sync 会自动跳过未评分的新页面）。');
+  console.log('再按抽取结果各生成 1 个 study 页面（两页类型/主题不得雷同）。');
+  console.log('收尾必须依次执行：npm run snapshot → 自动评分（AGENTS.md §11 步骤 5 / §12：覆盖上方全部待评分页面 + 本轮新页面，回填 rating、draft→published、写 rating.md）→ npm run verify && npm run validate → npm run sync。');
+  console.log('⚠ 跳过自动评分 = 违反 §11 步骤 5。未评分页面不会被 sync 提交，会持续积压并阻塞沉淀。');
 }

@@ -1,0 +1,24 @@
+{
+  "id": "20260821-openledger-charity-docs",
+  "title": "明账 OpenLedger · 社区公益捐赠公开账本文档站",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "generator": { "agent": "zcode / GLM-5.3", "invoked_by": "curator" },
+  "origin": "study",
+  "lineage": ["stripe"],
+  "page_type": "docs",
+  "industry": ["fintech"],
+  "mood": ["minimal", "premium"],
+  "innovation": 0,
+  "tags_ai": [
+    "细字重金融精密",
+    "蓝调多层阴影卡",
+    "tnum账目表格",
+    "年度分段账本",
+    "curl代码示例卡",
+    "深靛蓝开放数据区"
+  ],
+  "tags_user": [],
+  "rating": 4.0,
+  "status": "published",
+  "files": { "html": "index.html", "notes": "notes.md" }
+}

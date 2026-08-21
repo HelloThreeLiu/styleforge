@@ -1,0 +1,356 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>原型间 Protoshed — 独立游戏 jam 作品集</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wght@400&family=Newsreader:ital,opsz,wght@0,6..72,400;0,6..72,500;1,6..72,400&display=swap" rel="stylesheet">
+<style>
+  /* ============ Cursor Tokens（来源：design-md/cursor/DESIGN.md，本会话第二次 study）============ */
+  :root {
+    --dark: #26251e;             /* 暖近黑（黄调） */
+    --cream: #f2f1ed;            /* 暖奶油画布 */
+    --s100: #f7f7f4; --s300: #ebeae5; --s400: #e6e5e0; --s500: #e1e0db;
+    --accent: #f54e00;           /* 品牌橙 */
+    --error: #cf2d56;            /* 暖红 hover */
+    --gold: #c08532;
+    --success: #1f8a65;          /* 暖青绿 */
+    --bd: rgba(38, 37, 30, 0.1);         /* oklab 10% 回退 */
+    --bd-med: rgba(38, 37, 30, 0.2);     /* oklab 20% 回退 */
+    --bd-strong: rgba(38, 37, 30, 0.55);
+    --ghost: rgba(38, 37, 30, 0.55);
+    --faint: rgba(38, 37, 30, 0.4);
+    --t-think: #dfa88f; --t-grep: #9fc9a2; --t-read: #9fbbe0; --t-edit: #c0a8dd;  /* 时间线四色 */
+    --card-shadow: rgba(0, 0, 0, 0.14) 0px 28px 70px, rgba(0, 0, 0, 0.1) 0px 14px 32px;
+    --focus-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
+    --gothic: 'Archivo', 'CursorGothic', system-ui, 'Helvetica Neue', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --serif: 'Newsreader', 'jjannon', 'Iowan Old Style', Palatino, Georgia, 'Songti SC', serif;
+    --mono: 'berkeleyMono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--gothic); background: var(--cream); color: var(--dark); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--gothic); cursor: pointer; }
+  :focus-visible { outline: none; box-shadow: var(--focus-shadow); }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 32px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(242, 241, 237, 0.9); backdrop-filter: blur(10px); border-bottom: 1px solid var(--bd); }
+  .nav-inner { display: flex; align-items: center; gap: 26px; height: 62px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 17px; letter-spacing: -0.2px; }
+  .logo i { width: 18px; height: 18px; border-radius: 4px; background: var(--dark); font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; left: 6px; top: 6px; width: 6px; height: 6px; background: var(--accent); border-radius: 1px; }
+  .logo em { font-style: normal; font-size: 12px; color: var(--ghost); }
+  .nav-links { display: flex; gap: 2px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 14px; font-weight: 500; padding: 9px 12px; border-radius: 8px; color: var(--dark); }
+  .nav-links a:hover { color: var(--error); }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--bd); border-radius: 8px; }
+  .menu-btn span { display: block; width: 16px; height: 1.5px; background: var(--dark); margin: 3.5px auto; }
+
+  /* ============ 按钮 ============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 400; line-height: 1; padding: 12px 14px; border-radius: 8px; border: none; background: var(--s300); color: var(--dark); transition: color .15s; min-height: 44px; }
+  .btn:hover { color: var(--error); box-shadow: var(--focus-shadow); }
+  .pill { display: inline-flex; align-items: center; font-size: 13px; font-weight: 400; line-height: 1; background: var(--s400); color: rgba(38, 37, 30, 0.6); border-radius: 9999px; padding: 5px 10px; }
+  .pill:hover { color: var(--error); }
+
+  /* ============ Hero ============ */
+  .hero { padding: 88px 0 64px; }
+  .hero h1 { font-size: clamp(30px, 6.4vw, 72px); font-weight: 400; line-height: 1.10; letter-spacing: -2.16px; max-width: 720px; }
+  .hero h1 em { font-style: normal; color: var(--accent); }
+  .hero p.sub { font-family: var(--serif); font-size: 19.2px; font-weight: 400; line-height: 1.5; color: var(--ghost); max-width: 560px; margin: 22px 0 24px; }
+  .tags { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 30px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero .link { font-family: var(--serif); font-style: italic; color: var(--accent); }
+  .hero .link:hover { color: var(--error); }
+
+  /* ============ 作品网格 ============ */
+  section.works { padding: 24px 0 72px; }
+  .sec-head { display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap; margin-bottom: 12px; }
+  .sec-head h2 { font-size: 36px; font-weight: 400; line-height: 1.2; letter-spacing: -0.72px; }
+  .filter { display: flex; gap: 8px; flex-wrap: wrap; }
+  .filter button { font-size: 13px; font-weight: 400; background: var(--s400); color: rgba(38, 37, 30, 0.6); border: none; border-radius: 9999px; padding: 5px 10px; min-height: 32px; }
+  .filter button.on { background: var(--s500); color: var(--dark); }
+  .filter button:hover { color: var(--error); }
+  .work-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px; margin-top: 22px; }
+  .work { background: var(--s400); border: 1px solid var(--bd); border-radius: 8px; overflow: hidden; display: flex; flex-direction: column; transition: box-shadow .2s; }
+  .work:hover { box-shadow: var(--card-shadow), 0 0 0 1px var(--bd-med); }
+  .shot { aspect-ratio: 16/10; position: relative; overflow: hidden; border-bottom: 1px solid var(--bd); }
+  /* CSS 像素场景（每作一套） */
+  .g-elevator { background: linear-gradient(180deg, #3a3530 0%, #57503f 100%); }
+  .g-elevator::after { content: ''; position: absolute; left: 30%; right: 30%; top: 18%; bottom: 12%; background: repeating-linear-gradient(180deg, #8a7f66 0 14%, #2c2822 14% 16%); border: 3px solid #1d1a16; border-radius: 2px; }
+  .g-elevator::before { content: ''; position: absolute; left: 42%; top: 34%; width: 16%; height: 3px; background: var(--accent); box-shadow: 0 0 12px #f54e00; z-index: 1; }
+  .g-garden { background: linear-gradient(180deg, #dfe8d8 0%, #b8cdb0 100%); }
+  .g-garden::after { content: ''; position: absolute; left: 18%; top: 22%; width: 10px; height: 10px; background: var(--success); box-shadow: 26px 0 0 var(--gold), 52px 0 0 var(--t-grep), 78px 0 0 #7a5c3e, 104px 0 0 var(--t-think), 26px 30px 0 var(--t-think), 52px 30px 0 var(--t-grep), 78px 30px 0 #7a5c3e; }
+  .g-dragon { background: linear-gradient(180deg, #f3e6d0 0%, #e8d3b3 100%); }
+  .g-dragon::after { content: ''; position: absolute; left: 30%; bottom: 20%; width: 40%; height: 24%; background: #a3543a; clip-path: polygon(0 100%, 12% 30%, 28% 70%, 42% 10%, 58% 65%, 74% 25%, 88% 60%, 100% 100%); }
+  .g-rewind { background: linear-gradient(180deg, #d9e2f0 0%, #b9c8e4 100%); }
+  .g-rewind::after { content: ''; position: absolute; left: 22%; bottom: 26%; width: 56%; height: 4px; background: repeating-linear-gradient(90deg, var(--dark) 0 10px, transparent 10px 20px); }
+  .g-rewind::before { content: ''; position: absolute; left: 44%; top: 20%; width: 22px; height: 22px; border: 3px solid var(--dark); border-radius: 50%; border-bottom-color: transparent; }
+  .g-trolley { background: linear-gradient(180deg, #e8e2d6 0%, #cfc6b4 100%); }
+  .g-trolley::after { content: ''; position: absolute; inset: 24% 30% 20% 30%; border: 3px solid var(--dark); border-radius: 50%; background: conic-gradient(var(--dark) 0 25%, transparent 0 50%, var(--dark) 0 75%, transparent 0); opacity: .8; }
+  .g-radio { background: linear-gradient(180deg, #2e2c28 0%, #46423a 100%); }
+  .g-radio::after { content: ''; position: absolute; left: 34%; top: 24%; width: 32%; height: 42%; border: 3px solid #d8cfc0; border-radius: 6px; background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(216, 207, 192, 0.25) 8px 10px); }
+  .g-radio::before { content: ''; position: absolute; left: 46%; top: 72%; width: 8px; height: 8px; background: var(--gold); border-radius: 50%; box-shadow: 0 0 10px var(--gold); z-index: 1; }
+  .work .body { padding: 18px 20px 20px; display: flex; flex-direction: column; gap: 8px; flex: 1; }
+  .work .row1 { display: flex; justify-content: space-between; align-items: center; gap: 10px; }
+  .work h3 { font-size: 22px; font-weight: 400; line-height: 1.3; letter-spacing: -0.11px; }
+  .st { font-family: var(--mono); font-size: 11px; border-radius: 9999px; padding: 3px 10px; }
+  .st-done { background: rgba(31, 138, 101, 0.12); color: var(--success); }
+  .st-proto { background: rgba(192, 133, 50, 0.14); color: var(--gold); }
+  .st-dead { background: rgba(207, 45, 86, 0.1); color: var(--error); }
+  .work p { font-family: var(--serif); font-size: 16px; line-height: 1.4; color: var(--ghost); flex: 1; }
+  .work .meta { font-family: var(--mono); font-size: 11.5px; letter-spacing: -0.275px; color: var(--faint); }
+  .empty { display: none; padding: 40px 0; text-align: center; font-family: var(--serif); color: var(--ghost); }
+
+  /* ============ 开发时间线（AI 时间线四色转译）============ */
+  section.timeline { background: var(--s400); border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd); padding: 72px 0; }
+  .tl-grid { display: grid; grid-template-columns: 1fr 1.3fr; gap: 56px; align-items: start; }
+  .tl-grid .k { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-bottom: 10px; }
+  section.timeline h2 { font-size: 36px; font-weight: 400; line-height: 1.2; letter-spacing: -0.72px; margin-bottom: 14px; }
+  .tl-grid > div > p { font-family: var(--serif); font-size: 17px; line-height: 1.5; color: var(--ghost); }
+  .tl { position: relative; padding-left: 26px; }
+  .tl::before { content: ''; position: absolute; left: 5px; top: 8px; bottom: 8px; width: 1px; background: var(--bd); }
+  .tl-item { position: relative; padding-bottom: 22px; }
+  .tl-item:last-child { padding-bottom: 0; }
+  .tl-item::before { content: ''; position: absolute; left: -26px; top: 6px; width: 11px; height: 11px; border-radius: 50%; background: var(--c); box-shadow: 0 0 0 3px var(--s400); }
+  .tl-item .step { font-family: var(--mono); font-size: 12px; color: var(--c-d); letter-spacing: 0.3px; text-transform: uppercase; margin-bottom: 4px; }
+  .tl-item h4 { font-size: 20px; font-weight: 400; line-height: 1.3; margin-bottom: 4px; }
+  .tl-item p { font-family: var(--serif); font-size: 15.5px; line-height: 1.45; color: var(--ghost); }
+
+  /* ============ 关于（编辑体）============ */
+  section.about { padding: 80px 0; }
+  .about-grid { display: grid; grid-template-columns: 1fr 1.4fr; gap: 56px; align-items: start; }
+  .about .k { font-family: var(--mono); font-size: 12px; color: var(--faint); margin-bottom: 10px; }
+  .about h2 { font-size: 36px; font-weight: 400; line-height: 1.2; letter-spacing: -0.72px; }
+  .about .body p { font-family: var(--serif); font-size: 17.5px; line-height: 1.55; color: var(--ghost); margin-bottom: 16px; }
+  .about .body p:first-of-type::first-letter { font-size: 54px; float: left; line-height: 0.85; padding: 6px 12px 0 0; font-style: italic; }
+  .about .body b { color: var(--dark); font-weight: 500; }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--bd); padding: 44px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-family: var(--serif); font-size: 14.5px; line-height: 1.5; color: var(--ghost); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-family: var(--mono); font-size: 11px; color: var(--faint); margin-bottom: 12px; }
+  .foot-grid a { display: block; font-size: 14px; color: var(--ghost); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--error); }
+  .foot-note { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--bd); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-family: var(--mono); font-size: 11px; color: var(--faint); }
+
+  /* ============ 响应式：1279 / 900 / 768 / 600 / 375 ============ */
+  @media (max-width: 1280px) {
+    .container { padding: 0 40px; }
+  }
+  @media (max-width: 900px) {
+    .work-grid { grid-template-columns: repeat(2, 1fr); }
+    .tl-grid, .about-grid { grid-template-columns: 1fr; gap: 32px; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 62px; left: 0; right: 0; background: var(--cream); flex-direction: column; padding: 12px 32px 18px; gap: 2px; border-bottom: 1px solid var(--bd); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 24px; }
+    .hero { padding: 56px 0 44px; }
+    section.timeline, section.about { padding: 48px 0; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 600px) {
+    .work-grid { grid-template-columns: 1fr; }
+    .hero h1 { letter-spacing: -1px; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 30px; letter-spacing: -0.6px; }
+    .sec-head h2, section.timeline h2, .about h2 { font-size: 28px; letter-spacing: -0.4px; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>原型间 <em>Protoshed</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#works">作品架</a></li>
+      <li><a href="#timeline">两周时间线</a></li>
+      <li><a href="#about">关于</a></li>
+      <li><a href="#">开发日志</a></li>
+    </ul>
+    <a href="#works" class="btn">逛作品架</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <h1>七个原型，六个没做完，<em>一个舍不得删</em>。</h1>
+  <p class="sub">原型间是一位独立开发者的游戏 jam 作品集：48 小时限时限题，做出来的、做到一半的、做到三分之一的——都摆在架子上，因为每一个都教会了我下一件事。</p>
+  <div class="tags">
+    <span class="pill">48h jam</span>
+    <span class="pill">roguelike</span>
+    <span class="pill">打字冒险</span>
+    <span class="pill">解谜</span>
+    <span class="pill">弃坑收藏</span>
+  </div>
+  <div class="hero-actions">
+    <a href="#works" class="btn">看作品</a>
+    <a href="#timeline" class="link">一个原型是怎么活过两周的 →</a>
+  </div>
+</header>
+
+<section class="works container" id="works">
+  <div class="sec-head">
+    <h2>作品架</h2>
+    <div class="filter" id="filter">
+      <button class="on" data-f="all">全部</button>
+      <button data-f="done">完成</button>
+      <button data-f="proto">原型</button>
+      <button data-f="dead">弃坑</button>
+    </div>
+  </div>
+  <div class="work-grid" id="grid">
+    <div class="work" data-s="done">
+      <div class="shot g-elevator"></div>
+      <div class="body">
+        <div class="row1"><h3>电梯幽魂</h3><span class="st st-done">完成</span></div>
+        <p>一部大楼电梯里的鬼故事：你按下的每一层，都改变乘客的生死顺序。72 小时 jam 第三名。</p>
+        <p class="meta">godot · 72h · spooky jam 2025</p>
+      </div>
+    </div>
+    <div class="work" data-s="proto">
+      <div class="shot g-garden"></div>
+      <div class="body">
+        <div class="row1"><h3>扫雷花园</h3><span class="st st-proto">原型</span></div>
+        <p>把雷换成花：翻开的每格是种子或石头，数字提示相邻的浇水量。规则通了，美术没画完。</p>
+        <p class="meta">godot · 2 weeks · solo</p>
+      </div>
+    </div>
+    <div class="work" data-s="dead">
+      <div class="shot g-dragon"></div>
+      <div class="body">
+        <div class="row1"><h3>邮件巨龙</h3><span class="st st-dead">弃坑</span></div>
+        <p>打字对抗职场：巨龙喷出的是周报邮件，你用正确的回复把它打回去。死于第七关的措辞题库。</p>
+        <p class="meta">unity · 1 week · abandoned</p>
+      </div>
+    </div>
+    <div class="work" data-s="proto">
+      <div class="shot g-rewind"></div>
+      <div class="body">
+        <div class="row1"><h3>倒带跑酷</h3><span class="st st-proto">原型</span></div>
+        <p>死了不用重来——时间倒着走，你要在倒放里"预演"出活路。手感对了一半，摄像机还在打架。</p>
+        <p class="meta">godot · 10 days · mechanic-first</p>
+      </div>
+    </div>
+    <div class="work" data-s="done">
+      <div class="shot g-trolley"></div>
+      <div class="body">
+        <div class="row1"><h3>岔道扳手</h3><span class="st st-done">完成</span></div>
+        <p>电车难题模拟器，但轨道上跑的是你自己的存档。四小时做完的最小可玩作品，评论区吵了三百楼。</p>
+        <p class="meta">bitsy · 4h · mini jam</p>
+      </div>
+    </div>
+    <div class="work" data-s="dead">
+      <div class="shot g-garden" style="filter:grayscale(0.6)"></div>
+      <div class="body">
+        <div class="row1"><h3>奶奶的无线电</h3><span class="st st-dead">弃坑</span></div>
+        <p>调频解谜：转动旋钮在杂波里找奶奶留下的频道。故事写了八千字，谜题只做出了两章。</p>
+        <p class="meta">unity · 3 weeks · parked</p>
+      </div>
+    </div>
+  </div>
+  <p class="empty" id="empty">这一格架空着——下一个 jam 补上。</p>
+</section>
+
+<section class="timeline" id="timeline">
+  <div class="container tl-grid">
+    <div>
+      <p class="k">DEV LOG · 以《电梯幽魂》为例</p>
+      <h2>一个原型是怎么<br>活过两周的。</h2>
+      <p>每一关都是同一种循环：想清楚一点、搜一遍可能性、读别人的代码、最后咬牙砍功能。四色时间线记录了这七十二小时的真实节奏。</p>
+    </div>
+    <div class="tl">
+      <div class="tl-item" style="--c:var(--t-think);--c-d:#b5744f">
+        <p class="step">Day 0-1 · 思考</p>
+        <h4>"电梯作为叙事装置"</h4>
+        <p>写在餐巾纸上的三行设定：封闭空间、每次停靠即一幕、乘客互相影响。就做这个。</p>
+      </div>
+      <div class="tl-item" style="--c:var(--t-grep);--c-d:#6d9a70">
+        <p class="step">Day 1-3 · 找机制</p>
+        <h4>状态机搜了个遍</h4>
+        <p>翻遍论坛里"电梯+叙事"的旧帖，最终选定：按钮即选择、楼层数即章节树的分支实现。</p>
+      </div>
+      <div class="tl-item" style="--c:var(--t-read);--c-d:#6f8db8">
+        <p class="step">Day 3-5 · 读与抄</p>
+        <h4>读了三份对话系统源码</h4>
+        <p>别人的对话树又臭又长，抄来的教训是：超两句的台词在 jam 游戏里没人读。</p>
+      </div>
+      <div class="tl-item" style="--c:var(--t-edit);--c-d:#9275b8">
+        <p class="step">Day 5 · 砍功能</p>
+        <h4>砍掉六个楼层</h4>
+        <p>十二层砍到六层、三种结局砍到一种。剩下那一种，刚好够讲完一个鬼故事。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="about container" id="about">
+  <div class="about-grid">
+    <div>
+      <p class="k">ABOUT · 关于</p>
+      <h2>为什么留着<br>没做完的游戏。</h2>
+    </div>
+    <div class="body">
+      <p>因为"没做完"本身就是档案。回看《邮件巨龙》，我能准确说出第七关死在哪：我不想再写 200 条措辞题了——那个瞬间的疲惫，比任何复盘文档都诚实。</p>
+      <p>原型间的规矩是：<b>不删、不改、不假装做完</b>。每一格卡都如实标注引擎、时长与状态，弃坑的照常上架。做完的只有两个，但架子上六个没做完的，才是我成为开发者的完整路径。</p>
+      <p>下一个 jam 在两周后。作品架的第七格，还空着。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>原型间 <em>Protoshed</em></a>
+        <p>独立游戏 jam 作品集。不删、不改、不假装做完。</p>
+      </div>
+      <div>
+        <h5>Works</h5>
+        <a href="#works">作品架</a><a href="#">itch 主页</a><a href="#">源码仓库</a>
+      </div>
+      <div>
+        <h5>Log</h5>
+        <a href="#timeline">两周时间线</a><a href="#">开发日志</a><a href="#">jam 日历</a>
+      </div>
+      <div>
+        <h5>About</h5>
+        <a href="#about">关于</a><a href="#">联系方式</a><a href="#">朋友们的架</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 Protoshed 原型间 · StyleForge 平台 AI 生成习作 · study of cursor</span>
+      <span>prototypes 7 · done 2 · next jam in 14d</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  const empty = document.getElementById('empty');
+  document.getElementById('filter').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#filter button').forEach(b => b.classList.toggle('on', b === btn));
+    let hit = 0;
+    document.querySelectorAll('#grid .work').forEach(w => {
+      const show = btn.dataset.f === 'all' || w.dataset.s === btn.dataset.f;
+      w.style.display = show ? 'flex' : 'none';
+      if (show) hit++;
+    });
+    empty.style.display = hit ? 'none' : 'block';
+  });
+</script>
+</body>
+</html>

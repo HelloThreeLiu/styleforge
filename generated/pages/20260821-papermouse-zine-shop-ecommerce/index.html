@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>纸耗子 PaperMouse — 独立 zine 邮购小店</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Source+Code+Pro:wght@500&display=swap" rel="stylesheet">
+<style>
+  /* ============ PostHog Tokens（来源：design-md/posthog/DESIGN.md）============ */
+  :root {
+    --parchment: #fdfdf8;     /* 暖鼠尾草奶油画布 */
+    --sage-cream: #eeefe9;    /* sage 面（输入/次级容器）*/
+    --sage: #e5e7e0;          /* sage 按钮面 */
+    --tan: #d4c9b8;           /* 暖棕 featured */
+    --hover-white: #f4f4f4;
+    --olive: #4d4f46;         /* 橄榄墨主文本 */
+    --olive-deep: #23251d;    /* 深橄榄链接/强调 */
+    --muted: #65675e;
+    --placeholder: #9ea096;
+    --bd: #bfc1b7;            /* sage 边框 */
+    --bd2: #b6b7af;
+    --orange: #F54E00;        /* 隐藏品牌色：仅 hover 闪现 */
+    --amber: #F7A501;         /* 深按钮 hover 琥珀 */
+    --gold-bd: #b17816;
+    --focus: rgba(59, 130, 246, 0.5);
+    --dark-btn: #1e1f23;      /* 深色 CTA */
+    --float-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+    --font: 'IBM Plex Sans', -apple-system, system-ui, 'Avenir Next', 'Segoe UI', 'PingFang SC', 'Microsoft YaHei', sans-serif;
+    --mono: 'Source Code Pro', Menlo, Consolas, monospace;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { font-family: var(--font); background: var(--parchment); color: var(--olive); -webkit-font-smoothing: antialiased; overflow-x: clip; }
+  a { color: inherit; text-decoration: none; }
+  button { font-family: var(--font); cursor: pointer; }
+  :focus-visible { outline: 2px solid var(--focus); }
+  .container { max-width: 1160px; margin: 0 auto; padding: 0 22px; }
+
+  /* ============ 导航 ============ */
+  nav { position: sticky; top: 0; z-index: 100; background: rgba(253, 253, 248, 0.94); backdrop-filter: blur(8px); border-bottom: 1px solid var(--bd); }
+  .nav-inner { display: flex; align-items: center; gap: 26px; height: 60px; }
+  .logo { display: flex; align-items: center; gap: 9px; font-size: 19px; font-weight: 700; color: var(--olive-deep); }
+  .logo i { width: 26px; height: 18px; border: 2px solid var(--olive-deep); border-radius: 6px 10px 8px 4px; font-style: normal; position: relative; }
+  .logo i::after { content: ''; position: absolute; right: -7px; top: 7px; width: 12px; height: 2px; background: var(--olive-deep); border-radius: 2px; transform: rotate(-18deg); }
+  .logo em { font-style: normal; font-size: 12px; font-weight: 500; color: var(--muted); }
+  .nav-links { display: flex; gap: 4px; list-style: none; flex: 1; }
+  .nav-links a { font-size: 15px; font-weight: 600; color: var(--olive-deep); padding: 8px 10px; }
+  .nav-links a:hover { text-decoration: underline; }
+  .menu-btn { display: none; width: 44px; height: 44px; background: transparent; border: 1px solid var(--bd); border-radius: 4px; }
+  .menu-btn span { display: block; width: 16px; height: 2px; background: var(--olive-deep); margin: 3.5px auto; }
+
+  /* ============ 按钮（hover 橙闪是签名）============ */
+  .btn { display: inline-flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 600; line-height: 1.2; border-radius: 6px; padding: 10px 12px; min-height: 44px; border: none; transition: opacity .15s, color .15s, background .15s; }
+  .btn-dark { background: var(--dark-btn); color: #ffffff; }
+  .btn-dark:hover { opacity: 0.7; color: var(--amber); }
+  .btn-sage { background: var(--sage); color: var(--olive); border-radius: 4px; }
+  .btn-sage:hover { background: var(--hover-white); color: var(--orange); }
+  .btn-sm { font-size: 13px; padding: 8px 10px; min-height: 38px; border-radius: 4px; }
+
+  /* ============ Hero ============ */
+  .hero { padding: 76px 0 56px; position: relative; }
+  .hero-grid { display: grid; grid-template-columns: 1.3fr 1fr; gap: 56px; align-items: center; }
+  .hero h1 { font-size: clamp(28px, 4.4vw, 40px); font-weight: 800; line-height: 1.20; letter-spacing: -0.75px; color: var(--olive); max-width: 520px; }
+  .hero h1 em { font-style: normal; border-bottom: 4px solid var(--tan); }
+  .hero p { font-size: 17px; font-weight: 400; line-height: 1.56; color: var(--olive); max-width: 460px; margin: 18px 0 26px; }
+  .hero-actions { display: flex; gap: 12px; flex-wrap: wrap; }
+  .hero .fact { font-size: 13px; font-weight: 500; line-height: 1.5; color: var(--muted); margin-top: 18px; }
+  /* 手绘感邮购卡（CSS 简笔 + 齿孔） */
+  .postcard { background: var(--parchment); border: 1px solid var(--bd); border-radius: 6px; padding: 26px; position: relative; transform: rotate(1.6deg); max-width: 380px; justify-self: end; width: 100%; }
+  .postcard::before { content: ''; position: absolute; inset: 7px; border: 2px dashed var(--bd); border-radius: 4px; pointer-events: none; }
+  .postcard .stamp { position: absolute; top: 20px; right: 20px; width: 54px; height: 64px; background: var(--sage); border-radius: 2px; display: flex; align-items: center; justify-content: center; }
+  .postcard .stamp::after { content: ''; width: 34px; height: 38px; background: radial-gradient(circle at 50% 50%, var(--tan) 40%, var(--sage) 41%); }
+  .postcard .to { font-family: var(--mono); font-size: 12px; color: var(--muted); margin: 6px 0 18px; }
+  .postcard .lines i { display: block; height: 1px; background: var(--bd); margin: 16px 0; }
+  .postcard .lines i:nth-child(2) { width: 86%; }
+  .postcard .lines i:nth-child(3) { width: 68%; }
+  .postcard .btn { margin-top: 6px; }
+
+  /* ============ 分类标签 + zine 网格 ============ */
+  section.shop { padding: 40px 0 72px; }
+  .cat-label { font-size: 18px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.4px; color: var(--olive-deep); margin-bottom: 10px; }
+  .sec-h { font-size: 36px; font-weight: 700; line-height: 1.5; color: var(--olive-deep); }
+  .tabs { display: flex; gap: 8px; margin: 18px 0 26px; flex-wrap: wrap; }
+  .tabs button { font-size: 14px; font-weight: 600; background: var(--sage-cream); color: var(--olive); border: 1px solid var(--bd2); border-radius: 9999px; padding: 7px 14px; min-height: 36px; }
+  .tabs button.on { background: var(--dark-btn); color: #fff; border-color: var(--dark-btn); }
+  .tabs button:hover:not(.on) { color: var(--orange); }
+  .zine-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 18px; }
+  .zine { background: var(--parchment); border: 1px solid var(--bd); border-radius: 6px; padding: 12px; display: flex; flex-direction: column; gap: 10px; transition: border-color .15s; }
+  .zine:hover { border-color: var(--olive-deep); }
+  .cover { aspect-ratio: 3/4; border-radius: 3px; position: relative; overflow: hidden; display: flex; align-items: flex-end; padding: 12px; }
+  .cover b { font-size: 17px; font-weight: 700; line-height: 1.25; color: #fff; letter-spacing: 0.2px; text-shadow: 0 1px 6px rgba(0,0,0,.35); }
+  .cover .no { position: absolute; top: 10px; left: 10px; font-family: var(--mono); font-size: 10px; color: #fff; background: rgba(0,0,0,.3); padding: 2px 7px; border-radius: 9999px; }
+  /* 封面八型（每本一套手作色） */
+  .cv1 { background: #3f5d4e; }
+  .cv1::after { content: ''; position: absolute; right: 14px; top: 14px; width: 38px; height: 38px; border: 3px solid rgba(255,255,255,.5); border-radius: 50%; }
+  .cv2 { background: #a0522d; }
+  .cv2::after { content: ''; position: absolute; left: 20px; top: 22px; width: 30px; height: 20px; border: 3px solid rgba(255,255,255,.55); border-radius: 50%; box-shadow: 14px 10px 0 -3px rgba(255,255,255,.35); }
+  .cv3 { background: #31406e; }
+  .cv3::after { content: ''; position: absolute; left: 16px; right: 16px; top: 40%; height: 3px; background: rgba(255,255,255,.5); box-shadow: 0 10px 0 rgba(255,255,255,.3), 0 20px 0 rgba(255,255,255,.45); }
+  .cv4 { background: #6e3145; }
+  .cv4::after { content: ''; position: absolute; left: 50%; top: 24px; width: 44px; height: 44px; margin-left: -22px; border: 3px dashed rgba(255,255,255,.5); border-radius: 50%; }
+  .cv5 { background: #54554e; }
+  .cv5::after { content: ''; position: absolute; left: 18px; top: 20px; width: 34px; height: 34px; border: 3px solid rgba(255,255,255,.5); border-radius: 4px; box-shadow: 10px 12px 0 -2px rgba(255,255,255,.3); }
+  .cv6 { background: #9a6b2f; }
+  .cv6::after { content: ''; position: absolute; left: 22px; right: 22px; top: 46%; height: 26px; border: 3px solid rgba(255,255,255,.5); border-radius: 20px; }
+  .zine .info { display: flex; flex-direction: column; gap: 6px; padding: 2px 4px; flex: 1; }
+  .zine h3 { font-size: 21px; font-weight: 700; line-height: 1.30; color: var(--olive-deep); }
+  .zine p { font-size: 14px; font-weight: 400; line-height: 1.50; color: var(--olive); flex: 1; }
+  .zine .row { display: flex; justify-content: space-between; align-items: center; }
+  .zine .price { font-size: 16px; font-weight: 700; }
+  .zine .price s { font-size: 12px; color: var(--muted); margin-left: 5px; font-weight: 400; }
+  .empty { display: none; padding: 44px 0; text-align: center; font-size: 16px; font-weight: 500; color: var(--muted); grid-column: 1 / -1; }
+
+  /* ============ 手作承诺（sage 面）============ */
+  section.craft { background: var(--sage-cream); border-top: 1px solid var(--bd); border-bottom: 1px solid var(--bd); padding: 64px 0; }
+  .craft-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 18px; margin-top: 26px; }
+  .craft-card { background: var(--parchment); border: 1px solid var(--bd); border-radius: 6px; padding: 20px; }
+  .craft-card b { display: block; font-size: 20px; font-weight: 700; line-height: 1.40; margin-bottom: 8px; }
+  .craft-card p { font-size: 15px; font-weight: 400; line-height: 1.56; }
+  .craft-card .tag { font-family: var(--mono); font-size: 11px; color: var(--muted); display: block; margin-bottom: 10px; }
+
+  /* ============ 编辑体块 ============ */
+  section.why { padding: 72px 0; }
+  .why-grid { display: grid; grid-template-columns: 1fr 1.35fr; gap: 56px; align-items: start; }
+  .why-grid h2 { font-size: 36px; font-weight: 700; line-height: 1.5; color: var(--olive-deep); }
+  .why-grid .body p { font-size: 18px; font-weight: 400; line-height: 1.71; margin-bottom: 18px; }
+  .why-grid .body p b { font-weight: 600; color: var(--olive-deep); }
+
+  /* ============ 页脚 ============ */
+  footer { border-top: 1px solid var(--bd); padding: 44px 0 36px; }
+  .foot-grid { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr; gap: 32px; }
+  .foot-grid p { font-size: 14px; line-height: 1.56; color: var(--muted); max-width: 300px; margin-top: 12px; }
+  .foot-grid h5 { font-size: 13px; font-weight: 700; text-transform: uppercase; margin-bottom: 12px; color: var(--olive-deep); }
+  .foot-grid a { display: block; font-size: 14px; font-weight: 500; color: var(--olive); padding: 4px 0; }
+  .foot-grid a:hover { color: var(--orange); }
+  .foot-note { margin-top: 36px; padding-top: 18px; border-top: 1px solid var(--bd); display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: 12px; color: var(--muted); }
+
+  /* ============ 响应式：1024 / 768 / 640 / 425 / 375 ============ */
+  @media (max-width: 1024px) {
+    .hero-grid { grid-template-columns: 1fr; }
+    .postcard { justify-self: start; }
+    .zine-grid { grid-template-columns: repeat(2, 1fr); }
+    .why-grid { grid-template-columns: 1fr; gap: 24px; }
+  }
+  @media (max-width: 768px) {
+    .nav-links { display: none; position: absolute; top: 60px; left: 0; right: 0; background: var(--parchment); flex-direction: column; padding: 12px 22px 18px; gap: 2px; border-bottom: 1px solid var(--bd); }
+    .nav-links.open { display: flex; }
+    .menu-btn { display: block; margin-left: auto; }
+    .container { padding: 0 16px; }
+    .craft-grid { grid-template-columns: 1fr; }
+    .foot-grid { grid-template-columns: 1fr 1fr; }
+  }
+  @media (max-width: 640px) {
+    .zine-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 425px) {
+    .hero-actions .btn { width: 100%; }
+    .foot-grid { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 375px) {
+    .hero h1 { font-size: 28px; }
+    .sec-h { font-size: 28px; }
+    .postcard { transform: rotate(0deg); }
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="container nav-inner">
+    <a class="logo" href="#"><i></i>纸耗子 <em>PaperMouse</em></a>
+    <ul class="nav-links" id="navLinks">
+      <li><a href="#shop">书架</a></li>
+      <li><a href="#craft">怎么做的</a></li>
+      <li><a href="#why">为什么是纸</a></li>
+      <li><a href="#">投稿</a></li>
+    </ul>
+    <a href="#shop" class="btn btn-dark">邮购目录</a>
+    <button class="menu-btn" id="menuBtn" aria-label="菜单"><span></span><span></span><span></span></button>
+  </div>
+</nav>
+
+<header class="hero container">
+  <div class="hero-grid">
+    <div>
+      <h1>薄薄一本，<br><em>重过热搜。</em></h1>
+      <p>纸耗子是一家独立 zine 邮购小店：只卖 48 页以内、印量 200 本以下的手工小志。每一本都由作者本人装订、编号、寄出——像写信一样卖书。</p>
+      <div class="hero-actions">
+        <a href="#shop" class="btn btn-dark">逛本期书架</a>
+        <a href="#craft" class="btn btn-sage">怎么做的</a>
+      </div>
+      <p class="fact">当前在架 8 种 · 已售出 11,204 本 · 每本都带手写编号</p>
+    </div>
+    <div class="postcard" aria-hidden="true">
+      <div class="stamp"></div>
+      <p class="to">TO: 你的信箱</p>
+      <div class="lines"><i></i><i></i><i></i></div>
+      <a href="#shop" class="btn btn-sage">索取本月邮购单</a>
+    </div>
+  </div>
+</header>
+
+<section class="shop container" id="shop">
+  <p class="cat-label">Sorted by · 按架分类</p>
+  <h2 class="sec-h">本期书架。</h2>
+  <div class="tabs" id="tabs">
+    <button class="on" data-f="all">全部</button>
+    <button data-f="photo">摄影</button>
+    <button data-f="city">城市观察</button>
+    <button data-f="comic">漫画</button>
+    <button data-f="poem">诗</button>
+  </div>
+  <div class="zine-grid" id="grid">
+    <div class="zine" data-c="photo">
+      <div class="cover cv1"><span class="no">No.041</span><b>走廊</b></div>
+      <div class="info">
+        <h3>走廊</h3>
+        <p>三十八层老楼的楼道闪光灯摄影：邻居的门、鞋和永远亮着的声控灯。</p>
+        <div class="row"><span class="price">¥38<s>¥45</s></span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="city">
+      <div class="cover cv2"><span class="no">No.037</span><b>口袋地图</b></div>
+      <div class="info">
+        <h3>口袋地图</h3>
+        <p>一座不存在城市的二十张手绘地图：按气味、按猫的密度、按雨天的檐下绘制。</p>
+        <div class="row"><span class="price">¥42</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="comic">
+      <div class="cover cv3"><span class="no">No.029</span><b>三点半</b></div>
+      <div class="info">
+        <h3>三点半</h3>
+        <p>漫画：放学铃响前那一小时，教室后排发生的十二件小事。</p>
+        <div class="row"><span class="price">¥35</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="city">
+      <div class="cover cv4"><span class="no">No.044</span><b>菜市场人类学</b></div>
+      <div class="info">
+        <h3>菜市场人类学</h3>
+        <p>在同一个摊位蹲守三十个早晨的田野笔记：讨价还价的语法与葱的社交功能。</p>
+        <div class="row"><span class="price">¥40</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="poem">
+      <div class="cover cv5"><span class="no">No.032</span><b>雨天闭馆</b></div>
+      <div class="info">
+        <h3>雨天闭馆</h3>
+        <p>二十六首短诗，全部写于各城市博物馆的闭馆日。油印封面，随书附赠一张退票。</p>
+        <div class="row"><span class="price">¥30<s>¥36</s></span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="photo">
+      <div class="cover cv6"><span class="no">No.038</span><b>二手相机</b></div>
+      <div class="info">
+        <h3>二手相机</h3>
+        <p>七台二手胶片机拍的同一街区：镜头的划痕，成了照片的天气。</p>
+        <div class="row"><span class="price">¥45</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="comic">
+      <div class="cover cv1"><span class="no">No.026</span><b>口袋里的针</b></div>
+      <div class="info">
+        <h3>口袋里的针</h3>
+        <p>缝纫教室的四格漫画连载合订本：一台老缝纫机和它的十一个学生。</p>
+        <div class="row"><span class="price">¥32</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+    <div class="zine" data-c="poem">
+      <div class="cover cv3"><span class="no">No.045</span><b>夜班歌词</b></div>
+      <div class="info">
+        <h3>夜班歌词</h3>
+        <p>给凌晨工作者写的可以哼的诗：便利店、收费站、产房走廊。附二维码音频。</p>
+        <div class="row"><span class="price">¥36</span><button class="btn btn-sage btn-sm">放入邮购篮</button></div>
+      </div>
+    </div>
+  </div>
+  <p class="empty" id="empty">这一架暂时空着——下月上新，耗子比你先知道。</p>
+</section>
+
+<section class="craft" id="craft">
+  <div class="container">
+    <p class="cat-label">Handmade · 手作承诺</p>
+    <h2 class="sec-h">每一本，都经过人的手。</h2>
+    <div class="craft-grid">
+      <div class="craft-card">
+        <span class="tag">STEP 01 · BINDING</span>
+        <b>人手装订</b>
+        <p>骑马钉与线装都由作者完成。线头特意留了 3 厘米——那是装订那天手抖的证据。</p>
+      </div>
+      <div class="craft-card">
+        <span class="tag">STEP 02 · RISO</span>
+        <b>油印封面</b>
+        <p>封面一律双色油印（risograph）：套色偏移不是瑕疵，是这台 1987 年印机的签名。</p>
+      </div>
+      <div class="craft-card">
+        <span class="tag">STEP 03 · NUMBERING</span>
+        <b>手写编号</b>
+        <p>每本内页第一页有手写编号与作者缩写。No.001 永远留给作者的家人。</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="why container" id="why">
+  <div class="why-grid">
+    <h2>为什么还在<br>做纸的？</h2>
+    <div class="body">
+      <p>因为纸会<b>用完</b>。印两百本就是两百本，卖完不补——这让每一期的决定都变得郑重：这张照片值不值得占一页？这句话能不能不删？</p>
+      <p>也因为纸会<b>留下来</b>。我们回收过 1,731 本读者转让的旧 zine，扉页上都有前任主人的笔迹。一本书经过三个人的手，就成了三个人的东西——这件事，屏幕做不到。</p>
+      <p>纸耗子抽成 12%，其余归作者。投稿信箱常年开着，<b>第一本 zine 的作者免全部印费</b>。</p>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div>
+        <a class="logo" href="#"><i></i>纸耗子 <em>PaperMouse</em></a>
+        <p>独立 zine 邮购小店。像写信一样卖书，像藏书一样收信。</p>
+      </div>
+      <div>
+        <h5>Shop</h5>
+        <a href="#shop">本期书架</a><a href="#">往期归档</a><a href="#">转让角</a>
+      </div>
+      <div>
+        <h5>Make</h5>
+        <a href="#craft">手作承诺</a><a href="#">油印工房</a><a href="#">装订教程</a>
+      </div>
+      <div>
+        <h5>Join</h5>
+        <a href="#why">投稿</a><a href="#">首作免印费</a><a href="#">联系我们</a>
+      </div>
+    </div>
+    <div class="foot-note">
+      <span>© 2026 PaperMouse 纸耗子 · StyleForge 平台 AI 生成习作 · study of posthog</span>
+      <span>issues: 45 · sold: 11,204</span>
+    </div>
+  </div>
+</footer>
+
+<script>
+  document.getElementById('menuBtn').addEventListener('click', () => {
+    document.getElementById('navLinks').classList.toggle('open');
+  });
+  // 分类筛选
+  const empty = document.getElementById('empty');
+  document.getElementById('tabs').addEventListener('click', e => {
+    const btn = e.target.closest('button');
+    if (!btn) return;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('on', b === btn));
+    let hit = 0;
+    document.querySelectorAll('#grid .zine').forEach(z => {
+      const show = btn.dataset.f === 'all' || z.dataset.c === btn.dataset.f;
+      z.style.display = show ? 'flex' : 'none';
+      if (show) hit++;
+    });
+    empty.style.display = hit ? 'none' : 'block';
+  });
+  // 邮购篮反馈
+  document.querySelectorAll('#grid .btn').forEach(b => {
+    b.addEventListener('click', () => {
+      b.textContent = '✓ 放进去了';
+      setTimeout(() => b.textContent = '放入邮购篮', 1500);
+    });
+  });
+</script>
+</body>
+</html>
