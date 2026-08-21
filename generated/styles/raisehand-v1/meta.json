@@ -1,0 +1,11 @@
+{
+  "id": "raisehand-v1",
+  "name": "举手画廊",
+  "created_at": "2026-08-21T23:59:59+08:00",
+  "source_page": "20260821-raisehand-volunteer-signup-landing",
+  "lineage": ["figma"],
+  "inherited_rating": 4,
+  "rating": 4,
+  "child_count": 0,
+  "summary": "Figma 黑白画廊语言用于社区参与页面：界面绝对双色、色彩只来自活动内容块、微字重档与虚线焦点、黑页脚白药丸收尾。"
+}
